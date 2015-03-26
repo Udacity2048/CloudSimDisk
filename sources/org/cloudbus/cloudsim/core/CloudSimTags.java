@@ -274,6 +274,14 @@ public class CloudSimTags {
 
 	public static final int NextCycle = BASE + 48;
 
+	/**
+	 * Convert tagValue to TagText.
+	 * 
+	 * @author Anupinder Singh
+	 * @author baplou
+	 * @param tagValue
+	 * @return tagText
+	 */
 	public static String TagText(int tagValue) {
 		switch (tagValue) {
 		/*

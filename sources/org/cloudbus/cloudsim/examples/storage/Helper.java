@@ -1,5 +1,8 @@
 package org.cloudbus.cloudsim.examples.storage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -124,10 +127,12 @@ public class Helper {
 	 * Creates a Power-aware broker named "Broker".
 	 * 
 	 */
-	public void createBroker(String RequestArrivalDistri) {
+	public void createBroker(
+			String RequestArrivalDistri) {
 		try {
 			broker = new MyPowerDatacenterBroker(
-					"Broker", RequestArrivalDistri);
+					"Broker",
+					RequestArrivalDistri);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -281,12 +286,50 @@ public class Helper {
 		
 		if (startingFilesList == "") {
 			try {
-				datacenter.addFile(new File("shortFile", 1));
+				datacenter.addFile(new File(
+						"shortFile",
+						1));
 			} catch (ParameterException e) {
 				e.printStackTrace();
 			}
 		} else {
-			// TO DO: read starting Files from a specific file and add them to the persistent storage.
+			try {
+				// instantiate a reader
+				BufferedReader input = new BufferedReader(
+						new FileReader(
+								"files/" + startingFilesList));
+				
+				// read line by line
+				String line;
+				String[] lineSplited;
+				String fileName;
+				String fileSize;
+				while ((line = input.readLine()) != null) {
+					
+					// retrieve fileName and fileSize
+					lineSplited = line.split("\\s+"); // regular expression quantifiers for whitespace
+					fileName = lineSplited[0];
+					Log.print(fileName);
+					fileSize = lineSplited[1];
+					
+					// add file to datacenter
+					datacenter.addFile(new File(
+							fileName,
+							Integer.parseInt(fileSize)));
+				}
+				
+				// close the reader
+				input.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParameterException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

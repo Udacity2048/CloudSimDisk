@@ -9,7 +9,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 
 /**
  * @author baplou
- *
+ * 
  */
 public class MyRunner {
 	
@@ -32,14 +32,12 @@ public class MyRunner {
 			int NumberOfRequest,
 			String RequestArrivalDistri,
 			String FilesSizes,
-			String workload,
 			String startingFilesList) throws Exception {
 		
 		Log.printLine("Starting ...");
 		init(NumberOfRequest,
 				RequestArrivalDistri,
 				FilesSizes,
-				workload,
 				startingFilesList);
 		start();
 		stop();
@@ -63,7 +61,6 @@ public class MyRunner {
 			int NumberOfRequest,
 			String RequestArrivalDistri,
 			String FilesSizes,
-			String workload,
 			String startingFilesList) throws Exception {
 		
 		// Entities
@@ -85,7 +82,7 @@ public class MyRunner {
 		List<File> dataFiles = new ArrayList<File>();
 		dataFiles.add(new File(
 				"TheImitationGame",
-				3600));
+				Integer.parseInt(FilesSizes)));
 		
 		// Cloudlets
 		helper.createCloudletList(NumberOfRequest,

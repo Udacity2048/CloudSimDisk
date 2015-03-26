@@ -1,5 +1,7 @@
 package org.cloudbus.cloudsim;
 
+import java.util.Iterator;
+
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
@@ -104,6 +106,77 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
+	 * Gets the transfer time of a given file.
+	 * 
+	 * @param fileSize the size of the transferred file
+	 * @return the transfer time in seconds
+	 */
+	protected double getTransferTime(int fileSize) {
+		double result = 0;
+		if (fileSize > 0 && maxTransferRate != 0) { 
+			result = fileSize / maxTransferRate;   
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Gets the file with the specified name. The time taken (in seconds) for getting the file can
+	 * also be found using {@link gridsim.datagrid.File#getTransactionTime()}.
+	 * 
+	 * @param fileName the name of the needed file
+	 * @return the file with the specified filename
+	 */
+	@Override
+	public File getFile(String fileName) {
+		// check first whether file name is valid or not
+		File obj = null;
+		if (fileName == null || fileName.length() == 0) {
+			Log.printLine(name + ".getFile(): Warning - invalid " + "file name.");
+			return obj;
+		}
+
+		Iterator<File> it = fileList.iterator();
+		int size = 0;
+		int index = 0;
+		boolean found = false;
+		File tempFile = null;
+
+		// find the file in the disk
+		while (it.hasNext()) {
+			tempFile = it.next();
+			size += tempFile.getSize();
+			if (tempFile.getName().equals(fileName)) {
+				found = true;
+				obj = tempFile;
+				break;
+			}
+
+			index++;
+		}
+
+		// if the file is found, then determine the time taken to get it
+		if (found) {
+			obj = fileList.get(index);
+			double seekTime = getSeekTime(size);
+			double transferTime = getTransferTime(obj.getSize());
+			double latency = getLatency();
+
+			// total time for this operation
+			obj.setTransactionTime(seekTime + transferTime + latency);
+			System.out.println();
+			Log.formatLine("OBSERVATION>> Reading a File on the persistent storage.");
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for SeekTime.", seekTime);
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for TransferTime.", transferTime);
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for Latency.", latency);
+			System.out.println();
+
+		}
+
+		return obj;
+	}
+	
+	/**
 	 * Adds a file to the storage. First, the method checks if there is enough space on the storage,
 	 * then it checks if the file with the same name is already taken to avoid duplicate filenames. <br>
 	 * The time taken (in seconds) for adding the file can also be found using
@@ -126,7 +199,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			return result;
 		}
 
-		// check if the same file name is alraedy taken
+		// check if the same file name is already taken
 		if (!contains(file.getName())) {
 			double seekTime = getSeekTime(file.getSize());
 			double transferTime = getTransferTime(file.getSize());
@@ -138,9 +211,10 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			result = seekTime + transferTime + latency;  // Latency added by Baptiste Louis
 			
 			System.out.println();
-			System.out.println("VALUE " + seekTime + "seconds (seekTime)");
-			System.out.println("VALUE " + transferTime + "seconds (transferTime)");
-			System.out.println("VALUE " + latency + "seconds (latency)");
+			Log.formatLine("OBSERVATION>> Writting a File on the persistent storage.");
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for SeekTime.", seekTime);
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for TransferTime.", transferTime);
+			Log.formatLine("OBSERVATION>> %9.6f second(s) for Latency.", latency);
 			System.out.println();
 		}
 		

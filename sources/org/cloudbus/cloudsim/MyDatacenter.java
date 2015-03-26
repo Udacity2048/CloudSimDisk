@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.core.MyCloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
@@ -26,7 +27,56 @@ public class MyDatacenter extends Datacenter {
 			VmAllocationPolicy vmAllocationPolicy,
 			List<? extends Storage> storageList,
 			double schedulingInterval) throws Exception {
-		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
+		super(
+				name,
+				characteristics,
+				vmAllocationPolicy,
+				storageList,
+				schedulingInterval);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.cloudbus.cloudsim.Datacenter#processEvent(org.cloudbus.cloudsim.core.SimEvent)
+	 */
+	@Override
+	public void processEvent(
+			SimEvent ev) {
+		
+		if (ev.getTag() == MyCloudSimTags.CLOUDLET_FILES_DONE) {
+			processCloudletFilesDone(ev);
+		} else {
+			super.processEvent(ev);
+		}
+	}
+	
+	/**
+	 * Processes a Cloudlet Files Done notification
+	 */
+	protected void processCloudletFilesDone(
+			SimEvent ev) {
+		
+		// Retrieves data from the ev
+		Object[] data = (Object[]) ev.getData();
+		String action = (String) data[0];
+		Cloudlet cl = (Cloudlet) data[1];
+		File tempFile = (File) data[2];
+		double tempTime = (double) data[4];
+		Storage storage = (Storage) data[7];
+		
+		// Print out confirmation that Files have been handled
+		Log.formatLine("%.3f: %s: Cloudlet # %d: <%s> %s on %s.",
+				CloudSim.clock(),
+				getName(),
+				cl.getCloudletId(),
+				tempFile.getName(),
+				action,
+				storage.getName());
+		Log.formatLine("%10s Transaction time of %6.3f Seconde(s) according to %s specifications.",
+				"",
+				tempTime,
+				storage.getName());
+		Log.printLine();
 	}
 	
 	/**
@@ -38,20 +88,24 @@ public class MyDatacenter extends Datacenter {
 	 *            an acknowledgment
 	 */
 	@Override
-	protected void processCloudletSubmit(SimEvent ev, boolean ack) {
+	protected void processCloudletSubmit(
+			SimEvent ev,
+			boolean ack) {
 		updateCloudletProcessing();
 		
 		try {
 			// gets the Cloudlet object
 			Object obj = ev.getData();
 			
-			if (obj instanceof Cloudlet) { //test if this object is a Cloudlet
+			// Test is the Object <obj> is a Cloudlet
+			if (obj instanceof Cloudlet) {
 				Cloudlet cl = (Cloudlet) obj;
+				
 				// checks whether this Cloudlet has finished or not
 				if (cl.isFinished()) {
 					String name = CloudSim.getEntityName(cl.getUserId());
-					Log.printLine(getName() + ": Warning - Cloudlet #" + cl.getCloudletId() + " owned by "
-							+ name + " is already completed/finished.");
+					Log.printLine(getName() + ": Warning - Cloudlet #" + cl.getCloudletId() + " owned by " + name
+							+ " is already completed/finished.");
 					Log.printLine("Therefore, it is not being executed again");
 					Log.printLine();
 					
@@ -68,16 +122,21 @@ public class MyDatacenter extends Datacenter {
 						
 						// unique tag = operation tag
 						int tag = CloudSimTags.CLOUDLET_SUBMIT_ACK;
-						sendNow(cl.getUserId(), tag, data);
+						sendNow(cl.getUserId(),
+								tag,
+								data);
 					}
 					
-					sendNow(cl.getUserId(), CloudSimTags.CLOUDLET_RETURN, cl);
+					sendNow(cl.getUserId(),
+							CloudSimTags.CLOUDLET_RETURN,
+							cl);
 					
 					return;
 				}
 				
 				// process this Cloudlet to this CloudResource
-				cl.setResourceParameter(getId(), getCharacteristics().getCostPerSecond(),
+				cl.setResourceParameter(getId(),
+						getCharacteristics().getCostPerSecond(),
 						getCharacteristics().getCostPerBw());
 				
 				int userId = cl.getUserId();
@@ -86,21 +145,27 @@ public class MyDatacenter extends Datacenter {
 				// time to transfer the files
 				double fileTransferTime = predictRequiredFilesTransferTime(cl.getRequiredFiles());
 				
-				if (cl instanceof MyCloudlet) { //test if this cloudlet is a MyCloudlet
+				// Test if the Cloudlet <cl> is a MyCloudlet.
+				if (cl instanceof MyCloudlet) {
 					MyCloudlet mycl = (MyCloudlet) cl;
 					fileTransferTime += predictDataFilesTransferTime(mycl.getDataFiles());
 				}
 				
-				Host host = getVmAllocationPolicy().getHost(vmId, userId);
-				Vm vm = host.getVm(vmId, userId);
+				Host host = getVmAllocationPolicy().getHost(vmId,
+						userId);
+				Vm vm = host.getVm(vmId,
+						userId);
 				CloudletScheduler scheduler = vm.getCloudletScheduler();
-				double estimatedFinishTime = scheduler.cloudletSubmit(cl, fileTransferTime);
+				double estimatedFinishTime = scheduler.cloudletSubmit(cl,
+						fileTransferTime);
 				
 				// if this cloudlet is in the execution queue
 				if (estimatedFinishTime > 0.0 && !Double.isInfinite(estimatedFinishTime)) {
 					estimatedFinishTime += fileTransferTime;
-					send(getId(), estimatedFinishTime, CloudSimTags.VM_DATACENTER_EVENT); // Generate
-																							// Event.
+					send(getId(),
+							estimatedFinishTime,
+							CloudSimTags.VM_DATACENTER_EVENT); // Generate
+																// Event.
 				}
 				
 				if (ack) {
@@ -111,7 +176,9 @@ public class MyDatacenter extends Datacenter {
 					
 					// unique tag = operation tag
 					int tag = CloudSimTags.CLOUDLET_SUBMIT_ACK;
-					sendNow(cl.getUserId(), tag, data);
+					sendNow(cl.getUserId(),
+							tag,
+							data);
 				}
 			}
 		} catch (ClassCastException c) {
@@ -132,7 +199,8 @@ public class MyDatacenter extends Datacenter {
 	 *            the required files
 	 * @return the double
 	 */
-	protected double predictRequiredFilesTransferTime(List<String> requiredFiles) {
+	protected double predictRequiredFilesTransferTime(
+			List<String> requiredFiles) {
 		double time = 0.0;
 		
 		Iterator<String> iter = requiredFiles.iterator();
@@ -157,7 +225,8 @@ public class MyDatacenter extends Datacenter {
 	 *            the required files
 	 * @return the double
 	 */
-	protected double predictDataFilesTransferTime(List<File> dataFiles) {
+	protected double predictDataFilesTransferTime(
+			List<File> dataFiles) {
 		double time = 0.0;
 		
 		// handle the case where there is no persistent storage

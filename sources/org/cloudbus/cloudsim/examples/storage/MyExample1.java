@@ -18,17 +18,15 @@ public class MyExample1 {
 			String[] args) throws Exception {
 		
 		// Parameters
-		int NumberOfRequest = 500; // Number of requests
+		int NumberOfRequest = 4; // Number of requests
 		String RequestArrivalDistri = "expo"; // Exponential Distribution
-		String FilesSizes = "";
-		String workload = "";
-		String startingFilesList = "";
+		String FilesSizes = "1"; // Sizes (MB) of the files to write
+		String startingFilesList = "startingFilesListDefault";
 		
 		new MyRunner(
 				NumberOfRequest,
 				RequestArrivalDistri,
 				FilesSizes,
-				workload,
 				startingFilesList);
 	}
 	

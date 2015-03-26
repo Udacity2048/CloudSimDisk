@@ -48,14 +48,14 @@ public class HarddriveStorage implements Storage {
 	/** the total capacity of the harddrive in MB. */  // Modified the privacy for Baptiste Louis test
 	protected final double capacity;
 
-	/** the maximum transfer rate in MB/sec. */
-	private double maxTransferRate;
+	/** the maximum transfer rate in MB/sec. */ // Modified the privacy for Baptiste Louis test
+	protected double maxTransferRate;
 
-	/** the latency of the harddrive in seconds. */
-	private double latency;
+	/** the latency of the harddrive in seconds. */  // Modified the privacy for Baptiste Louis test
+	protected double latency;
 
-	/** the average seek time in seconds. */
-	private double avgSeekTime;
+	/** the average seek time in seconds. */  // Modified the privacy for Baptiste Louis test
+	protected double avgSeekTime;
 
 	/**
 	 * Creates a new harddrive storage with a given name and capacity.
@@ -384,16 +384,9 @@ public class HarddriveStorage implements Storage {
 			obj = fileList.get(index);
 			double seekTime = getSeekTime(size);
 			double transferTime = getTransferTime(obj.getSize());
-			double latency = getLatency();
 
 			// total time for this operation
-			obj.setTransactionTime(seekTime + transferTime + latency); // Latency added by Baptiste Louis
-			System.out.println();
-			System.out.println("VALUE " + seekTime + "seconds (seekTime)");
-			System.out.println("VALUE " + transferTime + "seconds (transferTime)");
-			System.out.println("VALUE " + latency + "seconds (latency)");
-			System.out.println();
-
+			obj.setTransactionTime(seekTime + transferTime);
 		}
 
 		return obj;
@@ -416,7 +409,7 @@ public class HarddriveStorage implements Storage {
 	 * @param fileSize the size of a file in MB
 	 * @return the seek time in seconds
 	 */
-	protected double getSeekTime(int fileSize) { // Rectified by Baptiste Louis  // Modified the privacy for Baptiste Louis test
+	protected double getSeekTime(int fileSize) { // Modified privacy for Baptiste Louis test
 		double result = 0;
 
 		if (gen != null) {
@@ -424,7 +417,7 @@ public class HarddriveStorage implements Storage {
 		}
 
 		if (fileSize > 0 && capacity != 0) {
-			result += (fileSize / capacity);  // Need verification
+			result += (fileSize / capacity);
 		}
 		
 		return result;
@@ -436,11 +429,10 @@ public class HarddriveStorage implements Storage {
 	 * @param fileSize the size of the transferred file
 	 * @return the transfer time in seconds
 	 */
-	protected double getTransferTime(int fileSize) { // Modified the privacy for Baptiste Louis test
+	protected double getTransferTime(int fileSize) { // Modified privacy for Baptiste Louis test
 		double result = 0;
-		if (fileSize > 0 && maxTransferRate != 0) { // Rectified by Baptiste Louis 
-			//result = (fileSize * maxTransferRate) / capacity;
-			result = fileSize / maxTransferRate;    // Rectified by Baptiste Louis 
+		if (fileSize > 0 && capacity != 0) { 
+			result = (fileSize * maxTransferRate) / capacity;
 		}
 
 		return result;
@@ -455,7 +447,7 @@ public class HarddriveStorage implements Storage {
 	 * @param methodName the name of the method in which we check for validity of the file
 	 * @return <tt>true</tt> if the file is valid, <tt>false</tt> otherwise
 	 */
-	protected boolean isFileValid(File file, String methodName) { // Modified the privacy for Baptiste Louis test
+	protected boolean isFileValid(File file, String methodName) { // Modified privacy for Baptiste Louis test
 
 		if (file == null) {
 			Log.printLine(name + "." + methodName + ": Warning - the given file is null.");

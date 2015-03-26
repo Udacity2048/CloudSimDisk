@@ -39,7 +39,7 @@ import org.cloudbus.cloudsim.core.predicates.PredicateType;
 public class PowerDatacenter extends Datacenter {
 
 	/** The power. */
-	protected double power; //  Access Modifiers changed by Baptiste Louis
+	private double power;
 
 	/** The disable migrations. */
 	private boolean disableMigrations;
@@ -65,7 +65,7 @@ public class PowerDatacenter extends Datacenter {
 			String name,
 			DatacenterCharacteristics characteristics,
 			VmAllocationPolicy vmAllocationPolicy,
-			List<? extends Storage> storageList, // Type changed by Baptiste Louis
+			List<Storage> storageList,
 			double schedulingInterval) throws Exception {
 		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
 
@@ -94,9 +94,7 @@ public class PowerDatacenter extends Datacenter {
 
 		// if some time passed since last processing
 		if (currentTime > getLastProcessTime()) {
-			
-			Log.printLine("\n\n\n");
-			Log.format("New Current Time : %.2f second(s)", currentTime);  // Formated by Baptiste LOUIS
+			System.out.print(currentTime + " ");
 
 			double minTime = updateCloudetProcessingWithoutSchedulingFutureEventsForce();
 
@@ -174,7 +172,7 @@ public class PowerDatacenter extends Datacenter {
 		double timeDiff = currentTime - getLastProcessTime();
 		double timeFrameDatacenterEnergy = 0.0;
 
-		Log.printLine("\n--------------------------------------------------------------\n");  // Formated by Baptiste LOUIS
+		Log.printLine("\n\n--------------------------------------------------------------\n\n");
 		Log.formatLine("New resource usage for the time frame starting at %.2f:", currentTime);
 
 		for (PowerHost host : this.<PowerHost> getHostList()) {
@@ -232,8 +230,7 @@ public class PowerDatacenter extends Datacenter {
 
 		checkCloudletCompletion();
 
-		/* AVOID TO DESTROY VMs WHEN THERE ARE NOT USED DURING A MOMENT (Baptiste LOUIS)
-		// Remove completed VMs
+		/** Remove completed VMs **/
 		for (PowerHost host : this.<PowerHost> getHostList()) {
 			for (Vm vm : host.getCompletedVms()) {
 				getVmAllocationPolicy().deallocateHostForVm(vm);
@@ -241,7 +238,7 @@ public class PowerDatacenter extends Datacenter {
 				Log.printLine("VM #" + vm.getId() + " has been deallocated from host #" + host.getId());
 			}
 		}
-		*/
+
 		Log.printLine();
 
 		setLastProcessTime(currentTime);
