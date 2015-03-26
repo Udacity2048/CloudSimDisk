@@ -8,7 +8,9 @@ import org.cloudbus.cloudsim.MyCloudlet;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
+import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.ExponentialDistr;
+import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.lists.VmList;
 
 /**
@@ -22,6 +24,8 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 */
 	private List<Double>	History	= new ArrayList<Double>();
 	
+	private ContinuousDistribution distri;
+	
 	/**
 	 * Created a new DatacenterBroker object.
 	 * 
@@ -33,16 +37,14 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 * @post $none
 	 */
 	public MyPowerDatacenterBroker(
-			String name) throws Exception {
+			String name,String RequestArrivalDistri) throws Exception {
 		super(name);
+		
+		setDistri(RequestArrivalDistri);
 	}
 	
 	@Override
 	protected void submitCloudlets() {
-		
-		// MAIN PARAMETERS
-		// Cloudlet (Request) Arrival Rate
-		ExponentialDistr expoDistri = new ExponentialDistr(60);
 		
 		// Initialize local variable
 		int vmIndex = 0;
@@ -70,7 +72,7 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 			cloudlet.setVmId(vm.getId());
 			
 			// Request arrival rate: each Cloudlet are delayed according to a specific distribution algorithm.
-			tempDelay = expoDistri.sample();
+			tempDelay = distri.sample();
 			History.add(tempDelay);
 			send(getVmsToDatacentersMap().get(vm.getId()), tempDelay, CloudSimTags.CLOUDLET_SUBMIT, myCloudlet);
 			Log.formatLine("%.3f: %s: Cloudlet #%3d is scheduled to be sent to VM #%3d in %7.3f second(s)", CloudSim.clock(), getName(),
@@ -92,5 +94,17 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 */
 	public List<Double> getDelayHistory() {
 		return History;
+	}
+	
+	public void setDistri(String RequestArrivalDistri) {
+		switch (RequestArrivalDistri) {
+			case "expo":
+				distri = new ExponentialDistr(60);
+				break;
+			
+			default:
+				distri = new UniformDistr(1, 2);
+				break;
+		}
 	}
 }

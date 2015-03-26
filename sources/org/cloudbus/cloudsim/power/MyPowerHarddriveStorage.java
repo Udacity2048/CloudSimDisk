@@ -75,12 +75,12 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 * @return the power
 	 */
 	public double getPower(double mode) {
+		double power = 0;
 		if (mode != 0 && mode != 1) {
 			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for operating mode.");
-			return -1;
+			return power;
 		}
 		
-		double power = 0;
 		try {
 			power = getPowerModelHdd().getPower(mode);
 		} catch (Exception e) {

@@ -60,7 +60,12 @@ public class MyPowerDatacenter extends PowerDatacenter {
 			VmAllocationPolicy vmAllocationPolicy,
 			List<MyPowerHarddriveStorage> storageList,
 			double schedulingInterval) throws Exception {
-		super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval);
+		super(
+				name,
+				characteristics,
+				vmAllocationPolicy,
+				storageList,
+				schedulingInterval);
 	}
 	
 	// Methods
@@ -70,25 +75,31 @@ public class MyPowerDatacenter extends PowerDatacenter {
 	 * @see cloudsim.Datacenter#processCloudletSubmit(cloudsim.core.SimEvent, boolean)
 	 */
 	@Override
-	protected void processCloudletSubmit(SimEvent ev, boolean ack) {
+	protected void processCloudletSubmit(
+			SimEvent ev,
+			boolean ack) {
 		// Handle Cloudlets' Processing, VMs and host updates regarding CPUs utilization
 		// (it is not our focus for this simulation).
 		// super.processCloudletSubmit(ev, ack);
 		// setCloudletSubmitted(CloudSim.clock());
-	
+		
 		/**
 		 * When a cloudlet is received by the Datacenter, First (and once for all) it gets required files and adds data
 		 * Files by interacting with the persistent storage available.
 		 */
-		processCloudletFiles(ev, ack);
+		processCloudletFiles(ev,
+				ack);
 	}
 	
 	/**
 	 * Process Cloudlet Required Files and Data Files
-	 * @param ev 
-	 * @param ack 
+	 * 
+	 * @param ev
+	 * @param ack
 	 */
-	public void processCloudletFiles(SimEvent ev, boolean ack) {
+	public void processCloudletFiles(
+			SimEvent ev,
+			boolean ack) {
 		// gets the Cloudlet object
 		Cloudlet cl = (Cloudlet) ev.getData();
 		
@@ -97,7 +108,9 @@ public class MyPowerDatacenter extends PowerDatacenter {
 		
 		// Confirm reception Cloudlet
 		Log.printLine();
-		Log.formatLine("%.3f: %s: Cloudlet # %d has been successfully received. ", CloudSim.clock(), getName(),
+		Log.formatLine("%.3f: %s: Cloudlet # %d has been successfully received. ",
+				CloudSim.clock(),
+				getName(),
 				cl.getCloudletId());
 		
 		// energy to get the files
@@ -118,12 +131,24 @@ public class MyPowerDatacenter extends PowerDatacenter {
 					tempTime = tempFile.getTransactionTime();
 					tempEnergy = tempPower * tempTime;
 					
-					Log.formatLine("%.3f: %s: Cloudlet # %d requires files stored on %s.", CloudSim.clock(), getName(),
-							cl.getCloudletId(), storage.getName());
-					Log.formatLine("%10s Power  consumption of %6.3f Watt(s)  according to mode %3d.", "", tempPower, mode);
-					Log.formatLine("%10s Transaction time   of %6.3f Seconde(s) according to %s specifications.", "", tempTime,
+					Log.formatLine("%.3f: %s about Cloudlet # %d : <%s> retrieved on %s.",
+							CloudSim.clock(),
+							getName(),
+							cl.getCloudletId(),
+							tempFile.getName(),
 							storage.getName());
-					Log.formatLine("%10s Energy consumption of %6.3f Joule(s) according to mode %3d.", "", tempEnergy, mode);
+					Log.formatLine("%10s Power  consumption of %6.3f Watt(s)  according to mode %3d.",
+							"",
+							tempPower,
+							mode);
+					Log.formatLine("%10s Transaction time   of %6.3f Seconde(s) according to %s specifications.",
+							"",
+							tempTime,
+							storage.getName());
+					Log.formatLine("%10s Energy consumption of %6.3f Joule(s) according to mode %3d.",
+							"",
+							tempEnergy,
+							mode);
 					Log.printLine();
 					
 					TotalOperationTime += tempFile.getTransactionTime();
@@ -163,12 +188,24 @@ public class MyPowerDatacenter extends PowerDatacenter {
 						tempTime = tempFile.getTransactionTime();
 						tempEnergy = tempPower * tempTime;
 						
-						Log.formatLine("%.3f: %s: <%s> added on %s.", CloudSim.clock(), getName(), tempFile.getName(),
+						Log.formatLine("%.3f: %s about Cloudlet # %d: <%s> added on %s.",
+								CloudSim.clock(),
+								getName(),
+								cl.getCloudletId(),
+								tempFile.getName(),
 								storage.getName());
-						Log.formatLine("%10s Power  consumption of %6.3f Watt(s)  according to mode %3d.", "", tempPower, mode);
-						Log.formatLine("%10s Transaction time   of %6.3f Seconde(s) according to %s specifications.", "",
-								tempTime, storage.getName());
-						Log.formatLine("%10s Energy consumption of %6.3f Joule(s) according to mode %3d.", "", tempEnergy, mode);
+						Log.formatLine("%10s Power  consumption of %6.3f Watt(s)  according to mode %3d.",
+								"",
+								tempPower,
+								mode);
+						Log.formatLine("%10s Transaction time   of %6.3f Seconde(s) according to %s specifications.",
+								"",
+								tempTime,
+								storage.getName());
+						Log.formatLine("%10s Energy consumption of %6.3f Joule(s) according to mode %3d.",
+								"",
+								tempEnergy,
+								mode);
 						Log.printLine();
 						
 						TotalOperationTime += tempFile.getTransactionTime();
@@ -176,6 +213,8 @@ public class MyPowerDatacenter extends PowerDatacenter {
 						timeFrameStorageEnergy = tempEnergy;
 					}
 				}
+			} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
+				Log.printLine(tempFile.getName() + ".addFile(): Warning - File named <" + tempFile.getName() + "> is already stored");
 			}
 			
 		}
@@ -194,7 +233,8 @@ public class MyPowerDatacenter extends PowerDatacenter {
 	 * @param totalStorageEnergy
 	 *            the totalStorageEnergy to set
 	 */
-	public void setTotalStorageEnergy(double totalStorageEnergy) {
+	public void setTotalStorageEnergy(
+			double totalStorageEnergy) {
 		this.totalStorageEnergy = totalStorageEnergy;
 	}
 	
@@ -209,7 +249,8 @@ public class MyPowerDatacenter extends PowerDatacenter {
 	 * @param totalOperationTime
 	 *            the totalOperationTime to set
 	 */
-	public void setTotalOperationTime(double totalOperationTime) {
+	public void setTotalOperationTime(
+			double totalOperationTime) {
 		TotalOperationTime = totalOperationTime;
 	}
 }

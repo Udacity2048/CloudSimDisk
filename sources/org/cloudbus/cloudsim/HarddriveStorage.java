@@ -388,9 +388,11 @@ public class HarddriveStorage implements Storage {
 
 			// total time for this operation
 			obj.setTransactionTime(seekTime + transferTime + latency); // Latency added by Baptiste Louis
-			System.out.println("TEST " + seekTime + "seconds (seekTime)");
-			System.out.println("TEST " + transferTime + "seconds (transferTime)");
-			System.out.println("TEST " + latency + "seconds (latency)");
+			System.out.println();
+			System.out.println("VALUE " + seekTime + "seconds (seekTime)");
+			System.out.println("VALUE " + transferTime + "seconds (transferTime)");
+			System.out.println("VALUE " + latency + "seconds (latency)");
+			System.out.println();
 
 		}
 
@@ -501,9 +503,11 @@ public class HarddriveStorage implements Storage {
 			nameList.add(file.getName());     // add the name to the name list
 			currentSize += file.getSize();    // increment the current HD size
 			result = seekTime + transferTime;
+	
 		}
 		
 		file.setTransactionTime(result);
+		
 		
 		return result;
 	}

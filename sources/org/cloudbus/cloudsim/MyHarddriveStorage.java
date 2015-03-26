@@ -126,7 +126,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			return result;
 		}
 
-		// check if the same file name is alredy taken
+		// check if the same file name is alraedy taken
 		if (!contains(file.getName())) {
 			double seekTime = getSeekTime(file.getSize());
 			double transferTime = getTransferTime(file.getSize());
@@ -136,6 +136,12 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			nameList.add(file.getName());     // add the name to the name list
 			currentSize += file.getSize();    // increment the current HD size
 			result = seekTime + transferTime + latency;  // Latency added by Baptiste Louis
+			
+			System.out.println();
+			System.out.println("VALUE " + seekTime + "seconds (seekTime)");
+			System.out.println("VALUE " + transferTime + "seconds (transferTime)");
+			System.out.println("VALUE " + latency + "seconds (latency)");
+			System.out.println();
 		}
 		
 		file.setTransactionTime(result);

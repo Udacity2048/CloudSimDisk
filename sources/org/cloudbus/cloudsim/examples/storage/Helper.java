@@ -6,17 +6,21 @@ import java.util.LinkedList;
 import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletScheduler;
+import org.cloudbus.cloudsim.CloudletSchedulerDynamicWorkload;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.File;
+import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyCloudlet;
 import org.cloudbus.cloudsim.ParameterException;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
+import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmScheduler;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
+import org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.examples.power.Constants;
 import org.cloudbus.cloudsim.power.MyPowerDatacenter;
@@ -25,6 +29,7 @@ import org.cloudbus.cloudsim.power.PowerDatacenter;
 import org.cloudbus.cloudsim.power.PowerDatacenterBroker;
 import org.cloudbus.cloudsim.power.MyPowerHarddriveStorage;
 import org.cloudbus.cloudsim.power.PowerHost;
+import org.cloudbus.cloudsim.power.PowerHostUtilizationHistory;
 import org.cloudbus.cloudsim.power.PowerVm;
 import org.cloudbus.cloudsim.power.models.PowerModel;
 import org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G4Xeon3040;
@@ -59,11 +64,6 @@ public class Helper {
 	 * an index incrementing IDs of VMs created.
 	 */
 	private int									vmId			= 0;
-	
-	/**
-	 * an index incrementing IDs of Pe created.
-	 */
-	private int									peId			= 0;
 	
 	/**
 	 * an index incrementing IDs of Hosts created.
@@ -105,297 +105,218 @@ public class Helper {
 	 */
 	public MyPowerDatacenter					datacenter;
 	
-	// Methods
+	/**
+	 * the Datacenter Characteristics
+	 */
+	public DatacenterCharacteristics			datacenterCharacteristics;
 	
+	// Methods
 	/**
 	 * Initialize CloudSim.
-	 * 
-	 * @param numberOfUser
 	 */
-	public void initCloudSim(int numberOfUser) {
-		Calendar calendar = Calendar.getInstance();
-		boolean trace_flag = false; // mean trace events
-		
-		// Initialize the CloudSim library.
-		CloudSim.init(numberOfUser, calendar, trace_flag);
-	}
-	
-	/**
-	 * Creates a power-aware Datacenter.
-	 * 
-	 * @param arch
-	 * @param os
-	 * @param vmm
-	 * @param time_zone
-	 * @param cost
-	 * @param costPerMem
-	 * @param costPerStorage
-	 * @param costPerBw
-	 * @return
-	 */
-	public PowerDatacenter createDatacenter(String arch, String os, String vmm, double time_zone, double cost, double costPerMem,
-			double costPerStorage, double costPerBw) {
-		
-		// Hosts
-		addPe(1000);
-		addHost(new RamProvisionerSimple(2048), new BwProvisionerSimple(10000), 1000000, new VmSchedulerTimeShared(peList),
-				new PowerModelSpecPowerHpProLiantMl110G4Xeon3040());
-		
-		// Persistent Storage
-		addPersistentStorage(1, new StorageModelHddSeagateEnterpriseST6000VN0001(),
-				new PowerModeHddSeagateEnterpriseST6000VN0001());
-		Log.printLine("Persitent storage created.");
-		
-		// Datacenter Characteristics
-		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(arch, os, vmm, hostList, time_zone, cost,
-				costPerMem, costPerStorage, costPerBw);
-		
-		// Datacenter
-		try {
-			datacenter = new MyPowerDatacenter("datacenter", characteristics, new VmAllocationPolicySimple(hostList),
-					storageList, 100);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return datacenter;
+	public void initCloudSim() {
+		CloudSim.init(1,
+				Calendar.getInstance(),
+				false);
 	}
 	
 	/**
 	 * Creates a Power-aware broker named "Broker".
 	 * 
 	 */
-	public void createBroker() {
+	public void createBroker(String RequestArrivalDistri) {
 		try {
-			broker = new MyPowerDatacenterBroker("Broker");
+			broker = new MyPowerDatacenterBroker(
+					"Broker", RequestArrivalDistri);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Creates a power-aware VM.
+	 * create Pe List.
 	 * 
-	 * @param mips
-	 * @param pesNumber
-	 * @param ram
-	 * @param bw
-	 * @param size
-	 * @param priority
-	 * @param vmm
-	 * @param cloudletScheduler
-	 * @param schedulingInterval
+	 * @param PesNumber
 	 */
-	public void createVM(double mips, int pesNumber, int ram, long bw, long size, int priority, String vmm,
-			CloudletScheduler cloudletScheduler, double schedulingInterval) {
-		
-		// create one VM.
-		PowerVm vm = new PowerVm(vmId, broker.getId(), mips, pesNumber, ram, bw, size, 1, vmm, cloudletScheduler,
-				schedulingInterval);
-		
-		vmId++;
-		
-		// add the VM to the vmList.
-		vmlist.add(vm);
-		
-		// submit the vmList to the Broker entity.
+	public void createPeList(
+			int PesNumber) {
+		for (int i = 0; i < PesNumber; i++) {
+			peList.add(new Pe(
+					i,
+					new PeProvisionerSimple(
+							MyConstants.HOST_MIPS)));
+		}
+	}
+	
+	/**
+	 * Creates the host list.
+	 * 
+	 * @param hostsNumber
+	 *            the hosts number
+	 */
+	public void createHostList(
+			int hostsNumber) {
+		for (int i = 0; i < hostsNumber; i++) {
+			hostList.add(new PowerHost(
+					i,
+					new RamProvisionerSimple(
+							MyConstants.HOST_RAM),
+					new BwProvisionerSimple(
+							MyConstants.HOST_BW),
+					MyConstants.HOST_STORAGE,
+					peList,
+					new VmSchedulerTimeSharedOverSubscription(
+							peList),
+					MyConstants.HOST_POWER_MODEL));
+		}
+	}
+	
+	/**
+	 * Creates the vm list.
+	 * 
+	 * @param vmsNumber
+	 *            the vms number
+	 */
+	public void createVmList(
+			int vmsNumber) {
+		for (int i = 0; i < vmsNumber; i++) {
+			vmlist.add(new PowerVm(
+					i,
+					broker.getId(),
+					MyConstants.VM_MIPS,
+					MyConstants.VM_PES_NUMBER,
+					MyConstants.VM_RAM,
+					MyConstants.VM_BW,
+					MyConstants.VM_SIZE,
+					MyConstants.VM_PRIORITY,
+					MyConstants.VM_VMM,
+					MyConstants.VM_CLOUDLET_SCHEDULER,
+					MyConstants.VM_SCHEDULING_INTERVVAL));
+		}
 		broker.submitVmList(vmlist);
 	}
 	
 	/**
-	 * add cloudlet to the Cloudlet List. This constructor can create a define number of identical Cloudlets.
+	 * create a defined number of defined storage type to the persistent storage of a power-aware datacenter.
 	 * 
-	 * @param quantity
-	 *            the number of Cloudlet to create.
-	 * @param lenght
-	 * @param pesNumber
-	 * @param fileSize
-	 * @param outputSize
-	 * @param utilizationModelCpu
-	 * @param utilizationModelRam
-	 * @param utilizationModelBw
-	 * @param requiredFiles
-	 * @param dataFiles
-	 * @throws ParameterException 
+	 * @param storageNumber
+	 * @throws ParameterException
 	 */
-	public void addCloudlet(int quantity, long lenght, int pesNumber, long fileSize, long outputSize,
-			UtilizationModel utilizationModelCpu, UtilizationModel utilizationModelRam, UtilizationModel utilizationModelBw,
-			List<String> requiredFiles, List<File> dataFiles) throws ParameterException {
-		
-		int i;
-		
-		for (i = 0; i < quantity; i++) {
-			
-			// Data Files creation
-			List<File> dF = new ArrayList<File>();
-			dF.add(new File("video" + i, 100));
-			
-			MyCloudlet cloudlet = new MyCloudlet(cloudletId, lenght, pesNumber, fileSize, outputSize, utilizationModelCpu,
-					utilizationModelRam, utilizationModelBw, requiredFiles, dF);
-			cloudlet.setUserId(broker.getId());
-			cloudlet.setVmId(vmlist.get(0).getId()); // assume there is only 1 VM
-			cloudletId++;
-			
-			// add the cloudlet to the list.
-			cloudletList.add(cloudlet);
+	public void createPersistentStorage(
+			int storageNumber) throws ParameterException {
+		for (int i = 0; i < storageNumber; i++) {
+			storageList.add(new MyPowerHarddriveStorage(
+					i,
+					"hdd" + i,
+					MyConstants.STORAGE_MODEL_HDD,
+					MyConstants.STORAGE_POWER_MODEL_HDD));
 		}
 	}
 	
 	/**
-	 * add cloudlet to the Cloudlet List. This constructor can create one specific cloudlet.
+	 * Creates a power-aware Datacenter.
+	 */
+	public void createDatacenterCharacteristics() {
+		datacenterCharacteristics = new DatacenterCharacteristics(
+				MyConstants.DATACENTER_ARCHITECTURE,
+				MyConstants.DATACENTER_OS,
+				MyConstants.DATACENTER_VMM,
+				hostList,
+				MyConstants.DATACENTER_TIME_ZONE,
+				MyConstants.DATACENTER_COST_PER_SEC,
+				MyConstants.DATACENTER_COST_PER_MEM,
+				MyConstants.DATACENTER_COST_PER_STORAGE,
+				MyConstants.DATACENTER_COST_PER_BW);
+	}
+	
+	/**
+	 * Creates a power-aware Datacenter.
 	 * 
-	 * @param lenght
-	 * @param pesNumber
-	 * @param fileSize
-	 * @param outputSize
-	 * @param utilizationModelCpu
-	 * @param utilizationModelRam
-	 * @param utilizationModelBw
+	 * @throws Exception
+	 */
+	public void createDatacenter() throws Exception {
+		datacenter = new MyPowerDatacenter(
+				MyConstants.DATACENTER_NAME,
+				datacenterCharacteristics,
+				new VmAllocationPolicySimple(
+						hostList),
+				storageList,
+				MyConstants.DATACENTER_SCHEDULING_INTERVAL);
+	}
+	
+	/**
+	 * @param CloudlerNumber
 	 * @param requiredFiles
 	 * @param dataFiles
+	 * @throws ParameterException
 	 */
-	public void addCloudlet(long lenght, int pesNumber, long fileSize, long outputSize, UtilizationModel utilizationModelCpu,
-			UtilizationModel utilizationModelRam, UtilizationModel utilizationModelBw, List<String> requiredFiles,
-			List<File> dataFiles) {
+	public void createCloudletList(
+			int CloudlerNumber,
+			List<String> requiredFiles,
+			List<File> dataFiles) throws ParameterException {
 		
-		MyCloudlet cloudlet = new MyCloudlet(cloudletId, lenght, pesNumber, fileSize, outputSize, utilizationModelCpu,
-				utilizationModelRam, utilizationModelBw, requiredFiles, dataFiles);
-		cloudlet.setUserId(broker.getId());
-		cloudlet.setVmId(vmlist.get(0).getId());
-		cloudletId++;
-		
-		// add the cloudlet to the list.
-		cloudletList.add(cloudlet);
+		for (int i = 0; i < CloudlerNumber; i++) {
+			cloudletList.add(new MyCloudlet(
+					i,
+					MyConstants.CLOUDLET_LENGHT,
+					MyConstants.CLOUDLET_PES_NUMBER,
+					MyConstants.CLOUDLET_FILE_SIZE,
+					MyConstants.CLOUDLET_OUTPUT_SIZE,
+					MyConstants.CLOUDLET_UTILIZATION_MODEL_CPU,
+					MyConstants.CLOUDLET_UTILIZATION_MODEL_RAM,
+					MyConstants.CLOUDLET_UTILIZATION_MODEL_BW,
+					requiredFiles,
+					dataFiles));
+			cloudletList.get(i).setUserId(broker.getId());
+			cloudletList.get(i).setVmId(vmlist.get(0).getId());
+		}
+		broker.submitCloudletList(cloudletList);
 	}
 	
 	/**
-	 * add a Pe to the Pe List.
-	 * 
-	 * @param mips
+	 * @param startingFilesList
 	 */
-	public void addPe(int mips) {
-		peList.add(new Pe(peId, new PeProvisionerSimple(mips)));
-		peId++;
-	}
-	
-	/**
-	 * add a host to the host List.
-	 * 
-	 * @param ramProvisioner
-	 * @param bwProvisioner
-	 * @param storage
-	 * @param vmScheduler
-	 * @param powerModel
-	 */
-	public void addHost(RamProvisioner ramProvisioner, BwProvisioner bwProvisioner, long storage, VmScheduler vmScheduler,
-			PowerModel powerModel) {
+	public void addFiles(
+			String startingFilesList) {
 		
-		PowerHost Machine = new PowerHost(hostId, ramProvisioner, bwProvisioner, storage, peList, vmScheduler, powerModel);
-		
-		hostList.add(Machine);
-		hostId++;
-	}
-	
-	/**
-	 * add a defined number of defined storage type to the persistent storage of a power-aware datacenter.
-	 * 
-	 * @param quantity
-	 *            the quantity of disk created
-	 * @param storageModelHdd
-	 *            the storage HDD model
-	 * @param powerModel
-	 *            the power model
-	 */
-	public void addPersistentStorage(int quantity, StorageModelHdd storageModelHdd, PowerModel powerModel) {
-		
-		for (int i = 0; i < quantity; i++) {
-			System.out.println("Hard drive <hdd" + hddId + "> manufacturing...");
-			MyPowerHarddriveStorage tempHdd;
+		if (startingFilesList == "") {
 			try {
-				tempHdd = new MyPowerHarddriveStorage(hddId, "hdd" + hddId, storageModelHdd,
-						new PowerModeHddHGSTUltrastarC10K900());
-				hddId++;
-				storageList.add(tempHdd);
-				System.out.println("Hard drive <hdd" + hddId + "> created.");
+				datacenter.addFile(new File("shortFile", 1));
 			} catch (ParameterException e) {
 				e.printStackTrace();
 			}
+		} else {
+			// TO DO: read starting Files from a specific file and add them to the persistent storage.
 		}
-	}
-	
-	/**
-	 * add a new power-aware hard drive to the persistent storage if a power-aware datacenter.
-	 * 
-	 * @param name
-	 *            the name of the HDD
-	 * @param storageModelHdd
-	 *            the HDD-model of the HDD
-	 * @param powerModelHdd
-	 *            the power-model of the HDD
-	 */
-	public void addPersistentStorage(String name, StorageModelHdd storageModelHdd, PowerModelHdd powerModelHdd) {
 		
-		MyPowerHarddriveStorage tempHdd;
-		try {
-			tempHdd = new MyPowerHarddriveStorage(hddId, name, storageModelHdd, powerModelHdd);
-			hddId++;
-			storageList.add(tempHdd);
-			Log.printLine("Hard drive <" + name + "> created.");
-		} catch (ParameterException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * add a file to the persistent storage of a power-aware datacenter. This file will be added before the simulation
-	 * start.
-	 * 
-	 * @param fileName
-	 *            is the name of the file
-	 * @param fileSize
-	 *            is the size of the file
-	 */
-	public void addFile(String fileName, int fileSize) {
-		File tempFile;
-		try {
-			tempFile = new File(fileName, fileSize);
-			datacenter.addFile(tempFile);
-		} catch (ParameterException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * @return the cloudletList
-	 */
-	public List<MyCloudlet> getCloudletList() {
-		return cloudletList;
-	}
-	
-	/**
-	 * @return the broker
-	 */
-	public PowerDatacenterBroker getBroker() {
-		return broker;
 	}
 	
 	/**
 	 * print the persistent storage details of a power-aware datacenter.
-	 * 
-	 * @param powerDatacenter
-	 *            the powerDatacenter
 	 */
-	public void printPersistenStorageDetails(PowerDatacenter powerDatacenter) {
-		List<MyPowerHarddriveStorage> tempList = powerDatacenter.getStorageList();
+	public void printPersistenStorageDetails() {
+		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
 		
 		for (int i = 0; i < tempList.size(); i++) {
 			Log.printLine((i + 1) + "/" + (tempList.size()) + " " + tempList.get(i).getName());
-			Log.formatLine("\tCapacity        -> %10.0f %s", tempList.get(i).getCapacity(), "MB");
+			Log.formatLine("\tCapacity        -> %10.0f %s",
+					tempList.get(i).getCapacity(),
+					"MB");
 			Log.formatLine("\tUsedSpace       -> %10.0f %s",
-					(tempList.get(i).getCapacity() - tempList.get(i).getAvailableSpace()), "MB");
-			Log.formatLine("\tFreeSpace       -> %10.0f %s", tempList.get(i).getAvailableSpace(), "MB");
-			Log.formatLine("\tlatency         -> %10.5f %s", tempList.get(i).getLatency(), "s");
-			Log.formatLine("\tavgSeekTime     -> %10.5f %s", tempList.get(i).getAvgSeekTime(), "s");
-			Log.formatLine("\tmaxTransferRate -> %10.0f %s", tempList.get(i).getMaxTransferRate(), "MB/s.");
+					(tempList.get(i).getCapacity() - tempList.get(i).getAvailableSpace()),
+					"MB");
+			Log.formatLine("\tFreeSpace       -> %10.0f %s",
+					tempList.get(i).getAvailableSpace(),
+					"MB");
+			Log.formatLine("\tlatency         -> %10.5f %s",
+					tempList.get(i).getLatency(),
+					"s");
+			Log.formatLine("\tavgSeekTime     -> %10.5f %s",
+					tempList.get(i).getAvgSeekTime(),
+					"s");
+			Log.formatLine("\tmaxTransferRate -> %10.0f %s",
+					tempList.get(i).getMaxTransferRate(),
+					"MB/s.");
 		}
 	}
 	
@@ -411,11 +332,15 @@ public class Helper {
 		Log.printLine();
 		Log.printLine("*** RESULTS ***");
 		Log.printLine();
-		Log.formatLine("Number of Hosts      : %d", numberOfHosts);
-		Log.formatLine("Number of Vms        : %d", numberOfVms);
-		Log.formatLine("Number of Cloudlets  : %d", numberOfCloudlets);
+		Log.formatLine("Number of Hosts      : %d",
+				numberOfHosts);
+		Log.formatLine("Number of Vms        : %d",
+				numberOfVms);
+		Log.formatLine("Number of Cloudlets  : %d",
+				numberOfCloudlets);
 		Log.printLine();
-		Log.formatLine("Total Storage    Energy Consumed : %.3f Joule(s)", TotalStorageEnergy);
+		Log.formatLine("Total Storage    Energy Consumed : %.3f Joule(s)",
+				TotalStorageEnergy);
 	}
 	
 	/**
@@ -426,7 +351,8 @@ public class Helper {
 		Log.printLine("************** Arrival Rate in second(s) (not sorted) *************");
 		
 		for (Double delay : broker.getDelayHistory()) {
-			Log.formatLine("%20.15f", delay);
+			Log.formatLine("%20.15f",
+					delay);
 		}
 		
 		Log.printLine("\n\n");
