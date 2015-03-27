@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,29 +55,14 @@ import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHddSeagateEnt
 public class Helper {
 	
 	/**
-	 * an index incrementing Names and IDs of HDDs created.
-	 */
-	private int									hddId			= 0;
-	
-	/**
-	 * an index incrementing IDs of Cloudlets created.
-	 */
-	private int									cloudletId		= 0;
-	
-	/**
-	 * an index incrementing IDs of VMs created.
-	 */
-	private int									vmId			= 0;
-	
-	/**
-	 * an index incrementing IDs of Hosts created.
-	 */
-	private int									hostId			= 0;
-	
-	/**
 	 * the cloudlet list.
 	 */
 	public List<MyCloudlet>						cloudletList	= new ArrayList<MyCloudlet>();
+	
+	/**
+	 * the cloudlet data Files list.
+	 */
+	public List<File>							dataFiles		= new ArrayList<File>();
 	
 	/**
 	 * the Power-VM List.
@@ -145,7 +131,7 @@ public class Helper {
 	 */
 	public void createPeList(
 			int PesNumber) {
-		for (int i = 0; i < PesNumber; i++) {
+		for (int i = 1; i <= PesNumber; i++) {
 			peList.add(new Pe(
 					i,
 					new PeProvisionerSimple(
@@ -161,7 +147,7 @@ public class Helper {
 	 */
 	public void createHostList(
 			int hostsNumber) {
-		for (int i = 0; i < hostsNumber; i++) {
+		for (int i = 1; i <= hostsNumber; i++) {
 			hostList.add(new PowerHost(
 					i,
 					new RamProvisionerSimple(
@@ -184,7 +170,7 @@ public class Helper {
 	 */
 	public void createVmList(
 			int vmsNumber) {
-		for (int i = 0; i < vmsNumber; i++) {
+		for (int i = 1; i <= vmsNumber; i++) {
 			vmlist.add(new PowerVm(
 					i,
 					broker.getId(),
@@ -209,7 +195,7 @@ public class Helper {
 	 */
 	public void createPersistentStorage(
 			int storageNumber) throws ParameterException {
-		for (int i = 0; i < storageNumber; i++) {
+		for (int i = 1; i <= storageNumber; i++) {
 			storageList.add(new MyPowerHarddriveStorage(
 					i,
 					"hdd" + i,
@@ -250,17 +236,67 @@ public class Helper {
 	}
 	
 	/**
+	 * Create a list of data Files.
+	 * 
+	 * @param source
+	 *            name of the file in the default files folder.
+	 */
+	public void createDataFilesList(
+			String source) {
+		String path = "files/" + source;
+		
+		try {
+			// instantiate a reader
+			BufferedReader input = new BufferedReader(
+					new FileReader(
+							path));
+			
+			// read line by line
+			String line;
+			String[] lineSplited;
+			String fileName;
+			String fileSize;
+			while ((line = input.readLine()) != null) {
+				
+				// retrieve fileName and fileSize
+				lineSplited = line.split("\\s+"); // regular expression quantifiers for whitespace
+				fileName = lineSplited[0];
+				fileSize = lineSplited[1];
+				
+				// add file to the List
+				dataFiles.add(new File(
+						fileName,
+						Integer.parseInt(fileSize)));
+			}
+			
+			// close the reader
+			input.close();
+			
+		} catch (IOException | NumberFormatException | ParameterException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * @param CloudlerNumber
 	 * @param requiredFiles
-	 * @param dataFiles
 	 * @throws ParameterException
 	 */
 	public void createCloudletList(
 			int CloudlerNumber,
-			List<String> requiredFiles,
-			List<File> dataFiles) throws ParameterException {
+			List<String> requiredFiles) throws ParameterException {
 		
-		for (int i = 0; i < CloudlerNumber; i++) {
+		// local variable
+		ArrayList<File> tempDataFileList = null;
+		
+		for (int i = 1; i <= CloudlerNumber; i++) {
+			if (i <= dataFiles.size()) {
+				tempDataFileList = new ArrayList<File>(
+						Arrays.asList(dataFiles.get(i - 1)));
+			} else {
+				tempDataFileList = null;
+			}
+			
 			cloudletList.add(new MyCloudlet(
 					i,
 					MyConstants.CLOUDLET_LENGHT,
@@ -271,9 +307,9 @@ public class Helper {
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_RAM,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_BW,
 					requiredFiles,
-					dataFiles));
-			cloudletList.get(i).setUserId(broker.getId());
-			cloudletList.get(i).setVmId(vmlist.get(0).getId());
+					tempDataFileList));
+			cloudletList.get(i - 1).setUserId(broker.getId());
+			cloudletList.get(i - 1).setVmId(vmlist.get(0).getId());
 		}
 		broker.submitCloudletList(cloudletList);
 	}
@@ -284,15 +320,7 @@ public class Helper {
 	public void addFiles(
 			String startingFilesList) {
 		
-		if (startingFilesList == "") {
-			try {
-				datacenter.addFile(new File(
-						"shortFile",
-						1));
-			} catch (ParameterException e) {
-				e.printStackTrace();
-			}
-		} else {
+		if (startingFilesList != "") {
 			try {
 				// instantiate a reader
 				BufferedReader input = new BufferedReader(
@@ -309,7 +337,6 @@ public class Helper {
 					// retrieve fileName and fileSize
 					lineSplited = line.split("\\s+"); // regular expression quantifiers for whitespace
 					fileName = lineSplited[0];
-					Log.print(fileName);
 					fileSize = lineSplited[1];
 					
 					// add file to datacenter
@@ -320,14 +347,8 @@ public class Helper {
 				
 				// close the reader
 				input.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParameterException e) {
-				// TODO Auto-generated catch block
+				
+			} catch (IOException | NumberFormatException | ParameterException e) {
 				e.printStackTrace();
 			}
 		}

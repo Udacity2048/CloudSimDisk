@@ -76,5 +76,6 @@ public class MyConstants {
 	public final static UtilizationModel CLOUDLET_UTILIZATION_MODEL_CPU = new UtilizationModelFull();
 	public final static UtilizationModel CLOUDLET_UTILIZATION_MODEL_RAM = new UtilizationModelFull();
 	public final static UtilizationModel CLOUDLET_UTILIZATION_MODEL_BW = new UtilizationModelFull();
+	public final static int CLOUDLET_NUMBER_WIKI = 5000;
 }
 

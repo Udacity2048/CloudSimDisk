@@ -2,6 +2,8 @@ package org.cloudbus.cloudsim.power;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyCloudlet;
@@ -10,6 +12,8 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.ExponentialDistr;
+import org.cloudbus.cloudsim.distributions.MyPoissonDistr;
+import org.cloudbus.cloudsim.distributions.MyWikiDistr;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.lists.VmList;
 
@@ -96,10 +100,27 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 		return History;
 	}
 	
+	/**
+	 * Sets the request arrival distribution
+	 * 
+	 * @param RequestArrivalDistri
+	 */
 	public void setDistri(String RequestArrivalDistri) {
 		switch (RequestArrivalDistri) {
 			case "expo":
 				distri = new ExponentialDistr(60);
+				break;
+				
+			case "pois":
+				distri = new MyPoissonDistr(60);
+				break;
+				
+			case "unif":
+				distri = new UniformDistr(30, 50);
+				break;
+				
+			case "wiki":
+				distri = new MyWikiDistr();
 				break;
 			
 			default:

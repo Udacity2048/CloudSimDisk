@@ -23,21 +23,20 @@ public class MyRunner {
 	 * 
 	 * @param NumberOfRequest
 	 * @param RequestArrivalDistri
-	 * @param FilesSizes
-	 * @param workload
+	 * @param dataFiles
 	 * @param startingFilesList
 	 * @throws Exception
 	 */
 	public MyRunner(
 			int NumberOfRequest,
 			String RequestArrivalDistri,
-			String FilesSizes,
+			String dataFiles,
 			String startingFilesList) throws Exception {
 		
 		Log.printLine("Starting ...");
 		init(NumberOfRequest,
 				RequestArrivalDistri,
-				FilesSizes,
+				dataFiles,
 				startingFilesList);
 		start();
 		stop();
@@ -52,15 +51,14 @@ public class MyRunner {
 	 *            the number of request
 	 * @param RequestArrivalDistri
 	 *            the request distribution
-	 * @param FilesSizes
-	 * @param workload
+	 * @param dataFiles
 	 * @param startingFilesList
 	 * @throws Exception
 	 */
 	public void init(
 			int NumberOfRequest,
 			String RequestArrivalDistri,
-			String FilesSizes,
+			String dataFiles,
 			String startingFilesList) throws Exception {
 		
 		// Entities
@@ -75,19 +73,21 @@ public class MyRunner {
 		
 		// Files
 		helper.addFiles(startingFilesList);
+		helper.createDataFilesList(dataFiles);
 		
 		// TO IMPROVE: HOW TO get the requiredFiles and dataFiles from a file.
 		List<String> requiredFiles = new ArrayList<String>();
 		requiredFiles.add("shortFile");
-		List<File> dataFiles = new ArrayList<File>();
-		dataFiles.add(new File(
+		
+		// If wikidataFiles is not working, use that for the moment
+		List<File> tempdataFiles = new ArrayList<File>();
+		tempdataFiles.add(new File(
 				"TheImitationGame",
-				Integer.parseInt(FilesSizes)));
+				3600));
 		
 		// Cloudlets
 		helper.createCloudletList(NumberOfRequest,
-				requiredFiles,
-				dataFiles);
+				requiredFiles);
 		
 		// Printing
 		helper.printPersistenStorageDetails();

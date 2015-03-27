@@ -155,54 +155,56 @@ public class MyPowerDatacenter extends MyDatacenter {
 			dataFiles = mycl.getDataFiles();
 		}
 		
-		Iterator<File> iter2 = dataFiles.iterator();
-		while (iter2.hasNext()) {
-			File tempFile = iter2.next();
-			
-			// Might need to move this in Datacenter.java
-			int answerTag = this.addFile(tempFile);
-			
-			// test if tempFile has been added
-			if (answerTag == DataCloudTags.FILE_ADD_SUCCESSFUL) {
+		if (dataFiles != null) {
+			Iterator<File> iter2 = dataFiles.iterator();
+			while (iter2.hasNext()) {
+				File tempFile = iter2.next();
 				
-				// find where the file has been added
-				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
+				// Might need to move this in Datacenter.java
+				int answerTag = this.addFile(tempFile);
+				
+				// test if tempFile has been added
+				if (answerTag == DataCloudTags.FILE_ADD_SUCCESSFUL) {
 					
-					// test if the storage id EQUAL the file ResourceID
-					if (storage.getId() == tempFile.getResourceID()) {
+					// find where the file has been added
+					for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
 						
-						// compute energy
-						int mode = 1; // mode if either 0(idle) or 1(operating). Can be improve later on.
-						double tempPower = storage.getPower(mode);
-						double tempTime = tempFile.getTransactionTime();
-						double tempEnergy = tempPower * tempTime;
-						
-						// add energy to this time frame storage energy
-						timeFrameStorageEnergy += tempEnergy;
-						
-						// Prepare data for the event
-						Object[] data = new Object[8];
-						data[0] = "added";
-						data[1] = cl;
-						data[2] = tempFile;
-						data[3] = tempPower;
-						data[4] = tempTime;
-						data[5] = tempEnergy;
-						data[6] = mode;
-						data[7] = storage;
-						
-						// Schedule a Confirmation Event delay by the transaction time of the written operation
-						send(this.getId(),
-								tempTime,
-								MyCloudSimTags.CLOUDLET_FILES_DONE,
-								data);
+						// test if the storage id EQUAL the file ResourceID
+						if (storage.getId() == tempFile.getResourceID()) {
+							
+							// compute energy
+							int mode = 1; // mode if either 0(idle) or 1(operating). Can be improve later on.
+							double tempPower = storage.getPower(mode);
+							double tempTime = tempFile.getTransactionTime();
+							double tempEnergy = tempPower * tempTime;
+							
+							// add energy to this time frame storage energy
+							timeFrameStorageEnergy += tempEnergy;
+							
+							// Prepare data for the event
+							Object[] data = new Object[8];
+							data[0] = "added";
+							data[1] = cl;
+							data[2] = tempFile;
+							data[3] = tempPower;
+							data[4] = tempTime;
+							data[5] = tempEnergy;
+							data[6] = mode;
+							data[7] = storage;
+							
+							// Schedule a Confirmation Event delay by the transaction time of the written operation
+							send(this.getId(),
+									tempTime,
+									MyCloudSimTags.CLOUDLET_FILES_DONE,
+									data);
+						}
 					}
+				} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
+					Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
+							+ "> is already stored");
 				}
-			} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
-				Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
-						+ "> is already stored");
+				
 			}
-			
 		}
 		
 		// Update total energy
