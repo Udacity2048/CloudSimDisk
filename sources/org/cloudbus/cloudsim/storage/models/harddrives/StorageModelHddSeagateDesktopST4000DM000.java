@@ -15,10 +15,10 @@ package org.cloudbus.cloudsim.storage.models.harddrives;
 public class StorageModelHddSeagateDesktopST4000DM000 extends StorageModelHdd {
 
     /**
-     * The characteristics of the hard drive: capacity, latency, seekTime,
-     * maxTransferRate.
+     * The characteristics of the hard drive: capacity (MB), latency (s), seekTime (s),
+     * maxTransferRate (MB/s).
      */
-    private final double[] parameters = {4000, 0.00516, 0.0085, 146};
+    private final double[] parameters = {4000000, 0.00516, 0.0085, 146};
 
     /**
      * The characteristics of the hard drive: capacity, latency, seekTime,

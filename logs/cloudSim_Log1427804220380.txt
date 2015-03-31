@@ -1,0 +1,87 @@
+
+Starting simulation "simulationWiki1"
+
+ACTION>> Hard disk drive "hdd1" is now in Idle mode.
+
+OBSERVATION>> Initial persistent storage 
+1/1 hdd1
+	Capacity        ->    6000000 MB
+	UsedSpace       ->          0 MB
+	FreeSpave       ->    6000000 MB
+	Latency         ->          0 s
+	avgSeekTime     ->          0 s
+	maxTransferRate ->        216 MB/s
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS_REQUEST; source = Broker; destination = Broker; Time= 0.0; endwaiting time = 0.0
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = REGISTER_RESOURCE; source = datacenter; destination = CloudInformationService; Time= 0.0; endwaiting time = 0.0; data = 3
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS; source = Broker; destination = datacenter; Time= 0.0; endwaiting time = 0.0; data = 2
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS; source = datacenter; destination = Broker; Time= 0.0; endwaiting time = 0.0; data = org.cloudbus.cloudsim.DatacenterCharacteristics@6d6f6e28
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = VM_CREATE_ACK; source = Broker; destination = datacenter; Time= 0.0; endwaiting time = 0.0; data = org.cloudbus.cloudsim.power.PowerVm@135fbaa4
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = VM_CREATE_ACK; source = datacenter; destination = Broker; Time= 0.1; endwaiting time = 0.0; data = [I@45ee12a7
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.6839999999997; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@330bedb4
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.565; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@2503dbd3
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.571; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@4b67cf4d
+
+
+OBSERVATION>> Writting "wikiFileB" on "hdd1" will take:
+              0,016546 second(s) for SeekTime;
+              0,013889 second(s) for TransferTime;
+              0,004160 second(s) for Latency;
+              0,034594 second(s) in TOTAL.
+
+ACTION>> Hard disk drive "hdd1" is now in Operating mode.
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.599594436559; endwaiting time = 0.0; data = [Ljava.lang.Object;@7ea987ac
+
+
+OBSERVATION>> Writting "wikiFileC" on "hdd1" will take:
+              0,002406 second(s) for SeekTime;
+              0,009259 second(s) for TransferTime;
+              0,004160 second(s) for Latency;
+              0,015825 second(s) in TOTAL.
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.6154198414797; endwaiting time = 0.0; data = [Ljava.lang.Object;@12a3a380
+
+
+ACTION>> Hard disk drive "hdd1" is now in Idle mode.
+
+OBSERVATION>> Writting "wikiFileA" on "hdd1" will take:
+              0,005313 second(s) for SeekTime;
+              0,004630 second(s) for TransferTime;
+              0,004160 second(s) for Latency;
+              0,014103 second(s) in TOTAL.
+
+ACTION>> Hard disk drive "hdd1" is now in Operating mode.
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.698102920948; endwaiting time = 0.0; data = [Ljava.lang.Object;@29453f44
+
+
+ACTION>> Hard disk drive "hdd1" is now in Idle mode.

@@ -6,6 +6,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.PrintFile;
 
 /**
  * @author baplou
@@ -16,11 +17,17 @@ public class MyRunner {
 	/**
 	 * An Helper for the Runner.
 	 */
-	public Helper	helper	= new Helper();
+	public Helper	helper				= new Helper();
+	
+	/**
+	 * End Time of the simulation.
+	 */
+	public double	endTimeSimulation	= 0.0;
 	
 	/**
 	 * Runner to run a MyExampleX scenario.
 	 * 
+	 * @param name
 	 * @param NumberOfRequest
 	 * @param RequestArrivalDistri
 	 * @param dataFiles
@@ -28,18 +35,19 @@ public class MyRunner {
 	 * @throws Exception
 	 */
 	public MyRunner(
+			String name,
 			int NumberOfRequest,
 			String RequestArrivalDistri,
 			String dataFiles,
 			String startingFilesList) throws Exception {
 		
-		Log.printLine("Starting ...");
+		PrintFile.AddtoFile("Starting simulation \"" + name + "\"\n");
+		
 		init(NumberOfRequest,
 				RequestArrivalDistri,
 				dataFiles,
 				startingFilesList);
 		start();
-		stop();
 		print();
 		Log.printLine("END !");
 	}
@@ -89,7 +97,7 @@ public class MyRunner {
 		helper.createCloudletList(NumberOfRequest,
 				requiredFiles);
 		
-		// Printing
+		// Logs
 		helper.printPersistenStorageDetails();
 	}
 	
@@ -97,21 +105,14 @@ public class MyRunner {
 	 * Start the simulation
 	 */
 	public void start() {
-		CloudSim.startSimulation();
-	}
-	
-	/**
-	 * Stop the simulation.
-	 */
-	public void stop() {
-		CloudSim.stopSimulation();
+		endTimeSimulation = CloudSim.startSimulation();
 	}
 	
 	/**
 	 * Print the Results and the Request Arrival Times History
 	 */
 	public void print() {
-		helper.printResults();
+		helper.printResults(endTimeSimulation);
 		helper.printArrivalRate();
 	}
 }

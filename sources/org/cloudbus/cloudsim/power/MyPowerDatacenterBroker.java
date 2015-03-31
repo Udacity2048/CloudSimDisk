@@ -79,7 +79,7 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 			tempDelay = distri.sample();
 			History.add(tempDelay);
 			send(getVmsToDatacentersMap().get(vm.getId()), tempDelay, CloudSimTags.CLOUDLET_SUBMIT, myCloudlet);
-			Log.formatLine("%.3f: %s: Cloudlet #%3d is scheduled to be sent to VM #%3d in %7.3f second(s)", CloudSim.clock(), getName(),
+			Log.formatLine("%.1f: %s: Cloudlet #%3d is scheduled to be sent to VM #%3d in %7.3f second(s)", CloudSim.clock(), getName(),
 					cloudlet.getCloudletId(), vm.getId(), tempDelay);
 			
 			cloudletsSubmitted++;

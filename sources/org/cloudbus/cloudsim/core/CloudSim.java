@@ -761,7 +761,7 @@ public class CloudSim {
 		if (e.eventTime() < clock) {
 			throw new IllegalArgumentException("Past event detected.");
 		}
-		clock = e.eventTime();
+		clock = e.eventTime();  // Clock increased.
 
 		// Ok now process it
 		switch (e.getType()) {
@@ -792,7 +792,7 @@ public class CloudSim {
 							deferred.addEvent(e);
 						}
 					} else {
-						deferred.addEvent(e);
+						deferred.addEvent(e);  // Event Transfered
 					}
 				}
 				break;

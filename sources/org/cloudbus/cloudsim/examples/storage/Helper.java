@@ -26,6 +26,7 @@ import org.cloudbus.cloudsim.VmScheduler;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.PrintFile;
 import org.cloudbus.cloudsim.examples.power.Constants;
 import org.cloudbus.cloudsim.power.MyPowerDatacenter;
 import org.cloudbus.cloudsim.power.MyPowerDatacenterBroker;
@@ -360,50 +361,53 @@ public class Helper {
 	 */
 	public void printPersistenStorageDetails() {
 		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
+		String msg = "";
 		
 		for (int i = 0; i < tempList.size(); i++) {
-			Log.printLine((i + 1) + "/" + (tempList.size()) + " " + tempList.get(i).getName());
-			Log.formatLine("\tCapacity        -> %10.0f %s",
-					tempList.get(i).getCapacity(),
-					"MB");
-			Log.formatLine("\tUsedSpace       -> %10.0f %s",
-					(tempList.get(i).getCapacity() - tempList.get(i).getAvailableSpace()),
-					"MB");
-			Log.formatLine("\tFreeSpace       -> %10.0f %s",
-					tempList.get(i).getAvailableSpace(),
-					"MB");
-			Log.formatLine("\tlatency         -> %10.5f %s",
-					tempList.get(i).getLatency(),
-					"s");
-			Log.formatLine("\tavgSeekTime     -> %10.5f %s",
-					tempList.get(i).getAvgSeekTime(),
-					"s");
-			Log.formatLine("\tmaxTransferRate -> %10.0f %s",
-					tempList.get(i).getMaxTransferRate(),
-					"MB/s.");
+			msg += String
+					.format("OBSERVATION>> Initial persistent storage \n%d/%d %s\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f MB/s\n",
+							(i + 1),
+							tempList.size(),
+							tempList.get(i).getName(),
+							"Capacity",
+							tempList.get(i).getCapacity(),
+							"UsedSpace",
+							(tempList.get(i).getCapacity() - tempList.get(i).getAvailableSpace()),
+							"FreeSpave",
+							tempList.get(i).getAvailableSpace(),
+							"Latency",
+							tempList.get(i).getLatency(),
+							"avgSeekTime",
+							tempList.get(i).getAvgSeekTime(),
+							"maxTransferRate",
+							tempList.get(i).getMaxTransferRate());
 		}
+		
+		PrintFile.AddtoFile(msg);
 	}
 	
 	/**
 	 * Prints a summary of the simulation.
+	 * @param endTimeSimulation 
 	 */
-	public void printResults() {
-		int numberOfHosts = datacenter.getHostList().size();
-		int numberOfVms = vmlist.size();
-		int numberOfCloudlets = cloudletList.size();
+	public void printResults(double endTimeSimulation) {
 		double TotalStorageEnergy = datacenter.getTotalStorageEnergy();
 		
 		Log.printLine();
-		Log.printLine("*** RESULTS ***");
+		Log.printLine("************************ RESULTS ************************");
 		Log.printLine();
-		Log.formatLine("Number of Hosts      : %d",
-				numberOfHosts);
-		Log.formatLine("Number of Vms        : %d",
-				numberOfVms);
-		Log.formatLine("Number of Cloudlets  : %d",
-				numberOfCloudlets);
-		Log.printLine();
-		Log.formatLine("Total Storage    Energy Consumed : %.3f Joule(s)",
+		Log.printLine("TIME SPENT IN IDLE/OPERATING MODE FOR EACH STORAGE");
+		
+		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
+		for (int i = 0; i < tempList.size(); i++) {
+			Log.printLine("Storage \"" + tempList.get(i).getName() + "\"");
+			Log.formatLine("Time in    Idle   mode: %12.6f second(s)", endTimeSimulation - tempList.get(i).getInOpeDuration() - 3634);
+			Log.formatLine("Time in Operating mode: %12.6f second(s)", tempList.get(i).getInOpeDuration());
+			Log.printLine();
+		}
+		
+		Log.printLine("BILAN ENERGY CONSUMTION FOR PERSISTENT STORAGE");
+		Log.formatLine("Energy consumed by Persistent Storage: %.3f Joule(s)",
 				TotalStorageEnergy);
 	}
 	
@@ -412,7 +416,7 @@ public class Helper {
 	 */
 	public void printArrivalRate() {
 		Log.printLine("\n\n");
-		Log.printLine("************** Arrival Rate in second(s) (not sorted) *************");
+		Log.printLine("********* Arrival Rate in second(s) (not sorted) ********");
 		
 		for (Double delay : broker.getDelayHistory()) {
 			Log.formatLine("%20.15f",

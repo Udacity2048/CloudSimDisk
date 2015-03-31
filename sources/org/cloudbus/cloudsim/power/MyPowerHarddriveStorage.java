@@ -1,7 +1,6 @@
 /*
- * Title: CloudSim EES Extention Description: CloudSim extention for Energy Efficient Storage
- * Licence: GPL - http://www.gnu.org/copyleft/gpl.html Copyright (c) 2015, Luleå University of
- * Techonology
+ * Title: CloudSim EES Extention Description: CloudSim extention for Energy Efficient Storage Licence: GPL -
+ * http://www.gnu.org/copyleft/gpl.html Copyright (c) 2015, Luleå University of Techonology
  */
 package org.cloudbus.cloudsim.power;
 
@@ -26,6 +25,11 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	private PowerModel	powerModelHdd;
 	
 	/**
+	 * Duration in Operating mode.
+	 */
+	public double		inOpeDuration;
+	
+	/**
 	 * Creates a new harddrive storage base on a specific Storage Model Hdd.
 	 * 
 	 * @param id
@@ -44,8 +48,12 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 			String name,
 			StorageModelHdd storageModelHdd,
 			PowerModel powerModel) throws ParameterException {
-		super(id, name, storageModelHdd);
+		super(
+				id,
+				name,
+				storageModelHdd);
 		setPowerModelHdd(powerModel);
+		setInOpeDuration(0.0);
 	}
 	
 	/**
@@ -54,7 +62,8 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 * @param powerModelHdd
 	 *            the new power model for Hdd
 	 */
-	protected void setPowerModelHdd(PowerModel powerModelHdd) {
+	protected void setPowerModelHdd(
+			PowerModel powerModelHdd) {
 		this.powerModelHdd = powerModelHdd;
 	}
 	
@@ -74,7 +83,8 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 *            0 for idle, 1 for operating
 	 * @return the power
 	 */
-	public double getPower(double mode) {
+	public double getPower(
+			double mode) {
 		double power = 0;
 		if (mode != 0 && mode != 1) {
 			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for operating mode.");
@@ -84,10 +94,27 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 		try {
 			power = getPowerModelHdd().getPower(mode);
 		} catch (Exception e) {
-			Logger.getLogger(MyPowerHarddriveStorage.class.getName()).log(Level.SEVERE, null, e);
+			Logger.getLogger(MyPowerHarddriveStorage.class.getName()).log(Level.SEVERE,
+					null,
+					e);
 			System.exit(0);
 		}
-
+		
 		return power;
+	}
+
+	/**
+	 * @return the inOpeDuration
+	 */
+	public double getInOpeDuration() {
+		return inOpeDuration;
+	}
+
+	/**
+	 * @param inOpeDuration the inOpeDuration to set
+	 */
+	public void setInOpeDuration(
+			double inOpeDuration) {
+		this.inOpeDuration = inOpeDuration;
 	}
 }

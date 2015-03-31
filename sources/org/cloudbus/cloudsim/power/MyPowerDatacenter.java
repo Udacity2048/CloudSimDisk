@@ -11,6 +11,7 @@ import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyCloudlet;
 import org.cloudbus.cloudsim.MyDatacenter;
+import org.cloudbus.cloudsim.MyHarddriveStorage;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -100,15 +101,15 @@ public class MyPowerDatacenter extends MyDatacenter {
 		
 		// Confirm reception Cloudlet
 		Log.printLine();
-		Log.formatLine("%.3f: %s: Cloudlet # %d has been successfully received. ",
+		Log.formatLine("\n%.6f: %s: Cloudlet # %d has been successfully received. ",
 				CloudSim.clock(),
 				getName(),
 				cl.getCloudletId());
 		
-		// handle energy consumption to read and write cloudlet files
+		// Handle Cloudlet Files
 		double timeFrameStorageEnergy = 0.0;
 		
-		// Handle requiredFiles of the Cloudlet
+		// handle requiredFiles of the Cloudlet
 		List<String> requiredFiles = cl.getRequiredFiles();
 		Iterator<String> iter = requiredFiles.iterator();
 		while (iter.hasNext()) {
@@ -127,20 +128,39 @@ public class MyPowerDatacenter extends MyDatacenter {
 					// add energy to this time frame storage energy
 					timeFrameStorageEnergy += tempEnergy;
 					
-					// Prepare data for the event
-					Object[] data = new Object[8];
-					data[0] = "retrieved";
-					data[1] = cl;
-					data[2] = tempFile;
-					data[3] = tempPower;
-					data[4] = tempTime;
-					data[5] = tempEnergy;
-					data[6] = mode;
-					data[7] = storage;
+					// add the transaction time to the total operating time for this disk
+					storage.setInOpeDuration(storage.getInOpeDuration() + tempTime);
 					
-					// Schedule a Confirmation Event delay by the transaction time of the written operation
+					// handle EndTime of the HDD
+					double waitingDelay = 0.0;
+					double eventDelay = 0.0;
+					
+					if (storage.isOperating()) {
+						waitingDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a duration.
+						storage.setEndAt(storage.getEndAt() + tempTime);
+						eventDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a duration.
+
+					} else if (storage.isIdle()) {
+						storage.setEndAt(CloudSim.clock() + tempTime);
+						eventDelay = tempTime;
+						storage.setMode(1);
+					}
+										
+					// prepare data for the event
+					Object[] data = new Object[9];
+					data[0] = "retrieved"; // the action of the operation
+					data[1] = cl; // the cloudlet subject to the operation
+					data[2] = tempFile; // the file subject to the operation
+					data[3] = tempPower; // the power needed during the operation
+					data[4] = tempTime; // the transaction time of the operation
+					data[5] = tempEnergy; // the energy consumed by the operation
+					data[6] = mode; // the mode of the disk for the operation
+					data[7] = storage; // the disk subject to the operation
+					data[8] = waitingDelay; // the waiting time for the operation
+					
+					// Schedule an Event confirming that the read/write operation has been done.
 					send(this.getId(),
-							tempTime,
+							eventDelay,
 							MyCloudSimTags.CLOUDLET_FILES_DONE,
 							data);
 					break;
@@ -181,20 +201,39 @@ public class MyPowerDatacenter extends MyDatacenter {
 							// add energy to this time frame storage energy
 							timeFrameStorageEnergy += tempEnergy;
 							
-							// Prepare data for the event
-							Object[] data = new Object[8];
-							data[0] = "added";
-							data[1] = cl;
-							data[2] = tempFile;
-							data[3] = tempPower;
-							data[4] = tempTime;
-							data[5] = tempEnergy;
-							data[6] = mode;
-							data[7] = storage;
+							// add the transaction time to the total operating time for this disk
+							storage.setInOpeDuration(storage.getInOpeDuration() + tempTime);
 							
-							// Schedule a Confirmation Event delay by the transaction time of the written operation
+							// handle EndTime of the HDD
+							double waitingDelay = 0.0;
+							double eventDelay = 0.0;
+							
+							if (storage.isOperating()) {
+								waitingDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a duration.		
+								storage.setEndAt(storage.getEndAt() + tempTime);
+								eventDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a duration.
+																
+							} else if (storage.isIdle()) {
+								storage.setEndAt(CloudSim.clock() + tempTime);
+								eventDelay = tempTime;
+								storage.setMode(1);
+							}
+							
+							// Prepare data for the event
+							Object[] data = new Object[9];
+							data[0] = "added"; // the action of the operation
+							data[1] = cl; // the cloudlet subject to the operation
+							data[2] = tempFile; // the file subject to the operation
+							data[3] = tempPower; // the power needed during the operation
+							data[4] = tempTime; // the transaction time of the operation
+							data[5] = tempEnergy; // the energy consumed by the operation
+							data[6] = mode; // the mode of the disk for the operation
+							data[7] = storage; // the disk subject to the operation
+							data[8] = waitingDelay; // the waiting time for the operation
+							
+							// Schedule an Event confirming that the read/write operation has been done.
 							send(this.getId(),
-									tempTime,
+									eventDelay,
 									MyCloudSimTags.CLOUDLET_FILES_DONE,
 									data);
 						}
@@ -224,10 +263,11 @@ public class MyPowerDatacenter extends MyDatacenter {
 		double tempTime = (double) data[4];
 		double tempEnergy = (double) data[5];
 		int mode = (int) data[6];
-		Storage storage = (Storage) data[7];
+		MyHarddriveStorage storage = (MyHarddriveStorage) data[7];
+		double waitingDelay = (double) data[8];
 		
 		// Print out confirmation that Files have been handled
-		Log.formatLine("%.3f: %s: Cloudlet # %d: <%s> %s on %s.",
+		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.",
 				CloudSim.clock(),
 				getName(),
 				cl.getCloudletId(),
@@ -238,7 +278,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 				"",
 				tempPower,
 				mode);
-		Log.formatLine("%10s Transaction time   of %6.3f Seconde(s) according to %s specifications.",
+		Log.formatLine("%10s Waiting time of %9.6f Seconds(s) due to the disk queue.",
+				"",
+				waitingDelay);
+		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s) according to %s specifications.",
 				"",
 				tempTime,
 				storage.getName());
@@ -247,6 +290,12 @@ public class MyPowerDatacenter extends MyDatacenter {
 				tempEnergy,
 				mode);
 		Log.printLine();
+		
+		// Test if there is further operation on the disk
+		if (storage.getEndAt() <= CloudSim.clock()) {
+			storage.setMode(0); // switch to idle mode
+			storage.setEndAt(0.0); // reset EndAt time
+		}
 	}
 	
 	/**

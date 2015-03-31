@@ -18,15 +18,17 @@ public class MyExampleWikipedia1 {
 			String[] args) throws Exception {
 		
 		// Parameters (Constant)
-		int NumberOfRequest = 5; //MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
+		int NumberOfRequest = 3; //MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
 		
 		// Parameters (Variable)
+		String name = "simulationWiki1"; // name of the simulation
 		String RequestArrivalDistri = "wiki"; // Wikipedia Distribution
 		String dataFiles = "wikiDataFiles"; // Wikipedia dataFiles
 		String startingFilesList = ""; //No files to start
 		
 		// Execution
 		new MyRunner(
+				name,
 				NumberOfRequest,
 				RequestArrivalDistri,
 				dataFiles,

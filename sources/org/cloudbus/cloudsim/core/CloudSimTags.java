@@ -394,6 +394,8 @@ public class CloudSimTags {
 			return "Network_Event_Host";
 		case 48:
 			return "NextCycle";
+		case 49:
+			return "Cloudlet_Files_Done";
 		default:
 			return "Invalid tag value";
 		}

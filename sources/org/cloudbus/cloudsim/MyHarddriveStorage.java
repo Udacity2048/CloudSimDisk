@@ -2,6 +2,7 @@ package org.cloudbus.cloudsim;
 
 import java.util.Iterator;
 
+import org.cloudbus.cloudsim.core.PrintFile;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
@@ -28,6 +29,16 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	private StorageModelHdd	storageModel;
 	
 	/**
+	 * time in millisecond until which the disk is in Operation mode. If 0, the disk is in Idle mode.
+	 */
+	protected double		EndAt;
+	
+	/**
+	 * mode of the HDD: 0 is idle, 1 is operating.
+	 */
+	protected int			mode;
+	
+	/**
 	 * Creates a Hard Drive storage from a specific model.
 	 * 
 	 * @param id
@@ -43,10 +54,14 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			int id,
 			String name,
 			StorageModelHdd storageModelHdd) throws ParameterException {
-		super(name, storageModelHdd.getCapacity() * 1000); // conversion from GBytes to MBytes.
+		super(
+				name,
+				storageModelHdd.getCapacity());
 		
 		setId(id);
 		setStorageModel(storageModelHdd);
+		setEndAt(0.0);
+		setMode(0); // idle mode by default
 	}
 	
 	// GETTER and SETTER
@@ -62,7 +77,8 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	 * @param reference
 	 *            the reference to set
 	 */
-	public void setReference(String reference) {
+	public void setReference(
+			String reference) {
 		this.reference = reference;
 	}
 	
@@ -77,7 +93,8 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(
+			int id) {
 		Id = id;
 	}
 	
@@ -92,56 +109,132 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	 * @param storageModel
 	 *            the storageModel to set
 	 */
-	public void setStorageModel(StorageModelHdd storageModel) {
+	public void setStorageModel(
+			StorageModelHdd storageModel) {
 		this.storageModel = storageModel;
 		
 		double min = 0;
 		double max = 2 * storageModel.getAvgSeekTime();
-		ContinuousDistribution gen = new UniformDistr(min, max);
+		ContinuousDistribution gen = new UniformDistr(
+				min,
+				max);
 		
 		setReference(storageModel.getReference());
 		setLatency(storageModel.getLatency());
-		setAvgSeekTime(storageModel.getAvgSeekTime(), gen); // Random seek time
+		setAvgSeekTime(storageModel.getAvgSeekTime(),
+				gen); // Random seek time
 		setMaxTransferRate((int) storageModel.getMaxTransferRate());
+	}
+	
+	/**
+	 * @return the EndAt
+	 */
+	public double getEndAt() {
+		return EndAt;
+	}
+	
+	/**
+	 * @param EndAt
+	 * @param opeEndAt
+	 *            the EndAt to set
+	 */
+	public void setEndAt(
+			double EndAt) {
+		this.EndAt = EndAt;
+	}
+	
+	/**
+	 * @return the mode
+	 */
+	public int getMode() {
+		return mode;
+	}
+	
+	/**
+	 * @param mode
+	 *            the mode to set
+	 */
+	public void setMode(
+			int mode) {
+		this.mode = mode;
+		
+		String result = "Unknown";
+		if (mode == 0) {
+			result = "Idle";
+		} else if (mode == 1) {
+			result = "Operating";
+		}
+		
+		PrintFile.AddtoFile("ACTION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
+	}
+	
+	/**
+	 * Is the HDD in Operating mode?
+	 * 
+	 * @return the answer
+	 */
+	public boolean isOperating() {
+		if (mode == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Is the HDD in Idle mode?
+	 * 
+	 * @return the answer
+	 */
+	public boolean isIdle() {
+		if (mode == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
 	 * Gets the transfer time of a given file.
 	 * 
-	 * @param fileSize the size of the transferred file
+	 * @param fileSize
+	 *            the size of the transferred file
 	 * @return the transfer time in seconds
 	 */
-	protected double getTransferTime(int fileSize) {
+	protected double getTransferTime(
+			int fileSize) {
 		double result = 0;
-		if (fileSize > 0 && maxTransferRate != 0) { 
-			result = fileSize / maxTransferRate;   
+		if (fileSize > 0 && maxTransferRate != 0) {
+			result = fileSize / maxTransferRate;
 		}
-
+		
 		return result;
 	}
 	
 	/**
-	 * Gets the file with the specified name. The time taken (in seconds) for getting the file can
-	 * also be found using {@link gridsim.datagrid.File#getTransactionTime()}.
+	 * Gets the file with the specified name. The time taken (in seconds) for getting the file can also be found using
+	 * {@link gridsim.datagrid.File#getTransactionTime()}.
 	 * 
-	 * @param fileName the name of the needed file
+	 * @param fileName
+	 *            the name of the needed file
 	 * @return the file with the specified filename
 	 */
 	@Override
-	public File getFile(String fileName) {
+	public File getFile(
+			String fileName) {
 		// check first whether file name is valid or not
 		File obj = null;
 		if (fileName == null || fileName.length() == 0) {
 			Log.printLine(name + ".getFile(): Warning - invalid " + "file name.");
 			return obj;
 		}
-
+		
 		Iterator<File> it = fileList.iterator();
 		int size = 0;
 		int index = 0;
 		boolean found = false;
 		File tempFile = null;
-
+		
 		// find the file in the disk
 		while (it.hasNext()) {
 			tempFile = it.next();
@@ -151,71 +244,92 @@ public class MyHarddriveStorage extends HarddriveStorage {
 				obj = tempFile;
 				break;
 			}
-
+			
 			index++;
 		}
-
+		
 		// if the file is found, then determine the time taken to get it
 		if (found) {
 			obj = fileList.get(index);
 			double seekTime = getSeekTime(size);
 			double transferTime = getTransferTime(obj.getSize());
 			double latency = getLatency();
-
+			
 			// total time for this operation
 			obj.setTransactionTime(seekTime + transferTime + latency);
-			System.out.println();
-			Log.formatLine("OBSERVATION>> Reading a File on the persistent storage.");
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for SeekTime.", seekTime);
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for TransferTime.", transferTime);
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for Latency.", latency);
-			System.out.println();
-
+			
+			// Log in the file
+			String msg = String.format("OBSERVATION>> Reading \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
+					+ " second(s) for SeekTime;" + "\n" + "%13s" + "%9.6f" + " second(s) for TransferTime;" + "\n" + "%13s"
+					+ "%9.6f" + " second(s) for Latency;" + "\n" + "%13s" + "%9.6f" + " second(s) in TOTAL.\n",
+					obj.getName(),
+					this.getName(),
+					"",
+					seekTime,
+					"",
+					transferTime,
+					"",
+					latency,
+					"",
+					seekTime + transferTime + latency);
+			PrintFile.AddtoFile(msg);
 		}
-
+		
 		return obj;
 	}
 	
 	/**
-	 * Adds a file to the storage. First, the method checks if there is enough space on the storage,
-	 * then it checks if the file with the same name is already taken to avoid duplicate filenames. <br>
+	 * Adds a file to the storage. First, the method checks if there is enough space on the storage, then it checks if
+	 * the file with the same name is already taken to avoid duplicate filenames. <br>
 	 * The time taken (in seconds) for adding the file can also be found using
 	 * {@link gridsim.datagrid.File#getTransactionTime()}.
 	 * 
-	 * @param file the file to be added
+	 * @param file
+	 *            the file to be added
 	 * @return the time taken (in seconds) for adding the specified file
 	 */
 	@Override
-	public double addFile(File file) {
+	public double addFile(
+			File file) {
 		double result = 0.0;
 		// check if the file is valid or not
-		if (!isFileValid(file, "addFile()")) {
+		if (!isFileValid(file,
+				"addFile()")) {
 			return result;
 		}
-
+		
 		// check the capacity
 		if (file.getSize() + currentSize > capacity) {
 			Log.printLine(name + ".addFile(): Warning - not enough space" + " to store " + file.getName());
 			return result;
 		}
-
+		
 		// check if the same file name is already taken
 		if (!contains(file.getName())) {
 			double seekTime = getSeekTime(file.getSize());
 			double transferTime = getTransferTime(file.getSize());
-			double latency = getLatency();	// added by Baptiste Louis
-
-			fileList.add(file);               // add the file into the HD
-			nameList.add(file.getName());     // add the name to the name list
-			currentSize += file.getSize();    // increment the current HD size
-			result = seekTime + transferTime + latency;  // Latency added by Baptiste Louis
+			double latency = getLatency(); // added by Baptiste Louis
 			
-			System.out.println();
-			Log.formatLine("OBSERVATION>> Writting a File on the persistent storage.");
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for SeekTime.", seekTime);
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for TransferTime.", transferTime);
-			Log.formatLine("OBSERVATION>> %9.6f second(s) for Latency.", latency);
-			System.out.println();
+			fileList.add(file); // add the file into the HD
+			nameList.add(file.getName()); // add the name to the name list
+			currentSize += file.getSize(); // increment the current HD size
+			result = seekTime + transferTime + latency; // Latency added by Baptiste Louis
+			
+			// Log in the file
+			String msg = String.format("OBSERVATION>> Writting \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
+					+ " second(s) for SeekTime;" + "\n" + "%13s" + "%9.6f" + " second(s) for TransferTime;" + "\n" + "%13s"
+					+ "%9.6f" + " second(s) for Latency;" + "\n" + "%13s" + "%9.6f" + " second(s) in TOTAL.\n",
+					file.getName(),
+					this.getName(),
+					"",
+					seekTime,
+					"",
+					transferTime,
+					"",
+					latency,
+					"",
+					seekTime + transferTime + latency);
+			PrintFile.AddtoFile(msg);
 		}
 		
 		file.setTransactionTime(result);
