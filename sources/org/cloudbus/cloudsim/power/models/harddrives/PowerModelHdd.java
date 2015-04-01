@@ -20,12 +20,12 @@ public abstract class PowerModelHdd implements PowerModel {
      * This methode return the power consumption of an Hard drive according to 
      * its mode: 0 for Idle mode, 1 for operation mode.
      *
-     * Note: further, a linear interpolation from a defined set of Data reched 
-     * by the method getPowerData(int index) can be implemented.
+     * Note: further, new mode can be implemented.
      *
      * @see org.cloudbus.cloudsim.power.models.PowerModel#getPower(double)
      */
-    @Override
+    @SuppressWarnings("javadoc")
+	@Override
     public double getPower(double mode) throws IllegalArgumentException {
         double power = getPowerData((int) mode);
         return power;

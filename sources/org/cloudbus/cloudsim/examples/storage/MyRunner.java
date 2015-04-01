@@ -1,15 +1,13 @@
 package org.cloudbus.cloudsim.examples.storage;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.PrintFile;
 
 /**
- * @author baplou
+ * A Runner to run storage examples.
+ * 
+ * @author Baptiste Louis
  * 
  */
 public class MyRunner {
@@ -25,12 +23,13 @@ public class MyRunner {
 	public double	endTimeSimulation	= 0.0;
 	
 	/**
-	 * Runner to run a MyExampleX scenario.
+	 * Create a Runner to run a MyExampleX scenario.
 	 * 
 	 * @param name
-	 * @param type 
+	 * @param type
 	 * @param NumberOfRequest
 	 * @param RequestArrivalDistri
+	 * @param requiredFiles
 	 * @param dataFiles
 	 * @param startingFilesList
 	 * @throws Exception
@@ -40,20 +39,25 @@ public class MyRunner {
 			String type,
 			int NumberOfRequest,
 			String RequestArrivalDistri,
+			String requiredFiles,
 			String dataFiles,
 			String startingFilesList) throws Exception {
 		
+		// BEGIN
 		Log.printLine("Starting simulation \"" + name + "\"\n");
 		PrintFile.AddtoFile("Starting simulation \"" + name + "\"\n");
 		
 		init(NumberOfRequest,
 				type,
 				RequestArrivalDistri,
+				requiredFiles,
 				dataFiles,
 				startingFilesList);
 		start();
 		print();
+		
 		Log.printLine("END !");
+		// END
 	}
 	
 	/**
@@ -61,8 +65,11 @@ public class MyRunner {
 	 * 
 	 * @param NumberOfRequest
 	 *            the number of request
+	 * @param type
+	 *            type of distribution
 	 * @param RequestArrivalDistri
 	 *            the request distribution
+	 * @param requiredFiles
 	 * @param dataFiles
 	 * @param startingFilesList
 	 * @throws Exception
@@ -71,12 +78,14 @@ public class MyRunner {
 			int NumberOfRequest,
 			String type,
 			String RequestArrivalDistri,
+			String requiredFiles,
 			String dataFiles,
 			String startingFilesList) throws Exception {
 		
 		// Entities
 		helper.initCloudSim();
-		helper.createBroker(type, RequestArrivalDistri);
+		helper.createBroker(type,
+				RequestArrivalDistri);
 		helper.createPeList(1);
 		helper.createHostList(1);
 		helper.createVmList(1);
@@ -86,35 +95,25 @@ public class MyRunner {
 		
 		// Files
 		helper.addFiles(startingFilesList);
+		helper.createRequiredFilesList(requiredFiles);
 		helper.createDataFilesList(dataFiles);
 		
-		// TO IMPROVE: HOW TO get the requiredFiles and dataFiles from a file.
-		List<String> requiredFiles = new ArrayList<String>();
-		requiredFiles.add("shortFile");
-		
-		// If wikidataFiles is not working, use that for the moment
-		List<File> tempdataFiles = new ArrayList<File>();
-		tempdataFiles.add(new File(
-				"TheImitationGame",
-				3600));
-		
 		// Cloudlets
-		helper.createCloudletList(NumberOfRequest,
-				requiredFiles);
+		helper.createCloudletList(NumberOfRequest);
 		
 		// Logs
 		helper.printPersistenStorageDetails();
 	}
 	
 	/**
-	 * Start the simulation
+	 * Start the simulation.
 	 */
 	public void start() {
 		endTimeSimulation = CloudSim.startSimulation();
 	}
 	
 	/**
-	 * Print the Results and the Request Arrival Times History
+	 * Print the Results.
 	 */
 	public void print() {
 		helper.printResults(endTimeSimulation);

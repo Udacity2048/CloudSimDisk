@@ -3,8 +3,10 @@ package org.cloudbus.cloudsim.distributions;
 import java.util.Random;
 
 /**
- * @author baplou
- *
+ * An poison number generator.
+ * 
+ * @author Baptiste Louis
+ * 
  */
 public class MyPoissonDistr implements ContinuousDistribution {
 	
@@ -22,11 +24,15 @@ public class MyPoissonDistr implements ContinuousDistribution {
 	 * @param mean
 	 *            the mean for the distribution.
 	 */
-	public MyPoissonDistr(long seed, double mean) {
+	public MyPoissonDistr(
+			long seed,
+			double mean) {
 		if (mean <= 0.0) {
-			throw new IllegalArgumentException("Mean must be greater than 0.0");
+			throw new IllegalArgumentException(
+					"Mean must be greater than 0.0");
 		}
-		numGen = new Random(seed);
+		numGen = new Random(
+				seed);
 		this.mean = mean;
 	}
 	
@@ -36,11 +42,14 @@ public class MyPoissonDistr implements ContinuousDistribution {
 	 * @param mean
 	 *            the mean for the distribution.
 	 */
-	public MyPoissonDistr(double mean) {
+	public MyPoissonDistr(
+			double mean) {
 		if (mean <= 0.0) {
-			throw new IllegalArgumentException("Mean must be greated than 0.0");
+			throw new IllegalArgumentException(
+					"Mean must be greated than 0.0");
 		}
-		numGen = new Random(System.currentTimeMillis());
+		numGen = new Random(
+				System.currentTimeMillis());
 		this.mean = mean;
 	}
 	

@@ -3,7 +3,7 @@ package org.cloudbus.cloudsim.distributions;
 import org.cloudbus.cloudsim.Log;
 
 /**
- * @author baplou
+ * @author Baptiste Louis
  *
  */
 public class TesterOfDistribution {

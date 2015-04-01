@@ -6,53 +6,32 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.CloudletScheduler;
-import org.cloudbus.cloudsim.CloudletSchedulerDynamicWorkload;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.File;
-import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyCloudlet;
 import org.cloudbus.cloudsim.ParameterException;
 import org.cloudbus.cloudsim.Pe;
-import org.cloudbus.cloudsim.Storage;
-import org.cloudbus.cloudsim.UtilizationModel;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.VmScheduler;
-import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.PrintFile;
-import org.cloudbus.cloudsim.examples.power.Constants;
 import org.cloudbus.cloudsim.power.MyPowerDatacenter;
 import org.cloudbus.cloudsim.power.MyPowerDatacenterBroker;
-import org.cloudbus.cloudsim.power.PowerDatacenter;
-import org.cloudbus.cloudsim.power.PowerDatacenterBroker;
 import org.cloudbus.cloudsim.power.MyPowerHarddriveStorage;
 import org.cloudbus.cloudsim.power.PowerHost;
-import org.cloudbus.cloudsim.power.PowerHostUtilizationHistory;
 import org.cloudbus.cloudsim.power.PowerVm;
-import org.cloudbus.cloudsim.power.models.PowerModel;
-import org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G4Xeon3040;
-import org.cloudbus.cloudsim.power.models.harddrives.*;
-import org.cloudbus.cloudsim.provisioners.BwProvisioner;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
-import org.cloudbus.cloudsim.provisioners.RamProvisioner;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
-import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHddSeagateEnterpriseST6000VN0001;
 
 /**
  * Helper for the CloudSim examples of cloudsim.examples.storage package.
  * 
- * @author baplou
+ * @author Baptiste Louis
  * 
  */
 public class Helper {
@@ -61,6 +40,11 @@ public class Helper {
 	 * the cloudlet list.
 	 */
 	public List<MyCloudlet>						cloudletList	= new ArrayList<MyCloudlet>();
+	
+	/**
+	 * the cloudlet required FileNames list.
+	 */
+	public List<String>							requiredFiles	= new ArrayList<String>();
 	
 	/**
 	 * the cloudlet data Files list.
@@ -114,6 +98,9 @@ public class Helper {
 	
 	/**
 	 * Creates a Power-aware broker named "Broker".
+	 * 
+	 * @param type
+	 * @param RequestArrivalDistri
 	 * 
 	 */
 	public void createBroker(
@@ -283,25 +270,69 @@ public class Helper {
 	}
 	
 	/**
+	 * Create a list of required FileNames.
+	 * 
+	 * @param source
+	 *            name of the file in the default files folder.
+	 */
+	public void createRequiredFilesList(
+			String source) {
+		String path = "files/" + source;
+		
+		try {
+			// instantiates reader
+			BufferedReader input = new BufferedReader(
+					new FileReader(
+							path));
+			
+			// instantiates local variable
+			String fileName;
+			
+			// read line by line
+			while ((fileName = input.readLine()) != null) {
+				
+				// add fileName to the List
+				requiredFiles.add(fileName);
+			}
+			
+			// close the reader
+			input.close();
+			
+		} catch (IOException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * @param CloudlerNumber
-	 * @param requiredFiles
 	 * @throws ParameterException
 	 */
 	public void createCloudletList(
-			int CloudlerNumber,
-			List<String> requiredFiles) throws ParameterException {
+			int CloudlerNumber) throws ParameterException {
 		
 		// local variable
-		ArrayList<File> tempDataFileList = null;
+		ArrayList<String> tempRequiredFilesList = null;
+		ArrayList<File> tempDataFilesList = null;
 		
 		for (int i = 1; i <= CloudlerNumber; i++) {
+			
+			// handle dataFiles
 			if (i <= dataFiles.size()) {
-				tempDataFileList = new ArrayList<File>(
+				tempDataFilesList = new ArrayList<File>(
 						Arrays.asList(dataFiles.get(i - 1)));
 			} else {
-				tempDataFileList = null;
+				tempDataFilesList = null;
 			}
 			
+			// handle requiredFiles
+			if (i <= requiredFiles.size()) {
+				tempRequiredFilesList = new ArrayList<String>(
+						Arrays.asList(requiredFiles.get(i - 1)));
+			} else {
+				tempRequiredFilesList = null;
+			}
+			
+			// create cloudlet
 			cloudletList.add(new MyCloudlet(
 					i,
 					MyConstants.CLOUDLET_LENGHT,
@@ -311,11 +342,13 @@ public class Helper {
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_CPU,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_RAM,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_BW,
-					requiredFiles,
-					tempDataFileList));
+					tempRequiredFilesList,
+					tempDataFilesList));
 			cloudletList.get(i - 1).setUserId(broker.getId());
 			cloudletList.get(i - 1).setVmId(vmlist.get(0).getId());
 		}
+		
+		// submit the list to the broker
 		broker.submitCloudletList(cloudletList);
 	}
 	
@@ -415,6 +448,8 @@ public class Helper {
 					endTimeSimulation - tempList.get(i).getInOpeDuration());
 			Log.formatLine("Time in Operating mode: %12.6f second(s)",
 					tempList.get(i).getInOpeDuration());
+			Log.formatLine("Time of the simulation: %12.6f second(s)",
+					endTimeSimulation);
 			Log.formatLine("Maximum Queue size    : %5d        operation(s)",
 					Collections.max(tempList.get(i).getQueueLengthHistory()));
 			Log.printLine();
@@ -430,7 +465,7 @@ public class Helper {
 		Log.printLine();
 		Log.printLine("************************** RAW DATA  **************************");
 		Log.printLine("ARRIVAL RATE in Second(s) (not sorted)");
-		for (Double delay : broker.getDelayHistory()) {
+		for (Double delay : broker.getArrivalTimeHistory()) {
 			Log.formatLine("%20.15f",
 					delay);
 		}

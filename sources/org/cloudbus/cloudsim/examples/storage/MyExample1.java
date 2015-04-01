@@ -1,7 +1,7 @@
 package org.cloudbus.cloudsim.examples.storage;
 
 /**
- * A basic example.
+ * A basic example with 3 requests in a time interval of 1 second.
  * 
  * @author Baptiste Louis
  */
@@ -21,7 +21,8 @@ public class MyExample1 {
 		String name = "Basic test example"; // name of the simulation
 		String type = "unif"; // type of the workload
 		int NumberOfRequest = 3; // Number of requests
-		String RequestArrivalDistri = ""; // fileName which contains Times Distributions based on Wikipedia workload format.
+		String RequestArrivalDistri = ""; // No file source for time distribution
+		String requiredFiles = ""; // No files required
 		String dataFiles = "ex1DataFiles.txt"; // Hypothetical Wikipedia dataFiles
 		String startingFilesList = ""; // No files to start
 		
@@ -31,6 +32,7 @@ public class MyExample1 {
 				type,
 				NumberOfRequest,
 				RequestArrivalDistri,
+				requiredFiles,
 				dataFiles,
 				startingFilesList);
 	}

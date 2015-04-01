@@ -1,9 +1,9 @@
 package org.cloudbus.cloudsim.core;
 
 /**
- * New Tags for Storage implementation by Baptiste Louis.
+ * My CloudSim Tags is used to declare ONE new Tags called CLOUDLET_FILES_DONE for the storage implementation.
  * 
- * @author baplou
+ * @author Baptiste Louis
  */
 public class MyCloudSimTags {
 	
@@ -16,8 +16,6 @@ public class MyCloudSimTags {
 	/**
 	 * Convert tagValue to TagText.
 	 * 
-	 * @author Anupinder Singh
-	 * @author baplou
 	 * @param tagValue
 	 * @return tagText
 	 */

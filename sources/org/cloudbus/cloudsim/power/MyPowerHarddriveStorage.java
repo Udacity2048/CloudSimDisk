@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyHarddriveStorage;
 import org.cloudbus.cloudsim.ParameterException;
@@ -19,7 +18,7 @@ import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 /**
  * MyPowerHarddriveStorage enables simulation of power-aware Hard drives.
  * 
- * @author baplou
+ * @author Baptiste Louis
  */
 public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	
@@ -34,24 +33,24 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	public double		inOpeDuration;
 	
 	/**
-	 * interval of time during which the disk is in idle mode.
+	 * Idle Duration Intervals history (when the disk is in idle mode).
 	 */
 	public List<Double>	IdleIntervalsHistory	= new ArrayList<Double>();
 	
 	/**
-	 * last starting Idle mode time
+	 * Last starting Idle time
 	 */
-	public double		LastIdleModeStartTime;
+	public double		LastIdleStartTime;
 	
 	/**
-	 * Creates a new harddrive storage base on a specific Storage Model Hdd.
+	 * Creates a new Hard Drive storage base on a specific HDD Model.
 	 * 
 	 * @param id
 	 * 
 	 * @param name
-	 *            the name of the new harddrive storage
+	 *            the name
 	 * @param storageModelHdd
-	 *            the specific model of Hard disk drive
+	 *            the specific model
 	 * @param powerModel
 	 *            the power model
 	 * @throws ParameterException
@@ -66,16 +65,22 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 				id,
 				name,
 				storageModelHdd);
+		
+		// set HDD characteristics
 		setPowerModelHdd(powerModel);
+		
+		// set initial parameters
 		setInOpeDuration(0.0);
-		setLastIdleModeStartTime(0.0);
+		setLastIdleStartTime(0.0);
 	}
+	
+	// GETTERs and SETTERs
 	
 	/**
 	 * Sets the power model.
 	 * 
 	 * @param powerModelHdd
-	 *            the new power model for Hdd
+	 *            the new power model
 	 */
 	protected void setPowerModelHdd(
 			PowerModel powerModelHdd) {
@@ -100,12 +105,17 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 */
 	public double getPower(
 			double mode) {
+		
+		// instantiates local variable
 		double power = 0;
+		
+		// check parameter validity
 		if (mode != 0 && mode != 1) {
 			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for operating mode.");
 			return power;
 		}
 		
+		// retrieve power
 		try {
 			power = getPowerModelHdd().getPower(mode);
 		} catch (Exception e) {
@@ -119,6 +129,8 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	}
 	
 	/**
+	 * Gets the operating duration.
+	 * 
 	 * @return the inOpeDuration
 	 */
 	public double getInOpeDuration() {
@@ -126,6 +138,8 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	}
 	
 	/**
+	 * Sets the operating duration.
+	 * 
 	 * @param inOpeDuration
 	 *            the inOpeDuration to set
 	 */
@@ -135,24 +149,31 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	}
 	
 	/**
+	 * Gets the idle intervals history.
+	 * 
 	 * @return the idle Intervals history
 	 */
 	public List<Double> getIdleIntervalsHistory() {
 		return IdleIntervalsHistory;
 	}
-
+	
 	/**
-	 * @return the lastIdleModeStartTime
+	 * Gets the last Idle start time.
+	 * 
+	 * @return the lastIdleStartTime
 	 */
-	public double getLastIdleModeStartTime() {
-		return LastIdleModeStartTime;
+	public double getLastIdleStartTime() {
+		return LastIdleStartTime;
 	}
-
+	
 	/**
-	 * @param lastIdleModeStartTime the lastIdleModeStartTime to set
+	 * Sets the last Idle start time.
+	 * 
+	 * @param lastIdleStartTime
+	 *            the lastIdleModeStartTime to set
 	 */
-	public void setLastIdleModeStartTime(
-			double lastIdleModeStartTime) {
-		LastIdleModeStartTime = lastIdleModeStartTime;
+	public void setLastIdleStartTime(
+			double lastIdleStartTime) {
+		LastIdleStartTime = lastIdleStartTime;
 	}
 }

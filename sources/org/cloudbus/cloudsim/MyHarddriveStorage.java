@@ -10,18 +10,24 @@ import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 
 /**
- * @author baplou
+ * My HarddriveStorage extends HarddriveStorage.java by overwriting some of its methods. The modifications are not
+ * important but necessary for the new storage implementation. Mainly, it adds variable concerning the Waiting Queue,
+ * the mode and the Operation End Time with their corresponding GETTER and SETTER. Additionally, only one constructor is
+ * available based on a HDD storage model in order to simplify things. Some models are provided and more can be easily
+ * implemented by the user.
+ * 
+ * @author Baptiste Louis
  * 
  */
 public class MyHarddriveStorage extends HarddriveStorage {
 	
 	/**
-	 * the specific ID of the Hard Drive (mandatory parameter)
+	 * unique ID of the Hard Drive
 	 */
 	private int				Id;
 	
 	/**
-	 * the specific reference of the Hard Drive
+	 * unique reference of the Hard Drive
 	 */
 	private String			reference;
 	
@@ -31,27 +37,27 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	private StorageModelHdd	storageModel;
 	
 	/**
-	 * time in millisecond until which the disk is in Operation mode. If 0, the disk is in Idle mode.
+	 * time (ms) until when the disk is in Operation mode. If 0, the disk is in Idle mode.
 	 */
-	protected double		EndAt;
+	protected double		opeEndAt;
 	
 	/**
-	 * mode of the HDD: 0 is idle, 1 is operating.
+	 * mode of the HDD. If 0, the disk is idle mode. If 1, the disk is in operating mode.
 	 */
 	protected int			mode;
 	
 	/**
-	 * Queue length
+	 * the length of the requests waiting queue.
 	 */
 	protected int			queueLength;
 	
 	/**
-	 * Queue length history
+	 * the history of the requests waiting queue lengths.
 	 */
 	protected List<Integer>	queueLengthHistory	= new ArrayList<Integer>();
 	
 	/**
-	 * Creates a Hard Drive storage from a specific model.
+	 * The constructor.
 	 * 
 	 * @param id
 	 * 
@@ -70,16 +76,127 @@ public class MyHarddriveStorage extends HarddriveStorage {
 				name,
 				storageModelHdd.getCapacity());
 		
+		// initializes global variables
 		setId(id);
 		setStorageModel(storageModelHdd);
-		setEndAt(0.0);
-		setMode(0); // idle mode by default
+		setOpeEndAt(0.0);
+		setMode(0);
 		setQueueLength(0);
 	}
 	
 	// GETTER and SETTER
 	
 	/**
+	 * Gets the storage model.
+	 * 
+	 * @return the storageModel
+	 */
+	public StorageModelHdd getStorageModel() {
+		return storageModel;
+	}
+	
+	/**
+	 * Sets the storage Model.
+	 * 
+	 * @param storageModel
+	 *            the storageModel to set
+	 */
+	public void setStorageModel(
+			StorageModelHdd storageModel) {
+		this.storageModel = storageModel;
+		
+		// randomize SeekTime
+		double min = 0;
+		double max = 2 * storageModel.getAvgSeekTime();
+		ContinuousDistribution gen = new UniformDistr(
+				min,
+				max);
+		
+		// set HDD characteristics
+		setReference(storageModel.getReference());
+		setLatency(storageModel.getLatency());
+		setAvgSeekTime(storageModel.getAvgSeekTime(),
+				gen);
+		setMaxTransferRate((int) storageModel.getMaxTransferRate());
+	}
+	
+	/**
+	 * Gets the mode.
+	 * 
+	 * @return the mode
+	 */
+	public int getMode() {
+		return mode;
+	}
+	
+	/**
+	 * Sets the mode.
+	 * 
+	 * @param mode
+	 *            the mode to set
+	 */
+	public void setMode(
+			int mode) {
+		this.mode = mode;
+		
+		// log the observation.
+		String result = "Unknown";
+		
+		if (mode == 0) {
+			result = "Idle";
+		} else if (mode == 1) {
+			result = "Operating";
+		}
+		
+		PrintFile.AddtoFile("OBSERVATION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
+	}
+	
+	/**
+	 * Gets the length of the waiting queue.
+	 * 
+	 * @return the queueLength
+	 */
+	public int getQueueLength() {
+		return queueLength;
+	}
+	
+	/**
+	 * Sets the length of the waiting queue.
+	 * 
+	 * @param queueLength
+	 *            the queueLength to set
+	 */
+	public void setQueueLength(
+			int queueLength) {
+		this.queueLength = queueLength;
+		
+		// store history
+		queueLengthHistory.add(queueLength);
+		
+		// log the observation
+		PrintFile.AddtoFile("OBSERVATION>> #QueueLenght <" + this.name + "> is now => " + queueLength);
+	}
+	
+	/**
+	 * Gets the transfer time of a given file.
+	 * 
+	 * @param fileSize
+	 *            the size of the transferred file
+	 * @return the transfer time in seconds
+	 */
+	protected double getTransferTime(
+			int fileSize) {
+		double result = 0;
+		if (fileSize > 0 && maxTransferRate != 0) {
+			result = fileSize / maxTransferRate;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets the reference.
+	 * 
 	 * @return the reference
 	 */
 	public String getReference() {
@@ -87,6 +204,8 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
+	 * Sets the reference.
+	 * 
 	 * @param reference
 	 *            the reference to set
 	 */
@@ -96,6 +215,8 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
+	 * Gets the id.
+	 * 
 	 * @return the id
 	 */
 	public int getId() {
@@ -103,6 +224,8 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
+	 * Sets the id.
+	 * 
 	 * @param id
 	 *            the id to set
 	 */
@@ -112,103 +235,34 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
-	 * @return the storageModel
+	 * Get the "Operation End At" time.
+	 * 
+	 * @return the opeEndAt
 	 */
-	public StorageModelHdd getStorageModel() {
-		return storageModel;
+	public double getOpeEndAt() {
+		return opeEndAt;
 	}
 	
 	/**
-	 * @param storageModel
-	 *            the storageModel to set
-	 */
-	public void setStorageModel(
-			StorageModelHdd storageModel) {
-		this.storageModel = storageModel;
-		
-		double min = 0;
-		double max = 2 * storageModel.getAvgSeekTime();
-		ContinuousDistribution gen = new UniformDistr(
-				min,
-				max);
-		
-		setReference(storageModel.getReference());
-		setLatency(storageModel.getLatency());
-		setAvgSeekTime(storageModel.getAvgSeekTime(),
-				gen); // Random seek time
-		setMaxTransferRate((int) storageModel.getMaxTransferRate());
-	}
-	
-	/**
-	 * @return the EndAt
-	 */
-	public double getEndAt() {
-		return EndAt;
-	}
-	
-	/**
-	 * @param EndAt
+	 * Sets the "Operation End At" time.
+	 * 
 	 * @param opeEndAt
 	 *            the EndAt to set
 	 */
-	public void setEndAt(
-			double EndAt) {
-		this.EndAt = EndAt;
+	public void setOpeEndAt(
+			double opeEndAt) {
+		this.opeEndAt = opeEndAt;
 	}
 	
 	/**
-	 * @return the mode
-	 */
-	public int getMode() {
-		return mode;
-	}
-	
-	/**
-	 * @param mode
-	 *            the mode to set
-	 */
-	public void setMode(
-			int mode) {
-		this.mode = mode;
-		
-		String result = "Unknown";
-		if (mode == 0) {
-			result = "Idle";
-		} else if (mode == 1) {
-			result = "Operating";
-		}
-		
-		PrintFile.AddtoFile("ACTION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
-	}
-	
-	/**
-	 * @return the queueLength
-	 */
-	public int getQueueLength() {
-		return queueLength;
-	}
-	
-	/**
-	 * @param queueLength
-	 *            the queueLength to set
-	 */
-	public void setQueueLength(
-			int queueLength) {
-		this.queueLength = queueLength;
-
-		// Store history
-		queueLengthHistory.add(queueLength);
-		
-		PrintFile.AddtoFile("OBSERVATION>> #QueueLenght <" + this.name + "> is now => " + queueLength);
-	}
-	
-	/**
+	 * Gets the waiting queue history.
+	 * 
 	 * @return the queueLengthHistory
 	 */
 	public List<Integer> getQueueLengthHistory() {
 		return queueLengthHistory;
 	}
-
+	
 	/**
 	 * Is the HDD in Operating mode?
 	 * 
@@ -236,25 +290,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
-	 * Gets the transfer time of a given file.
-	 * 
-	 * @param fileSize
-	 *            the size of the transferred file
-	 * @return the transfer time in seconds
-	 */
-	protected double getTransferTime(
-			int fileSize) {
-		double result = 0;
-		if (fileSize > 0 && maxTransferRate != 0) {
-			result = fileSize / maxTransferRate;
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Gets the file with the specified name. The time taken (in seconds) for getting the file can also be found using
-	 * {@link gridsim.datagrid.File#getTransactionTime()}.
+	 * Gets the file with the specified name.
 	 * 
 	 * @param fileName
 	 *            the name of the needed file
@@ -299,7 +335,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			// total time for this operation
 			obj.setTransactionTime(seekTime + transferTime + latency);
 			
-			// Log in the file
+			// log the observation
 			String msg = String.format("OBSERVATION>> Reading \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
 					+ " second(s) for SeekTime;" + "\n" + "%13s" + "%9.6f" + " second(s) for TransferTime;" + "\n" + "%13s"
 					+ "%9.6f" + " second(s) for Latency;" + "\n" + "%13s" + "%9.6f" + " second(s) in TOTAL.\n",
@@ -321,9 +357,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	
 	/**
 	 * Adds a file to the storage. First, the method checks if there is enough space on the storage, then it checks if
-	 * the file with the same name is already taken to avoid duplicate filenames. <br>
-	 * The time taken (in seconds) for adding the file can also be found using
-	 * {@link gridsim.datagrid.File#getTransactionTime()}.
+	 * the file with the same name is already taken to avoid duplicate filenames.
 	 * 
 	 * @param file
 	 *            the file to be added
@@ -356,7 +390,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 			currentSize += file.getSize(); // increment the current HD size
 			result = seekTime + transferTime + latency; // Latency added by Baptiste Louis
 			
-			// Log in the file
+			// Log the observation
 			String msg = String.format("OBSERVATION>> Writting \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
 					+ " second(s) for SeekTime;" + "\n" + "%13s" + "%9.6f" + " second(s) for TransferTime;" + "\n" + "%13s"
 					+ "%9.6f" + " second(s) for Latency;" + "\n" + "%13s" + "%9.6f" + " second(s) in TOTAL.\n",

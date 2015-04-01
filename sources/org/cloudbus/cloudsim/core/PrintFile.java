@@ -8,8 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This class create a trace of all Events passing during a simulation. The file is available in the "logs" folder. More
- * information at: https://www.youtube.com/watch?v=tj2GKa39yTk
+ * This class create a trace of all Events passing and other OBSERVATION during a simulation. To log a new message, use
+ * the code <PrintFile.AddtoFile("OBSERVATION")>. The file is available in the "logs" folder. More information at:
+ * https://www.youtube.com/watch?v=tj2GKa39yTk
  * 
  * @author Anupinder Singh
  * @author Baptiste Louis
@@ -27,7 +28,8 @@ public class PrintFile {
 	 * @param msg
 	 *            the message to add on the Log file.
 	 */
-	public static void AddtoFile(String msg) {
+	public static void AddtoFile(
+			String msg) {
 		try {
 			// Variable to change each log files names.
 			java.util.Date d = new java.util.Date();
@@ -38,7 +40,8 @@ public class PrintFile {
 			}
 			
 			// Instantiate a File object
-			File file = new File(file_name);
+			File file = new File(
+					file_name);
 			
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
@@ -46,8 +49,11 @@ public class PrintFile {
 			}
 			
 			// write the message on the Log file
-			FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-			String text = System.lineSeparator() + msg.replace("\n", System.lineSeparator());
+			FileWriter fw = new FileWriter(
+					file.getAbsoluteFile(),
+					true);
+			String text = System.lineSeparator() + msg.replace("\n",
+					System.lineSeparator());
 			fw.write(text);
 			fw.close();
 		} catch (IOException e) {

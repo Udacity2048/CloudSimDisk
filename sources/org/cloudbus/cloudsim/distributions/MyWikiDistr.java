@@ -3,52 +3,62 @@ package org.cloudbus.cloudsim.distributions;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.cloudbus.cloudsim.examples.storage.MyConstants;
 
 /**
- * @author baplou
+ * A wikipedia Number generator. Each sample is read from a Wikipedia Workload file. The Wikipedia Workload file is
+ * formatted according to WikiBench.s. More information at http://www.wikibench.eu/?page_id=60 .
+ * 
+ * @author Baptiste Louis
  * 
  */
 public class MyWikiDistr implements ContinuousDistribution {
 	
-	/** The path to the Wiki distribution file. */
+	/** The path to the Wikipedia Workload file. */
 	private final String	path;
 	
 	/** The request arrival times */
-	private double[]		times;
+	private List<Double>	times;
 	
 	/** Reader index */
 	private int				index;
 	
+	/** The BASE TIME for this workload */
+	private double			baseTime;
+	
 	/**
-	 * Creates a new wiki distribution.
+	 * Creates a new wikipedia number generator.
+	 * 
+	 * @param workloadFileName
+	 *            the name of the wikipedia workload file. It has to be in "files/wikipedia" folder.
 	 */
 	public MyWikiDistr(
-			String RequestArrivalDistri) {
-		path = "files/" + RequestArrivalDistri;
+			String workloadFileName) {
+		path = "files/wikipedia/" + workloadFileName;
 		index = -1;
-		times = new double[MyConstants.CLOUDLET_NUMBER_WIKI];
+		times = new ArrayList<Double>();
 		init();
 	}
 	
 	/**
-	 * Initializes the distribution times.
+	 * Initializes the wikipedia generator.
 	 */
 	public void init() {
 		
 		try {
 			
-			// instantiate a reader
+			// initializes a reader
 			BufferedReader input = new BufferedReader(
 					new FileReader(
 							path));
 			
-			// local variables
-			int i = 0;
-			String line;
+			// initializes variables
+			String line = "";
+			String fullTimeStamp = "";
 			String[] lineSplited;
-			String fullTimeStamp;
 			
 			// read line by line
 			while ((line = input.readLine()) != null) {
@@ -58,10 +68,12 @@ public class MyWikiDistr implements ContinuousDistribution {
 				fullTimeStamp = lineSplited[1];
 				
 				// add time to the array
-				fullTimeStamp = fullTimeStamp.substring(6); // remove the first 6 numbers of the TimeStamp
-				times[i] = Double.parseDouble(fullTimeStamp);
-				i++;
+				times.add(Double.parseDouble(fullTimeStamp));
 			}
+			
+			// define base Time (wikipedia workload Time-Stamp are not starting from 0)
+			double tempDouble = times.get(0);
+			baseTime = (int) tempDouble;
 			
 			// close the reader
 			input.close();
@@ -79,6 +91,6 @@ public class MyWikiDistr implements ContinuousDistribution {
 	 */
 	public double sample() {
 		index++;
-		return times[index];
+		return (times.get(index) - baseTime);
 	}
 }

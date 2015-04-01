@@ -11,16 +11,15 @@ import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyCloudlet;
 import org.cloudbus.cloudsim.MyDatacenter;
-import org.cloudbus.cloudsim.MyHarddriveStorage;
-import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.MyCloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 
 /**
- * @author baplou
+ * My Power-aware Datacenter is a Datacenter which overwrites all methods to be in accordance with power-aware ability.
+ * 
+ * @author Baptiste Louis
  * 
  */
 public class MyPowerDatacenter extends MyDatacenter {
@@ -32,7 +31,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 	private double	totalDatacenterEnergy;
 	
 	/**
-	 * Instantiates a new datacenter.
+	 * Creates a new datacenter.
 	 * 
 	 * @param name
 	 *            the name
@@ -60,35 +59,30 @@ public class MyPowerDatacenter extends MyDatacenter {
 				storageList,
 				schedulingInterval);
 		
+		// sets initial variables
 		setTotalDatacenterEnergy(0.0);
 		setTotalStorageEnergy(0.0);
 	}
-	
-	// Methods
 	
 	/*
 	 * (non-Javadoc)
 	 * @see cloudsim.Datacenter#processCloudletSubmit(cloudsim.core.SimEvent, boolean)
 	 */
+	@SuppressWarnings("javadoc")
 	@Override
 	protected void processCloudletSubmit(
 			SimEvent ev,
 			boolean ack) {
-		// Handle Cloudlets' Processing, VMs and host updates regarding CPUs utilization
-		// (it is not our focus for this simulation).
-		// super.processCloudletSubmit(ev, ack);
-		// setCloudletSubmitted(CloudSim.clock());
-		
 		/**
-		 * When a cloudlet is received by the Datacenter, First (and once for all) it gets required files and adds data
-		 * Files by interacting with the persistent storage available.
+		 * When a cloudlet is received by the Datacenter, First (and once for all) it retrieves requiredFiles and adds
+		 * dataFiles by interacting with the persistent storage available.
 		 */
 		processCloudletFiles(ev,
 				ack);
 	}
 	
 	/**
-	 * Process Cloudlet Required Files and Data Files
+	 * Process Cloudlet Required Files and Data Files.
 	 * 
 	 * @param ev
 	 * @param ack
@@ -96,41 +90,50 @@ public class MyPowerDatacenter extends MyDatacenter {
 	public void processCloudletFiles(
 			SimEvent ev,
 			boolean ack) {
-		// gets the Cloudlet object
+		
+		// retrieve Cloudlet object
 		Cloudlet cl = (Cloudlet) ev.getData();
 		
-		// Confirm reception Cloudlet
+		// confirm Cloudlet reception
 		Log.printLine();
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d has been successfully received. ",
 				CloudSim.clock(),
 				getName(),
 				cl.getCloudletId());
 		
-		// Handle Cloudlet Files
+		// initializes local variable
 		double timeFrameStorageEnergy = 0.0;
 		
-		// handle requiredFiles of the Cloudlet
-		List<String> requiredFiles = cl.getRequiredFiles();
-		Iterator<String> iter = requiredFiles.iterator();
-		while (iter.hasNext()) {
-			String fileName = iter.next();
+		// handle requiredFiles
+		List<String> requiredFiles = new ArrayList<String>();
+		if (cl instanceof MyCloudlet) {
+			MyCloudlet mycl = (MyCloudlet) cl;
+			requiredFiles = mycl.getRequiredFiles();
+		}
+		
+		if (requiredFiles != null) {
+			Iterator<String> iter = requiredFiles.iterator();
 			
-			for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
-				File tempFile = storage.getFile(fileName);
-				if (tempFile != null) {
+			while (iter.hasNext()) {
+				String fileName = iter.next();
+				
+				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
+					File tempFile = storage.getFile(fileName);
 					
-					// add energy to this time frame storage energy
-					timeFrameStorageEnergy += processOperationWithStorage(storage,
-							tempFile,
-							cl,
-							"retrieved");
-					
-					break;
+					if (tempFile != null) {
+						
+						// add energy to this time frame storage energy
+						timeFrameStorageEnergy += processOperationWithStorage(storage,
+								tempFile,
+								cl,
+								"retrieved");
+						break;
+					}
 				}
 			}
 		}
 		
-		// Handle dataFiles of the Cloudlet
+		// Handle dataFiles
 		List<File> dataFiles = new ArrayList<File>();
 		if (cl instanceof MyCloudlet) {
 			MyCloudlet mycl = (MyCloudlet) cl;
@@ -138,9 +141,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 		}
 		
 		if (dataFiles != null) {
-			Iterator<File> iter2 = dataFiles.iterator();
-			while (iter2.hasNext()) {
-				File tempFile = iter2.next();
+			Iterator<File> iter = dataFiles.iterator();
+			
+			while (iter.hasNext()) {
+				File tempFile = iter.next();
 				
 				// Might need to move this in Datacenter.java
 				int answerTag = this.addFile(tempFile);
@@ -159,14 +163,12 @@ public class MyPowerDatacenter extends MyDatacenter {
 									tempFile,
 									cl,
 									"added");
-							
 						}
 					}
 				} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
 					Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
 							+ "> is already stored");
 				}
-				
 			}
 		}
 		
@@ -175,6 +177,15 @@ public class MyPowerDatacenter extends MyDatacenter {
 		setTotalStorageEnergy(getTotalStorageEnergy() + timeFrameStorageEnergy);
 	}
 	
+	/**
+	 * Process operation with the storage.
+	 * 
+	 * @param storage
+	 * @param tempFile
+	 * @param cl
+	 * @param action
+	 * @return the energy
+	 */
 	protected double processOperationWithStorage(
 			MyPowerHarddriveStorage storage,
 			File tempFile,
@@ -182,7 +193,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 			String action) {
 		
 		// compute energy
-		int mode = 1; // mode if either 0(idle) or 1(operating). Can be improve later on.
+		int mode = 1;
 		double tempPower = storage.getPower(mode);
 		double tempTime = tempFile.getTransactionTime();
 		double tempEnergy = tempPower * tempTime;
@@ -195,18 +206,17 @@ public class MyPowerDatacenter extends MyDatacenter {
 		double eventDelay = 0.0;
 		
 		if (storage.isOperating()) {
-			waitingDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a
-																	// duration.
-			storage.setEndAt(storage.getEndAt() + tempTime);
-			eventDelay = storage.getEndAt() - CloudSim.clock(); // Note: a delay is not a specific Time, it is a
-																// duration.
+			waitingDelay = storage.getOpeEndAt() - CloudSim.clock();
+			storage.setOpeEndAt(storage.getOpeEndAt() + tempTime);
+			eventDelay = storage.getOpeEndAt() - CloudSim.clock();
+			// Note: a delay is not a specific Time, it is a duration. A duration is a difference between two times.
 			
 		} else if (storage.isIdle()) {
 			// handle Idle intervals
-			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleModeStartTime());
+			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleStartTime());
 			
 			// handle Operating End Time
-			storage.setEndAt(CloudSim.clock() + tempTime);
+			storage.setOpeEndAt(CloudSim.clock() + tempTime);
 			
 			// handle Event for Operation completion
 			eventDelay = tempTime;
@@ -240,6 +250,11 @@ public class MyPowerDatacenter extends MyDatacenter {
 		return tempEnergy;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.cloudbus.cloudsim.MyDatacenter#processCloudletFilesDone(org.cloudbus.cloudsim.core.SimEvent)
+	 */
+	@SuppressWarnings("javadoc")
 	protected void processCloudletFilesDone(
 			SimEvent ev) {
 		
@@ -284,14 +299,18 @@ public class MyPowerDatacenter extends MyDatacenter {
 		storage.setQueueLength(storage.getQueueLength() - 1);
 		
 		// Test if there is further operation on the disk
-		if (storage.getEndAt() <= CloudSim.clock()) {
+		if (storage.getOpeEndAt() <= CloudSim.clock()) {
 			storage.setMode(0); // switch to idle mode
-			storage.setLastIdleModeStartTime(CloudSim.clock()); // handle Idle intervals
-			storage.setEndAt(0.0); // reset EndAt time
+			storage.setLastIdleStartTime(CloudSim.clock()); // handle Idle intervals
+			storage.setOpeEndAt(0.0); // reset EndAt time
 		}
 	}
 	
+	// GETTERs and SETTERs
+	
 	/**
+	 * Gets the total Energy related to Storage.
+	 * 
 	 * @return the totalStorageEnergy
 	 */
 	public double getTotalStorageEnergy() {
@@ -299,6 +318,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 	}
 	
 	/**
+	 * Sets the total Energy related to Storage.
+	 * 
 	 * @param totalStorageEnergy
 	 *            the totalStorageEnergy to set
 	 */
@@ -308,6 +329,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 	}
 	
 	/**
+	 * Gets the total energy related to the Datacenter.
+	 * 
 	 * @return the totalDatacenterEnergy
 	 */
 	public double getTotalDatacenterEnergy() {
@@ -315,6 +338,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 	}
 	
 	/**
+	 * Sets the total energy related to the Datacenter.
+	 * 
 	 * @param totalDatacenterEnergy
 	 *            the totalDatacenterEnergy to set
 	 */

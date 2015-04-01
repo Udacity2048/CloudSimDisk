@@ -278,7 +278,7 @@ public class CloudSimTags {
 	 * Convert tagValue to TagText.
 	 * 
 	 * @author Anupinder Singh
-	 * @author baplou
+	 * @author Baptiste Louis
 	 * @param tagValue
 	 * @return tagText
 	 */
