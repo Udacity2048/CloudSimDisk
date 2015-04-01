@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.cloudbus.cloudsim.Cloudlet;
@@ -115,10 +117,12 @@ public class Helper {
 	 * 
 	 */
 	public void createBroker(
+			String type,
 			String RequestArrivalDistri) {
 		try {
 			broker = new MyPowerDatacenterBroker(
 					"Broker",
+					type,
 					RequestArrivalDistri);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -260,7 +264,7 @@ public class Helper {
 			while ((line = input.readLine()) != null) {
 				
 				// retrieve fileName and fileSize
-				lineSplited = line.split("\\s+"); // regular expression quantifiers for whitespace
+				lineSplited = line.split("\\t+"); // regular expression quantifiers for whitespace
 				fileName = lineSplited[0];
 				fileSize = lineSplited[1];
 				
@@ -388,41 +392,67 @@ public class Helper {
 	
 	/**
 	 * Prints a summary of the simulation.
-	 * @param endTimeSimulation 
+	 * 
+	 * @param endTimeSimulation
 	 */
-	public void printResults(double endTimeSimulation) {
+	public void printResults(
+			double endTimeSimulation) {
 		double TotalStorageEnergy = datacenter.getTotalStorageEnergy();
+		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
 		
+		// -----------------------------------------------------------------------
 		Log.printLine();
-		Log.printLine("************************ RESULTS ************************");
+		Log.printLine("*************************** RESULTS ***************************");
 		Log.printLine();
 		Log.printLine("TIME SPENT IN IDLE/OPERATING MODE FOR EACH STORAGE");
-		
-		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
 		for (int i = 0; i < tempList.size(); i++) {
 			Log.printLine("Storage \"" + tempList.get(i).getName() + "\"");
-			Log.formatLine("Time in    Idle   mode: %12.6f second(s)", endTimeSimulation - tempList.get(i).getInOpeDuration() - 3634);
-			Log.formatLine("Time in Operating mode: %12.6f second(s)", tempList.get(i).getInOpeDuration());
+			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
+				Log.formatLine("        Idle intervale: %12.6f second(s)",
+						interval);
+			}
+			Log.formatLine("Time in    Idle   mode: %12.6f second(s)",
+					endTimeSimulation - tempList.get(i).getInOpeDuration());
+			Log.formatLine("Time in Operating mode: %12.6f second(s)",
+					tempList.get(i).getInOpeDuration());
+			Log.formatLine("Maximum Queue size    : %5d        operation(s)",
+					Collections.max(tempList.get(i).getQueueLengthHistory()));
 			Log.printLine();
 		}
-		
-		Log.printLine("BILAN ENERGY CONSUMTION FOR PERSISTENT STORAGE");
+		Log.printLine();
+		// -----------------------------------------------------------------------
+		Log.printLine();
+		Log.printLine("******** BILAN ENERGY CONSUMTION FOR PERSISTENT STORAGE *******");
 		Log.formatLine("Energy consumed by Persistent Storage: %.3f Joule(s)",
 				TotalStorageEnergy);
-	}
-	
-	/**
-	 * Prints the list of arrival request time.
-	 */
-	public void printArrivalRate() {
-		Log.printLine("\n\n");
-		Log.printLine("********* Arrival Rate in second(s) (not sorted) ********");
-		
+		Log.printLine();
+		// -----------------------------------------------------------------------
+		Log.printLine();
+		Log.printLine("************************** RAW DATA  **************************");
+		Log.printLine("ARRIVAL RATE in Second(s) (not sorted)");
 		for (Double delay : broker.getDelayHistory()) {
 			Log.formatLine("%20.15f",
 					delay);
 		}
+		Log.printLine();
+		Log.printLine("IDLE INTERVALS in Second(s) (not sorted)");
+		for (int i = 0; i < tempList.size(); i++) {
+			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
+				Log.formatLine("%20.15f",
+						interval);
+			}
+			Log.printLine();
+		}
+		Log.printLine("QUEUE SIZE in Operation(s) (not sorted)");
+		for (int i = 0; i < tempList.size(); i++) {
+			for (int queue : tempList.get(i).getQueueLengthHistory()) {
+				Log.formatLine("%4d",
+						queue);
+			}
+		}
+		Log.printLine();
+		// -----------------------------------------------------------------------
 		
-		Log.printLine("\n\n");
 	}
+	
 }

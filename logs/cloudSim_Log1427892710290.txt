@@ -1,8 +1,9 @@
 
-Starting simulation "simulationWiki1"
+Starting simulation "Basic test example"
 
 ACTION>> Hard disk drive "hdd1" is now in Idle mode.
 
+OBSERVATION>> #QueueLenght <hdd1> is now => 0
 OBSERVATION>> Initial persistent storage 
 1/1 hdd1
 	Capacity        ->    6000000 MB
@@ -37,51 +38,57 @@ CloudSim(future queue event added)
 
 
 CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.6839999999997; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@330bedb4
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.188925793810546; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@330bedb4
 
 
 CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.565; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@2503dbd3
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.5702156235142828; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@2503dbd3
 
 
 CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 3634.571; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@4b67cf4d
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.19506065658136243; endwaiting time = 0.0; data = org.cloudbus.cloudsim.MyCloudlet@4b67cf4d
 
 
-OBSERVATION>> Writting "wikiFileB" on "hdd1" will take:
-              0,016546 second(s) for SeekTime;
-              0,013889 second(s) for TransferTime;
-              0,004160 second(s) for Latency;
-              0,034594 second(s) in TOTAL.
-
-ACTION>> Hard disk drive "hdd1" is now in Operating mode.
-
-CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.599594436559; endwaiting time = 0.0; data = [Ljava.lang.Object;@7ea987ac
-
-
-OBSERVATION>> Writting "wikiFileC" on "hdd1" will take:
-              0,002406 second(s) for SeekTime;
-              0,009259 second(s) for TransferTime;
-              0,004160 second(s) for Latency;
-              0,015825 second(s) in TOTAL.
-
-CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.6154198414797; endwaiting time = 0.0; data = [Ljava.lang.Object;@12a3a380
-
-
-ACTION>> Hard disk drive "hdd1" is now in Idle mode.
-
-OBSERVATION>> Writting "wikiFileA" on "hdd1" will take:
-              0,005313 second(s) for SeekTime;
+OBSERVATION>> Writting "FileA" on "hdd1" will take:
+              0,008623 second(s) for SeekTime;
               0,004630 second(s) for TransferTime;
               0,004160 second(s) for Latency;
-              0,014103 second(s) in TOTAL.
+              0,017413 second(s) in TOTAL.
 
 ACTION>> Hard disk drive "hdd1" is now in Operating mode.
 
+OBSERVATION>> #QueueLenght <hdd1> is now => 1
 CloudSim(future queue event added)
-: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 3634.698102920948; endwaiting time = 0.0; data = [Ljava.lang.Object;@29453f44
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 0.20633884980135436; endwaiting time = 0.0; data = [Ljava.lang.Object;@7ea987ac
 
 
+OBSERVATION>> Writting "FileC" on "hdd1" will take:
+              0,005381 second(s) for SeekTime;
+              0,013889 second(s) for TransferTime;
+              0,004160 second(s) for Latency;
+              0,023430 second(s) in TOTAL.
+
+OBSERVATION>> #QueueLenght <hdd1> is now => 2
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 0.22976854081528544; endwaiting time = 0.0; data = [Ljava.lang.Object;@12a3a380
+
+
+OBSERVATION>> #QueueLenght <hdd1> is now => 1
+OBSERVATION>> #QueueLenght <hdd1> is now => 0
+ACTION>> Hard disk drive "hdd1" is now in Idle mode.
+
+OBSERVATION>> Writting "FileB" on "hdd1" will take:
+              0,002789 second(s) for SeekTime;
+              0,009259 second(s) for TransferTime;
+              0,004160 second(s) for Latency;
+              0,016208 second(s) in TOTAL.
+
+ACTION>> Hard disk drive "hdd1" is now in Operating mode.
+
+OBSERVATION>> #QueueLenght <hdd1> is now => 1
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = Cloudlet_Files_Done; source = datacenter; destination = datacenter; Time= 0.5864240291954274; endwaiting time = 0.0; data = [Ljava.lang.Object;@29453f44
+
+
+OBSERVATION>> #QueueLenght <hdd1> is now => 0
 ACTION>> Hard disk drive "hdd1" is now in Idle mode.

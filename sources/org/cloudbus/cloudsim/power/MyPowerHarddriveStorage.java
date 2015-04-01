@@ -4,8 +4,12 @@
  */
 package org.cloudbus.cloudsim.power;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.MyHarddriveStorage;
 import org.cloudbus.cloudsim.ParameterException;
@@ -28,6 +32,16 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 * Duration in Operating mode.
 	 */
 	public double		inOpeDuration;
+	
+	/**
+	 * interval of time during which the disk is in idle mode.
+	 */
+	public List<Double>	IdleIntervalsHistory	= new ArrayList<Double>();
+	
+	/**
+	 * last starting Idle mode time
+	 */
+	public double		LastIdleModeStartTime;
 	
 	/**
 	 * Creates a new harddrive storage base on a specific Storage Model Hdd.
@@ -54,6 +68,7 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 				storageModelHdd);
 		setPowerModelHdd(powerModel);
 		setInOpeDuration(0.0);
+		setLastIdleModeStartTime(0.0);
 	}
 	
 	/**
@@ -102,19 +117,42 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 		
 		return power;
 	}
-
+	
 	/**
 	 * @return the inOpeDuration
 	 */
 	public double getInOpeDuration() {
 		return inOpeDuration;
 	}
-
+	
 	/**
-	 * @param inOpeDuration the inOpeDuration to set
+	 * @param inOpeDuration
+	 *            the inOpeDuration to set
 	 */
 	public void setInOpeDuration(
 			double inOpeDuration) {
 		this.inOpeDuration = inOpeDuration;
+	}
+	
+	/**
+	 * @return the idle Intervals history
+	 */
+	public List<Double> getIdleIntervalsHistory() {
+		return IdleIntervalsHistory;
+	}
+
+	/**
+	 * @return the lastIdleModeStartTime
+	 */
+	public double getLastIdleModeStartTime() {
+		return LastIdleModeStartTime;
+	}
+
+	/**
+	 * @param lastIdleModeStartTime the lastIdleModeStartTime to set
+	 */
+	public void setLastIdleModeStartTime(
+			double lastIdleModeStartTime) {
+		LastIdleModeStartTime = lastIdleModeStartTime;
 	}
 }

@@ -31,6 +31,11 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	private ContinuousDistribution distri;
 	
 	/**
+	 * Type of distribution
+	 */
+	private String type;
+	
+	/**
 	 * Created a new DatacenterBroker object.
 	 * 
 	 * @param name
@@ -41,10 +46,10 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 * @post $none
 	 */
 	public MyPowerDatacenterBroker(
-			String name,String RequestArrivalDistri) throws Exception {
+			String name,String type, String RequestArrivalDistri) throws Exception {
 		super(name);
 		
-		setDistri(RequestArrivalDistri);
+		setDistri(type, RequestArrivalDistri);
 	}
 	
 	@Override
@@ -105,8 +110,8 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 * 
 	 * @param RequestArrivalDistri
 	 */
-	public void setDistri(String RequestArrivalDistri) {
-		switch (RequestArrivalDistri) {
+	public void setDistri(String type, String RequestArrivalDistri) {
+		switch (type) {
 			case "expo":
 				distri = new ExponentialDistr(60);
 				break;
@@ -116,11 +121,11 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 				break;
 				
 			case "unif":
-				distri = new UniformDistr(30, 50);
+				distri = new UniformDistr(0, 1);
 				break;
 				
 			case "wiki":
-				distri = new MyWikiDistr();
+				distri = new MyWikiDistr(RequestArrivalDistri);
 				break;
 			
 			default:

@@ -28,6 +28,7 @@ public class MyRunner {
 	 * Runner to run a MyExampleX scenario.
 	 * 
 	 * @param name
+	 * @param type 
 	 * @param NumberOfRequest
 	 * @param RequestArrivalDistri
 	 * @param dataFiles
@@ -36,14 +37,17 @@ public class MyRunner {
 	 */
 	public MyRunner(
 			String name,
+			String type,
 			int NumberOfRequest,
 			String RequestArrivalDistri,
 			String dataFiles,
 			String startingFilesList) throws Exception {
 		
+		Log.printLine("Starting simulation \"" + name + "\"\n");
 		PrintFile.AddtoFile("Starting simulation \"" + name + "\"\n");
 		
 		init(NumberOfRequest,
+				type,
 				RequestArrivalDistri,
 				dataFiles,
 				startingFilesList);
@@ -65,13 +69,14 @@ public class MyRunner {
 	 */
 	public void init(
 			int NumberOfRequest,
+			String type,
 			String RequestArrivalDistri,
 			String dataFiles,
 			String startingFilesList) throws Exception {
 		
 		// Entities
 		helper.initCloudSim();
-		helper.createBroker(RequestArrivalDistri);
+		helper.createBroker(type, RequestArrivalDistri);
 		helper.createPeList(1);
 		helper.createHostList(1);
 		helper.createVmList(1);
@@ -113,6 +118,5 @@ public class MyRunner {
 	 */
 	public void print() {
 		helper.printResults(endTimeSimulation);
-		helper.printArrivalRate();
 	}
 }

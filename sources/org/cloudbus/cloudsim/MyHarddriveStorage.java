@@ -1,6 +1,8 @@
 package org.cloudbus.cloudsim;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.cloudbus.cloudsim.core.PrintFile;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
@@ -39,6 +41,16 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	protected int			mode;
 	
 	/**
+	 * Queue length
+	 */
+	protected int			queueLength;
+	
+	/**
+	 * Queue length history
+	 */
+	protected List<Integer>	queueLengthHistory	= new ArrayList<Integer>();
+	
+	/**
 	 * Creates a Hard Drive storage from a specific model.
 	 * 
 	 * @param id
@@ -62,6 +74,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 		setStorageModel(storageModelHdd);
 		setEndAt(0.0);
 		setMode(0); // idle mode by default
+		setQueueLength(0);
 	}
 	
 	// GETTER and SETTER
@@ -168,6 +181,34 @@ public class MyHarddriveStorage extends HarddriveStorage {
 		PrintFile.AddtoFile("ACTION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
 	}
 	
+	/**
+	 * @return the queueLength
+	 */
+	public int getQueueLength() {
+		return queueLength;
+	}
+	
+	/**
+	 * @param queueLength
+	 *            the queueLength to set
+	 */
+	public void setQueueLength(
+			int queueLength) {
+		this.queueLength = queueLength;
+
+		// Store history
+		queueLengthHistory.add(queueLength);
+		
+		PrintFile.AddtoFile("OBSERVATION>> #QueueLenght <" + this.name + "> is now => " + queueLength);
+	}
+	
+	/**
+	 * @return the queueLengthHistory
+	 */
+	public List<Integer> getQueueLengthHistory() {
+		return queueLengthHistory;
+	}
+
 	/**
 	 * Is the HDD in Operating mode?
 	 * 

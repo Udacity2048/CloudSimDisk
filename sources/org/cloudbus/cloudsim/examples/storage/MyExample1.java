@@ -1,11 +1,11 @@
 package org.cloudbus.cloudsim.examples.storage;
 
 /**
- * A first example based on Wikipedia workload.
+ * A basic example.
  * 
  * @author Baptiste Louis
  */
-public class MyExampleWikipedia1 {
+public class MyExample1 {
 	
 	/**
 	 * The main method.
@@ -18,11 +18,11 @@ public class MyExampleWikipedia1 {
 			String[] args) throws Exception {
 		
 		// Parameters
-		String name = "simulationWiki1"; // name of the simulation
-		String type = "wiki"; // type of the workload
-		int NumberOfRequest = MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
-		String RequestArrivalDistri = "wikiDistr"; // fileName which contains Times Distributions based on Wikipedia workload format.
-		String dataFiles = "wikiDataFiles.txt"; // Hypothetical Wikipedia dataFiles
+		String name = "Basic test example"; // name of the simulation
+		String type = "unif"; // type of the workload
+		int NumberOfRequest = 3; // Number of requests
+		String RequestArrivalDistri = ""; // fileName which contains Times Distributions based on Wikipedia workload format.
+		String dataFiles = "ex1DataFiles.txt"; // Hypothetical Wikipedia dataFiles
 		String startingFilesList = ""; // No files to start
 		
 		// Execution

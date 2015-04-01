@@ -16,7 +16,7 @@ public class MyWikiDistr implements ContinuousDistribution {
 	private final String	path;
 	
 	/** The request arrival times */
-	private double[]			times;
+	private double[]		times;
 	
 	/** Reader index */
 	private int				index;
@@ -24,8 +24,9 @@ public class MyWikiDistr implements ContinuousDistribution {
 	/**
 	 * Creates a new wiki distribution.
 	 */
-	public MyWikiDistr() {
-		path = "files/wikiDistr";
+	public MyWikiDistr(
+			String RequestArrivalDistri) {
+		path = "files/" + RequestArrivalDistri;
 		index = -1;
 		times = new double[MyConstants.CLOUDLET_NUMBER_WIKI];
 		init();
@@ -73,6 +74,7 @@ public class MyWikiDistr implements ContinuousDistribution {
 	
 	/**
 	 * Get the next sample.
+	 * 
 	 * @return a time
 	 */
 	public double sample() {
