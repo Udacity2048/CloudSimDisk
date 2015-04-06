@@ -35,67 +35,65 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * 
  */
 public class Helper {
-	
+
 	/**
 	 * the cloudlet list.
 	 */
-	public List<MyCloudlet>						cloudletList	= new ArrayList<MyCloudlet>();
-	
+	public List<MyCloudlet> cloudletList = new ArrayList<MyCloudlet>();
+
 	/**
 	 * the cloudlet required FileNames list.
 	 */
-	public List<String>							requiredFiles	= new ArrayList<String>();
-	
+	public List<String> requiredFiles = new ArrayList<String>();
+
 	/**
 	 * the cloudlet data Files list.
 	 */
-	public List<File>							dataFiles		= new ArrayList<File>();
-	
+	public List<File> dataFiles = new ArrayList<File>();
+
 	/**
 	 * the Power-VM List.
 	 */
-	public List<PowerVm>						vmlist			= new ArrayList<PowerVm>();
-	
+	public List<PowerVm> vmlist = new ArrayList<PowerVm>();
+
 	/**
 	 * the Power-host List.
 	 */
-	public List<PowerHost>						hostList		= new ArrayList<PowerHost>();
-	
+	public List<PowerHost> hostList = new ArrayList<PowerHost>();
+
 	/**
 	 * the Pe List.
 	 */
-	public List<Pe>								peList			= new ArrayList<Pe>();
-	
+	public List<Pe> peList = new ArrayList<Pe>();
+
 	/**
 	 * the persistent storage List.
 	 */
-	public LinkedList<MyPowerHarddriveStorage>	storageList		= new LinkedList<MyPowerHarddriveStorage>();
-	
+	public LinkedList<MyPowerHarddriveStorage> storageList = new LinkedList<MyPowerHarddriveStorage>();
+
 	/**
 	 * the Broker.
 	 */
-	public MyPowerDatacenterBroker				broker;
-	
+	public MyPowerDatacenterBroker broker;
+
 	/**
 	 * the Datacenter.
 	 */
-	public MyPowerDatacenter					datacenter;
-	
+	public MyPowerDatacenter datacenter;
+
 	/**
 	 * the Datacenter Characteristics
 	 */
-	public DatacenterCharacteristics			datacenterCharacteristics;
-	
+	public DatacenterCharacteristics datacenterCharacteristics;
+
 	// Methods
 	/**
 	 * Initialize CloudSim.
 	 */
 	public void initCloudSim() {
-		CloudSim.init(1,
-				Calendar.getInstance(),
-				false);
+		CloudSim.init(1, Calendar.getInstance(), false);
 	}
-	
+
 	/**
 	 * Creates a Power-aware broker named "Broker".
 	 * 
@@ -103,227 +101,197 @@ public class Helper {
 	 * @param RequestArrivalDistri
 	 * 
 	 */
-	public void createBroker(
-			String type,
-			String RequestArrivalDistri) {
+	public void createBroker(String type, String RequestArrivalDistri) {
 		try {
-			broker = new MyPowerDatacenterBroker(
-					"Broker",
-					type,
+			broker = new MyPowerDatacenterBroker("Broker", type,
 					RequestArrivalDistri);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * create Pe List.
 	 * 
 	 * @param PesNumber
 	 */
-	public void createPeList(
-			int PesNumber) {
+	public void createPeList(int PesNumber) {
 		for (int i = 1; i <= PesNumber; i++) {
-			peList.add(new Pe(
-					i,
-					new PeProvisionerSimple(
-							MyConstants.HOST_MIPS)));
+			peList.add(new Pe(i, new PeProvisionerSimple(MyConstants.HOST_MIPS)));
 		}
 	}
-	
+
 	/**
 	 * Creates the host list.
 	 * 
 	 * @param hostsNumber
 	 *            the hosts number
 	 */
-	public void createHostList(
-			int hostsNumber) {
+	public void createHostList(int hostsNumber) {
 		for (int i = 1; i <= hostsNumber; i++) {
-			hostList.add(new PowerHost(
-					i,
-					new RamProvisionerSimple(
-							MyConstants.HOST_RAM),
-					new BwProvisionerSimple(
-							MyConstants.HOST_BW),
-					MyConstants.HOST_STORAGE,
-					peList,
-					new VmSchedulerTimeSharedOverSubscription(
-							peList),
+			hostList.add(new PowerHost(i, new RamProvisionerSimple(
+					MyConstants.HOST_RAM), new BwProvisionerSimple(
+					MyConstants.HOST_BW), MyConstants.HOST_STORAGE, peList,
+					new VmSchedulerTimeSharedOverSubscription(peList),
 					MyConstants.HOST_POWER_MODEL));
 		}
 	}
-	
+
 	/**
 	 * Creates the vm list.
 	 * 
 	 * @param vmsNumber
 	 *            the vms number
 	 */
-	public void createVmList(
-			int vmsNumber) {
+	public void createVmList(int vmsNumber) {
 		for (int i = 1; i <= vmsNumber; i++) {
-			vmlist.add(new PowerVm(
-					i,
-					broker.getId(),
-					MyConstants.VM_MIPS,
-					MyConstants.VM_PES_NUMBER,
-					MyConstants.VM_RAM,
-					MyConstants.VM_BW,
-					MyConstants.VM_SIZE,
-					MyConstants.VM_PRIORITY,
-					MyConstants.VM_VMM,
+			vmlist.add(new PowerVm(i, broker.getId(), MyConstants.VM_MIPS,
+					MyConstants.VM_PES_NUMBER, MyConstants.VM_RAM,
+					MyConstants.VM_BW, MyConstants.VM_SIZE,
+					MyConstants.VM_PRIORITY, MyConstants.VM_VMM,
 					MyConstants.VM_CLOUDLET_SCHEDULER,
 					MyConstants.VM_SCHEDULING_INTERVVAL));
 		}
 		broker.submitVmList(vmlist);
 	}
-	
+
 	/**
-	 * create a defined number of defined storage type to the persistent storage of a power-aware datacenter.
+	 * create a defined number of defined storage type to the persistent storage
+	 * of a power-aware datacenter.
 	 * 
 	 * @param storageNumber
 	 * @throws ParameterException
 	 */
-	public void createPersistentStorage(
-			int storageNumber) throws ParameterException {
+	public void createPersistentStorage(int storageNumber)
+			throws ParameterException {
 		for (int i = 1; i <= storageNumber; i++) {
-			storageList.add(new MyPowerHarddriveStorage(
-					i,
-					"hdd" + i,
+			storageList.add(new MyPowerHarddriveStorage(i, "hdd" + i,
 					MyConstants.STORAGE_MODEL_HDD,
 					MyConstants.STORAGE_POWER_MODEL_HDD));
 		}
 	}
-	
+
 	/**
 	 * Creates a power-aware Datacenter.
 	 */
 	public void createDatacenterCharacteristics() {
 		datacenterCharacteristics = new DatacenterCharacteristics(
-				MyConstants.DATACENTER_ARCHITECTURE,
-				MyConstants.DATACENTER_OS,
-				MyConstants.DATACENTER_VMM,
-				hostList,
+				MyConstants.DATACENTER_ARCHITECTURE, MyConstants.DATACENTER_OS,
+				MyConstants.DATACENTER_VMM, hostList,
 				MyConstants.DATACENTER_TIME_ZONE,
 				MyConstants.DATACENTER_COST_PER_SEC,
 				MyConstants.DATACENTER_COST_PER_MEM,
 				MyConstants.DATACENTER_COST_PER_STORAGE,
 				MyConstants.DATACENTER_COST_PER_BW);
 	}
-	
+
 	/**
 	 * Creates a power-aware Datacenter.
 	 * 
 	 * @throws Exception
 	 */
 	public void createDatacenter() throws Exception {
-		datacenter = new MyPowerDatacenter(
-				MyConstants.DATACENTER_NAME,
-				datacenterCharacteristics,
-				new VmAllocationPolicySimple(
-						hostList),
-				storageList,
+		datacenter = new MyPowerDatacenter(MyConstants.DATACENTER_NAME,
+				datacenterCharacteristics, new VmAllocationPolicySimple(
+						hostList), storageList,
 				MyConstants.DATACENTER_SCHEDULING_INTERVAL);
 	}
-	
+
 	/**
 	 * Create a list of data Files.
 	 * 
 	 * @param source
 	 *            name of the file in the default files folder.
 	 */
-	public void createDataFilesList(
-			String source) {
+	public void createDataFilesList(String source) {
 		String path = "files/" + source;
-		
+
 		try {
 			// instantiate a reader
-			BufferedReader input = new BufferedReader(
-					new FileReader(
-							path));
-			
+			BufferedReader input = new BufferedReader(new FileReader(path));
+
 			// read line by line
 			String line;
 			String[] lineSplited;
 			String fileName;
 			String fileSize;
 			while ((line = input.readLine()) != null) {
-				
+
 				// retrieve fileName and fileSize
-				lineSplited = line.split("\\t+"); // regular expression quantifiers for whitespace
+				lineSplited = line.split("\\t+"); // regular expression
+													// quantifiers for
+													// whitespace
 				fileName = lineSplited[0];
 				fileSize = lineSplited[1];
-				
+
 				// add file to the List
-				dataFiles.add(new File(
-						fileName,
-						Integer.parseInt(fileSize)));
+				dataFiles.add(new File(fileName, Integer.parseInt(fileSize)));
 			}
-			
+
 			// close the reader
 			input.close();
-			
+
 		} catch (IOException | NumberFormatException | ParameterException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Create a list of required FileNames.
 	 * 
 	 * @param source
 	 *            name of the file in the default files folder.
 	 */
-	public void createRequiredFilesList(
-			String source) {
-		String path = "files/" + source;
-		
-		try {
-			// instantiates reader
-			BufferedReader input = new BufferedReader(
-					new FileReader(
-							path));
-			
-			// instantiates local variable
-			String fileName;
-			
-			// read line by line
-			while ((fileName = input.readLine()) != null) {
-				
-				// add fileName to the List
-				requiredFiles.add(fileName);
+	public void createRequiredFilesList(String source) {
+
+		if (source != "") {
+
+			String path = "files/" + source;
+
+			try {
+				// instantiates reader
+				BufferedReader input = new BufferedReader(new FileReader(path));
+
+				// instantiates local variable
+				String fileName;
+
+				// read line by line
+				while ((fileName = input.readLine()) != null) {
+
+					// add fileName to the List
+					requiredFiles.add(fileName);
+				}
+
+				// close the reader
+				input.close();
+
+			} catch (IOException | NumberFormatException e) {
+				e.printStackTrace();
 			}
-			
-			// close the reader
-			input.close();
-			
-		} catch (IOException | NumberFormatException e) {
-			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @param CloudlerNumber
 	 * @throws ParameterException
 	 */
-	public void createCloudletList(
-			int CloudlerNumber) throws ParameterException {
-		
+	public void createCloudletList(int CloudlerNumber)
+			throws ParameterException {
+
 		// local variable
 		ArrayList<String> tempRequiredFilesList = null;
 		ArrayList<File> tempDataFilesList = null;
-		
+
 		for (int i = 1; i <= CloudlerNumber; i++) {
-			
+
 			// handle dataFiles
 			if (i <= dataFiles.size()) {
-				tempDataFilesList = new ArrayList<File>(
-						Arrays.asList(dataFiles.get(i - 1)));
+				tempDataFilesList = new ArrayList<File>(Arrays.asList(dataFiles
+						.get(i - 1)));
 			} else {
 				tempDataFilesList = null;
 			}
-			
+
 			// handle requiredFiles
 			if (i <= requiredFiles.size()) {
 				tempRequiredFilesList = new ArrayList<String>(
@@ -331,108 +299,98 @@ public class Helper {
 			} else {
 				tempRequiredFilesList = null;
 			}
-			
+
 			// create cloudlet
-			cloudletList.add(new MyCloudlet(
-					i,
-					MyConstants.CLOUDLET_LENGHT,
+			cloudletList.add(new MyCloudlet(i, MyConstants.CLOUDLET_LENGHT,
 					MyConstants.CLOUDLET_PES_NUMBER,
 					MyConstants.CLOUDLET_FILE_SIZE,
 					MyConstants.CLOUDLET_OUTPUT_SIZE,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_CPU,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_RAM,
 					MyConstants.CLOUDLET_UTILIZATION_MODEL_BW,
-					tempRequiredFilesList,
-					tempDataFilesList));
+					tempRequiredFilesList, tempDataFilesList));
 			cloudletList.get(i - 1).setUserId(broker.getId());
 			cloudletList.get(i - 1).setVmId(vmlist.get(0).getId());
 		}
-		
+
 		// submit the list to the broker
 		broker.submitCloudletList(cloudletList);
 	}
-	
+
 	/**
 	 * @param startingFilesList
 	 */
-	public void addFiles(
-			String startingFilesList) {
-		
+	public void addFiles(String startingFilesList) {
+
 		if (startingFilesList != "") {
 			try {
 				// instantiate a reader
-				BufferedReader input = new BufferedReader(
-						new FileReader(
-								"files/" + startingFilesList));
-				
+				BufferedReader input = new BufferedReader(new FileReader(
+						"files/" + startingFilesList));
+
 				// read line by line
 				String line;
 				String[] lineSplited;
 				String fileName;
 				String fileSize;
 				while ((line = input.readLine()) != null) {
-					
+
 					// retrieve fileName and fileSize
-					lineSplited = line.split("\\s+"); // regular expression quantifiers for whitespace
+					lineSplited = line.split("\\s+"); // regular expression
+														// quantifiers for
+														// whitespace
 					fileName = lineSplited[0];
 					fileSize = lineSplited[1];
-					
+
 					// add file to datacenter
-					datacenter.addFile(new File(
-							fileName,
-							Integer.parseInt(fileSize)));
+					datacenter.addFile(new File(fileName, Integer
+							.parseInt(fileSize)));
 				}
-				
+
 				// close the reader
 				input.close();
-				
+
 			} catch (IOException | NumberFormatException | ParameterException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * print the persistent storage details of a power-aware datacenter.
 	 */
 	public void printPersistenStorageDetails() {
 		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
 		String msg = "";
-		
+
 		for (int i = 0; i < tempList.size(); i++) {
 			msg += String
 					.format("OBSERVATION>> Initial persistent storage \n%d/%d %s\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f MB/s\n",
-							(i + 1),
-							tempList.size(),
-							tempList.get(i).getName(),
-							"Capacity",
-							tempList.get(i).getCapacity(),
-							"UsedSpace",
-							(tempList.get(i).getCapacity() - tempList.get(i).getAvailableSpace()),
-							"FreeSpave",
-							tempList.get(i).getAvailableSpace(),
-							"Latency",
-							tempList.get(i).getLatency(),
-							"avgSeekTime",
+							(i + 1), tempList.size(),
+							tempList.get(i).getName(), "Capacity", tempList
+									.get(i).getCapacity(), "UsedSpace",
+							(tempList.get(i).getCapacity() - tempList.get(i)
+									.getAvailableSpace()), "FreeSpave",
+							tempList.get(i).getAvailableSpace(), "Latency",
+							tempList.get(i).getLatency(), "avgSeekTime",
 							tempList.get(i).getAvgSeekTime(),
-							"maxTransferRate",
-							tempList.get(i).getMaxTransferRate());
+							"maxTransferRate", tempList.get(i)
+									.getMaxTransferRate());
 		}
-		
+
 		PrintFile.AddtoFile(msg);
 	}
-	
+
 	/**
 	 * Prints a summary of the simulation.
 	 * 
 	 * @param endTimeSimulation
 	 */
-	public void printResults(
-			double endTimeSimulation) {
+	public void printResults(double endTimeSimulation) {
 		double TotalStorageEnergy = datacenter.getTotalStorageEnergy();
 		List<MyPowerHarddriveStorage> tempList = datacenter.getStorageList();
-		
+
 		// -----------------------------------------------------------------------
 		Log.printLine();
 		Log.printLine("*************************** RESULTS ***************************");
@@ -446,8 +404,8 @@ public class Helper {
 			}
 			Log.formatLine("Time in    Idle   mode: %12.6f second(s)",
 					endTimeSimulation - tempList.get(i).getInActiveDuration());
-			Log.formatLine("Time in   Active  mode: %12.6f second(s)",
-					tempList.get(i).getInActiveDuration());
+			Log.formatLine("Time in   Active  mode: %12.6f second(s)", tempList
+					.get(i).getInActiveDuration());
 			Log.formatLine("Time of the simulation: %12.6f second(s)",
 					endTimeSimulation);
 			Log.formatLine("Maximum Queue size    : %5d        operation(s)",
@@ -466,28 +424,25 @@ public class Helper {
 		Log.printLine("************************** RAW DATA  **************************");
 		Log.printLine("ARRIVAL RATE in Second(s) (not sorted)");
 		for (Double delay : broker.getArrivalTimeHistory()) {
-			Log.formatLine("%20.15f",
-					delay);
+			Log.formatLine("%20.15f", delay);
 		}
 		Log.printLine();
 		Log.printLine("IDLE INTERVALS in Second(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
 			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
-				Log.formatLine("%20.15f",
-						interval);
+				Log.formatLine("%20.15f", interval);
 			}
 			Log.printLine();
 		}
 		Log.printLine("QUEUE SIZE in Operation(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
 			for (int queue : tempList.get(i).getQueueLengthHistory()) {
-				Log.formatLine("%4d",
-						queue);
+				Log.formatLine("%4d", queue);
 			}
 		}
 		Log.printLine();
 		// -----------------------------------------------------------------------
-		
+
 	}
-	
+
 }
