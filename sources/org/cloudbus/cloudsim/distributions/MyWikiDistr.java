@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cloudbus.cloudsim.examples.storage.MyConstants;
-
 /**
  * A wikipedia Number generator. Each sample is read from a Wikipedia Workload file. The Wikipedia Workload file is
  * formatted according to WikiBench.s. More information at http://www.wikibench.eu/?page_id=60 .
@@ -37,7 +35,7 @@ public class MyWikiDistr implements ContinuousDistribution {
 	 */
 	public MyWikiDistr(
 			String workloadFileName) {
-		path = "files/wikipedia/" + workloadFileName;
+		path = "files/" + workloadFileName;
 		index = -1;
 		times = new ArrayList<Double>();
 		init();

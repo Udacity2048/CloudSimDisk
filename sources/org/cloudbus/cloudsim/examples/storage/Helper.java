@@ -408,39 +408,44 @@ public class Helper {
 					.get(i).getInActiveDuration());
 			Log.formatLine("Time of the simulation: %12.6f second(s)",
 					endTimeSimulation);
-			Log.formatLine("Maximum Queue size    : %5d        operation(s)",
+			Log.printLine();
+			Log.formatLine("Maximum Queue size    : %10d operation(s)",
 					Collections.max(tempList.get(i).getQueueLengthHistory()));
 			Log.printLine();
-		}
-		Log.printLine();
-		// -----------------------------------------------------------------------
-		Log.printLine();
-		Log.printLine("******** BILAN ENERGY CONSUMTION FOR PERSISTENT STORAGE *******");
-		Log.formatLine("Energy consumed by Persistent Storage: %.3f Joule(s)",
-				TotalStorageEnergy);
-		Log.printLine();
-		// -----------------------------------------------------------------------
-		Log.printLine();
-		Log.printLine("************************** RAW DATA  **************************");
-		Log.printLine("ARRIVAL RATE in Second(s) (not sorted)");
-		for (Double delay : broker.getArrivalTimeHistory()) {
-			Log.formatLine("%20.15f", delay);
-		}
-		Log.printLine();
-		Log.printLine("IDLE INTERVALS in Second(s) (not sorted)");
-		for (int i = 0; i < tempList.size(); i++) {
-			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
-				Log.formatLine("%20.15f", interval);
-			}
+			Log.formatLine(
+					"Energy consumed by Persistent Storage: %.3f Joule(s)",
+					TotalStorageEnergy);
 			Log.printLine();
 		}
-		Log.printLine("QUEUE SIZE in Operation(s) (not sorted)");
+		Log.printLine();
+		// -----------------------------------------------------------------------
+
+		// -----------------------------------------------------------------------
+		// Log detailed information.
+		PrintFile.AddtoFile("\n************************** RAW DATA  **************************");
+		
+		// Arrival rate
+		PrintFile.AddtoFile("ARRIVAL RATE in Second(s) (not sorted)");
+		for (Double delay : broker.getArrivalTimeHistory()) {
+			PrintFile.AddtoFile(String.format("%20.15f", delay));
+		}
+
+		// Idle Interval
+		PrintFile.AddtoFile("\nIDLE INTERVALS in Second(s) (not sorted)");
+		for (int i = 0; i < tempList.size(); i++) {
+			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
+				PrintFile.AddtoFile(String.format("%20.15f", interval));
+			}
+			PrintFile.AddtoFile("\n");
+		}
+		
+		// queue size
+		PrintFile.AddtoFile("QUEUE SIZE in Operation(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
 			for (int queue : tempList.get(i).getQueueLengthHistory()) {
-				Log.formatLine("%4d", queue);
+				PrintFile.AddtoFile(String.format("%4d", queue));
 			}
 		}
-		Log.printLine();
 		// -----------------------------------------------------------------------
 
 	}
