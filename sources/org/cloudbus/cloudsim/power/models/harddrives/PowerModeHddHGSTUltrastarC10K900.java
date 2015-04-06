@@ -19,7 +19,7 @@ public class PowerModeHddHGSTUltrastarC10K900 extends PowerModelHdd {
 	private final double	powerIdle	= 3.0;
 	
 	/**
-	 * The power consumption of the HDD in operation mode in W.
+	 * The power consumption of the HDD in active mode in W.
 	 */
 	private final double	powerOpe	= 5.8;
 	

@@ -4,7 +4,9 @@ import java.util.List;
 
 /**
  * My Cloudlet extends Cloudlet.java by adding RequiredFiles and DataFiles parameters. RequiredFiles is a list of
- * fileNames that is required by the Cloudlet. DataFiles is a list of Files that need to be added on the datacenter.
+ * fileNames that is required by the Cloudlet. Consequently, these files will be retrieve from the persistent storage of
+ * the datacenter. DataFiles is a list of Files that need to be added on the datacenter. Thus, these files will be added
+ * to the persistent storage.
  * 
  * @author Baptiste Louis
  * 
@@ -60,8 +62,7 @@ public class MyCloudlet extends Cloudlet {
 				cloudletOutputSize,
 				utilizationModelCpu,
 				utilizationModelRam,
-				utilizationModelBw,
-				false);
+				utilizationModelBw);
 		
 		setRequiredFiles(requiredFiles);
 		setDataFiles(dataFiles);
@@ -74,6 +75,7 @@ public class MyCloudlet extends Cloudlet {
 	 * 
 	 * @return the required files
 	 */
+	@Override
 	public List<String> getRequiredFiles() {
 		return requiredFiles;
 	}

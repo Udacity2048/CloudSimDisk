@@ -198,25 +198,25 @@ public class MyPowerDatacenter extends MyDatacenter {
 		double tempTime = tempFile.getTransactionTime();
 		double tempEnergy = tempPower * tempTime;
 		
-		// add the transaction time to the total operating time for this disk
-		storage.setInOpeDuration(storage.getInOpeDuration() + tempTime);
+		// add the transaction time to the total active time for this disk
+		storage.setInActiveDuration(storage.getInActiveDuration() + tempTime);
 		
 		// handle EndTime of the HDD
 		double waitingDelay = 0.0;
 		double eventDelay = 0.0;
 		
-		if (storage.isOperating()) {
-			waitingDelay = storage.getOpeEndAt() - CloudSim.clock();
-			storage.setOpeEndAt(storage.getOpeEndAt() + tempTime);
-			eventDelay = storage.getOpeEndAt() - CloudSim.clock();
+		if (storage.isActive()) {
+			waitingDelay = storage.getActiveEndAt() - CloudSim.clock();
+			storage.setActiveEndAt(storage.getActiveEndAt() + tempTime);
+			eventDelay = storage.getActiveEndAt() - CloudSim.clock();
 			// Note: a delay is not a specific Time, it is a duration. A duration is a difference between two times.
 			
 		} else if (storage.isIdle()) {
 			// handle Idle intervals
 			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleStartTime());
 			
-			// handle Operating End Time
-			storage.setOpeEndAt(CloudSim.clock() + tempTime);
+			// handle Active End Time
+			storage.setActiveEndAt(CloudSim.clock() + tempTime);
 			
 			// handle Event for Operation completion
 			eventDelay = tempTime;
@@ -299,10 +299,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 		storage.setQueueLength(storage.getQueueLength() - 1);
 		
 		// Test if there is further operation on the disk
-		if (storage.getOpeEndAt() <= CloudSim.clock()) {
+		if (storage.getActiveEndAt() <= CloudSim.clock()) {
 			storage.setMode(0); // switch to idle mode
 			storage.setLastIdleStartTime(CloudSim.clock()); // handle Idle intervals
-			storage.setOpeEndAt(0.0); // reset EndAt time
+			storage.setActiveEndAt(0.0); // reset EndAt time
 		}
 	}
 	

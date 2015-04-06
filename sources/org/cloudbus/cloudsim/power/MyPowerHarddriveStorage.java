@@ -28,9 +28,9 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	private PowerModel	powerModelHdd;
 	
 	/**
-	 * Duration in Operating mode.
+	 * Duration in Active mode.
 	 */
-	public double		inOpeDuration;
+	public double		inActiveDuration;
 	
 	/**
 	 * Idle Duration Intervals history (when the disk is in idle mode).
@@ -70,7 +70,7 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 		setPowerModelHdd(powerModel);
 		
 		// set initial parameters
-		setInOpeDuration(0.0);
+		setInActiveDuration(0.0);
 		setLastIdleStartTime(0.0);
 	}
 	
@@ -100,7 +100,7 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 * Gets the power.
 	 * 
 	 * @param mode
-	 *            0 for idle, 1 for operating
+	 *            0 for idle, 1 for Active
 	 * @return the power
 	 */
 	public double getPower(
@@ -111,7 +111,7 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 		
 		// check parameter validity
 		if (mode != 0 && mode != 1) {
-			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for operating mode.");
+			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for Active mode.");
 			return power;
 		}
 		
@@ -129,23 +129,23 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	}
 	
 	/**
-	 * Gets the operating duration.
+	 * Gets the Active duration.
 	 * 
-	 * @return the inOpeDuration
+	 * @return the inActiveDuration
 	 */
-	public double getInOpeDuration() {
-		return inOpeDuration;
+	public double getInActiveDuration() {
+		return inActiveDuration;
 	}
 	
 	/**
-	 * Sets the operating duration.
+	 * Sets the Active duration.
 	 * 
-	 * @param inOpeDuration
-	 *            the inOpeDuration to set
+	 * @param inActiveDuration
+	 *            the inActiveDuration to set
 	 */
-	public void setInOpeDuration(
-			double inOpeDuration) {
-		this.inOpeDuration = inOpeDuration;
+	public void setInActiveDuration(
+			double inActiveDuration) {
+		this.inActiveDuration = inActiveDuration;
 	}
 	
 	/**

@@ -19,7 +19,7 @@ public class PowerModeHddSeagateEnterpriseST6000VN0001 extends PowerModelHdd {
 	private final double	powerIdle	= 6.9;
 	
 	/**
-	 * The power consumption of the HDD in operation mode in W.
+	 * The power consumption of the HDD in active mode in W.
 	 */
 	private final double	powerOpe	= 11.27;
 	

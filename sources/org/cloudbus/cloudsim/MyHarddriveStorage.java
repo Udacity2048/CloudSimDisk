@@ -12,7 +12,7 @@ import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 /**
  * My HarddriveStorage extends HarddriveStorage.java by overwriting some of its methods. The modifications are not
  * important but necessary for the new storage implementation. Mainly, it adds variable concerning the Waiting Queue,
- * the mode and the Operation End Time with their corresponding GETTER and SETTER. Additionally, only one constructor is
+ * the mode and the Active End Time with their corresponding GETTER and SETTER. Additionally, only one constructor is
  * available based on a HDD storage model in order to simplify things. Some models are provided and more can be easily
  * implemented by the user.
  * 
@@ -37,12 +37,12 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	private StorageModelHdd	storageModel;
 	
 	/**
-	 * time (ms) until when the disk is in Operation mode. If 0, the disk is in Idle mode.
+	 * time (ms) until when the disk is in Active mode.
 	 */
-	protected double		opeEndAt;
+	protected double		activeEndAt;
 	
 	/**
-	 * mode of the HDD. If 0, the disk is idle mode. If 1, the disk is in operating mode.
+	 * mode of the HDD. If 0, the disk is idle mode. If 1, the disk is in Active mode.
 	 */
 	protected int			mode;
 	
@@ -79,7 +79,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 		// initializes global variables
 		setId(id);
 		setStorageModel(storageModelHdd);
-		setOpeEndAt(0.0);
+		setActiveEndAt(0.0);
 		setMode(0);
 		setQueueLength(0);
 	}
@@ -145,7 +145,7 @@ public class MyHarddriveStorage extends HarddriveStorage {
 		if (mode == 0) {
 			result = "Idle";
 		} else if (mode == 1) {
-			result = "Operating";
+			result = "Active";
 		}
 		
 		PrintFile.AddtoFile("OBSERVATION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
@@ -235,23 +235,23 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
-	 * Get the "Operation End At" time.
+	 * Get the "Active End At" time.
 	 * 
-	 * @return the opeEndAt
+	 * @return the activeEndAt
 	 */
-	public double getOpeEndAt() {
-		return opeEndAt;
+	public double getActiveEndAt() {
+		return activeEndAt;
 	}
 	
 	/**
-	 * Sets the "Operation End At" time.
+	 * Sets the "Active End At" time.
 	 * 
-	 * @param opeEndAt
-	 *            the EndAt to set
+	 * @param activeEndAt
+	 *            the time to set
 	 */
-	public void setOpeEndAt(
-			double opeEndAt) {
-		this.opeEndAt = opeEndAt;
+	public void setActiveEndAt(
+			double activeEndAt) {
+		this.activeEndAt = activeEndAt;
 	}
 	
 	/**
@@ -264,11 +264,11 @@ public class MyHarddriveStorage extends HarddriveStorage {
 	}
 	
 	/**
-	 * Is the HDD in Operating mode?
+	 * Is the HDD in Active mode?
 	 * 
 	 * @return the answer
 	 */
-	public boolean isOperating() {
+	public boolean isActive() {
 		if (mode == 1) {
 			return true;
 		} else {

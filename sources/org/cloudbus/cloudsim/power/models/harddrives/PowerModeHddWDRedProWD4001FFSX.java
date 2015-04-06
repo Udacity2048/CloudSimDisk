@@ -19,7 +19,7 @@ public class PowerModeHddWDRedProWD4001FFSX extends PowerModelHdd {
 	private final double	powerIdle	= 6.5;
 	
 	/**
-	 * The power consumption of the HDD in operation mode in W.
+	 * The power consumption of the HDD in active mode in W.
 	 */
 	private final double	powerOpe	= 8.6;
 	

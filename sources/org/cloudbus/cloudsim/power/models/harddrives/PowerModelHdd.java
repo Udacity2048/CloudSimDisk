@@ -18,7 +18,7 @@ public abstract class PowerModelHdd implements PowerModel {
 
     /*
      * This methode return the power consumption of an Hard drive according to 
-     * its mode: 0 for Idle mode, 1 for operation mode.
+     * its mode: 0 for Idle mode, 1 for active mode.
      *
      * Note: further, new mode can be implemented.
      *
@@ -34,7 +34,7 @@ public abstract class PowerModelHdd implements PowerModel {
     /**
      * Gets the power data.
      *
-     * @param key 0 for Idle mode, 1 for operation mode.
+     * @param key 0 for Idle mode, 1 for active mode.
      * @return the power data
      */
     protected abstract double getPowerData(int key);

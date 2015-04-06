@@ -437,7 +437,7 @@ public class Helper {
 		Log.printLine();
 		Log.printLine("*************************** RESULTS ***************************");
 		Log.printLine();
-		Log.printLine("TIME SPENT IN IDLE/OPERATING MODE FOR EACH STORAGE");
+		Log.printLine("TIME SPENT IN IDLE/ACTIVE MODE FOR EACH STORAGE");
 		for (int i = 0; i < tempList.size(); i++) {
 			Log.printLine("Storage \"" + tempList.get(i).getName() + "\"");
 			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
@@ -445,9 +445,9 @@ public class Helper {
 						interval);
 			}
 			Log.formatLine("Time in    Idle   mode: %12.6f second(s)",
-					endTimeSimulation - tempList.get(i).getInOpeDuration());
-			Log.formatLine("Time in Operating mode: %12.6f second(s)",
-					tempList.get(i).getInOpeDuration());
+					endTimeSimulation - tempList.get(i).getInActiveDuration());
+			Log.formatLine("Time in   Active  mode: %12.6f second(s)",
+					tempList.get(i).getInActiveDuration());
 			Log.formatLine("Time of the simulation: %12.6f second(s)",
 					endTimeSimulation);
 			Log.formatLine("Maximum Queue size    : %5d        operation(s)",
