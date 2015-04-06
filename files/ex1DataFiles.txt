@@ -1,3 +1,0 @@
-FileA	1
-FileB	2
-FileC	3
