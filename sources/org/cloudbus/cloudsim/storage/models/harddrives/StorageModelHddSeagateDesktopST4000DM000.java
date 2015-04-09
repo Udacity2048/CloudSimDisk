@@ -14,7 +14,6 @@ public class StorageModelHddSeagateDesktopST4000DM000 extends StorageModelHdd {
 	/* (non-Javadoc)
 	 * 
 	 * @see org.cloudbus.cloudsim.power.models.PowerModelSpecPower#getPowerData(int) */
-	@SuppressWarnings("javadoc")
 	@Override
 	protected Object getParameter(int key) {
 		switch (key) {

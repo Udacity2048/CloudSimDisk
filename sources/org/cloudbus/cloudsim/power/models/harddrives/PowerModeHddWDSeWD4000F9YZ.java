@@ -1,7 +1,5 @@
-/*
- * Title: CloudSim EES Extention Description: CloudSim extention for Energy Efficient Storage Licence: GPL -
- * http://www.gnu.org/copyleft/gpl.html Copyright (c) 2015, Luleå University of Techonology
- */
+/* Title: CloudSim EES Extention Description: CloudSim extention for Energy Efficient Storage Licence: GPL -
+ * http://www.gnu.org/copyleft/gpl.html Copyright (c) 2015, Luleå University of Techonology */
 package org.cloudbus.cloudsim.power.models.harddrives;
 
 /**
@@ -12,30 +10,27 @@ package org.cloudbus.cloudsim.power.models.harddrives;
  * @author Baptiste Louis
  */
 public class PowerModeHddWDSeWD4000F9YZ extends PowerModelHdd {
-	
-	/**
-	 * The power consumption of the HDD in idle mode in W.
-	 */
-	private final double	powerIdle	= 8.1;
-	
-	/**
-	 * The power consumption of the HDD in active mode in W.
-	 */
-	private final double	powerOpe	= 9.5;
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd#getPowerData(int)
-	 */
-	@SuppressWarnings("javadoc")
+
+	/* (non-Javadoc)
+	 * 
+	 * @see org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd#getPowerData(int) */
 	@Override
-	protected double getPowerData(
-			int key) {
-		if (key == 0) {
-			return powerIdle;
-		} else {
-			return powerOpe;
+	protected double getPowerData(int key) {
+
+		switch (key) {
+			case 0:
+				return 8.1; // Idle mode, in W.
+			case 1:
+				return 9.5; // Active mode, in W.
+			default:
+				return 0.0;
+				
+				// SCALABILITY: add new mode by adding new CASE.
+				//
+				// case <KEY_NUMBER>:
+				// return <POWER_VALUE>;
+				//
 		}
+
 	}
-	
 }

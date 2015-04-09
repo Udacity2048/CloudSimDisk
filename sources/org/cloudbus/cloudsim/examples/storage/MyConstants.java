@@ -13,6 +13,7 @@ import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.power.models.PowerModel;
 import org.cloudbus.cloudsim.power.models.PowerModelSpecPowerHpProLiantMl110G4Xeon3040;
 import org.cloudbus.cloudsim.power.models.harddrives.PowerModeHddSeagateEnterpriseST6000VN0001;
+import org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd;
 import org.cloudbus.cloudsim.provisioners.BwProvisioner;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisioner;
@@ -66,7 +67,7 @@ public class MyConstants {
 	
 	// Default Persistent storage parameters
 	public final static StorageModelHdd STORAGE_MODEL_HDD = new StorageModelHddSeagateEnterpriseST6000VN0001();
-	public final static PowerModel STORAGE_POWER_MODEL_HDD = new PowerModeHddSeagateEnterpriseST6000VN0001();
+	public final static PowerModelHdd STORAGE_POWER_MODEL_HDD = new PowerModeHddSeagateEnterpriseST6000VN0001();
 	
 	// Default Cloudlet parameters
 	public final static int CLOUDLET_LENGHT = 1;
