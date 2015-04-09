@@ -1,12 +1,14 @@
 package org.cloudbus.cloudsim.examples.storage;
 
 /**
- * A Wikipedia example based on Wikipedia workload.
+ * Example Wikipedia 1: this example use wikipedia workload for the time distribution of requests. In this scenario,
+ * 5000 requests are sent to the Datacenter. Each requests adds 1 File name "WikiFileXXXX" on the persistent storage.
+ * The size of the File is variable between [1 ; 10[ MB. No files are retrieved.
  * 
  * @author Baptiste Louis
  */
 public class MyExampleWikipedia1 {
-	
+
 	/**
 	 * The main method.
 	 * 
@@ -14,9 +16,8 @@ public class MyExampleWikipedia1 {
 	 *            the arguments
 	 * @throws Exception
 	 */
-	public static void main(
-			String[] args) throws Exception {
-		
+	public static void main(String[] args) throws Exception {
+
 		// Parameters
 		String name = "simulationWiki1"; // name of the simulation
 		String type = "wiki"; // type of the workload
@@ -25,16 +26,9 @@ public class MyExampleWikipedia1 {
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
 		String startingFilesList = ""; // No files to start
-		
+
 		// Execution
-		new MyRunner(
-				name,
-				type,
-				NumberOfRequest,
-				RequestArrivalDistri,
-				requiredFiles,
-				dataFiles,
-				startingFilesList);
+		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList);
 	}
-	
+
 }
