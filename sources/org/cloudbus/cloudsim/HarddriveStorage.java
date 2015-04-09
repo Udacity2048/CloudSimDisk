@@ -39,8 +39,8 @@ public class HarddriveStorage implements Storage {
 	/** the name of the harddrive. */  // Modified the privacy for Baptiste Louis test
 	protected final String name;
 
-	/** a generator required to randomize the seek time. */
-	private ContinuousDistribution gen;
+	/** a generator required to randomize the seek time. */  // Modified the privacy for Baptiste Louis test
+	protected ContinuousDistribution gen;
 
 	/** the current size of files on the harddrive. */  // Modified the privacy for Baptiste Louis test
 	protected double currentSize;
