@@ -366,7 +366,7 @@ public class Helper {
 
 		for (int i = 0; i < tempList.size(); i++) {
 			msg += String
-					.format("OBSERVATION>> Initial persistent storage \n%d/%d %s\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f s\n\t%-16s-> %10.0f MB/s\n",
+					.format("OBSERVATION>> Initial persistent storage \n%d/%d %s\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.6f s\n\t%-16s-> %10.6f s\n\t%-16s-> %10.3f MB/s\n",
 							(i + 1), tempList.size(),
 							tempList.get(i).getName(), "Capacity", tempList
 									.get(i).getCapacity(), "UsedSpace",

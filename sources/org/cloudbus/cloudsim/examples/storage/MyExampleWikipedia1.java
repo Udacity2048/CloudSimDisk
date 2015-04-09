@@ -2,7 +2,7 @@ package org.cloudbus.cloudsim.examples.storage;
 
 /**
  * Example Wikipedia 1: this example use wikipedia workload for the time distribution of requests. In this scenario,
- * 5000 requests are sent to the Datacenter. Each requests adds 1 File name "WikiFileXXXX" on the persistent storage.
+ * 5000 requests are sent to the Datacenter. Each requests adds 1 File name "wikiFileXXXX" on the persistent storage.
  * The size of the File is variable between [1 ; 10[ MB. No files are retrieved.
  * 
  * @author Baptiste Louis
