@@ -26,9 +26,10 @@ public class MyExampleWikipedia1 {
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
 		String startingFilesList = ""; // No files to start
+		int NumberOfDisk = 1; // 1 HDD
 
 		// Execution
-		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList);
+		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList, NumberOfDisk);
 	}
 
 }

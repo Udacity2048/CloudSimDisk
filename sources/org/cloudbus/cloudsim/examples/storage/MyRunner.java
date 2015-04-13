@@ -33,6 +33,7 @@ public class MyRunner {
 	 * @param requiredFiles
 	 * @param dataFiles
 	 * @param startingFilesList
+	 * @param NumberOfDisk 
 	 * @throws Exception
 	 */
 	public MyRunner(
@@ -42,7 +43,8 @@ public class MyRunner {
 			String RequestArrivalDistri,
 			String requiredFiles,
 			String dataFiles,
-			String startingFilesList) throws Exception {
+			String startingFilesList,
+			int NumberOfDisk) throws Exception {
 		
 		// BEGIN
 		Log.printLine("Starting simulation \"" + name + "\"\n");
@@ -54,7 +56,8 @@ public class MyRunner {
 				RequestArrivalDistri,
 				requiredFiles,
 				dataFiles,
-				startingFilesList);
+				startingFilesList,
+				NumberOfDisk);
 		start();
 		print();
 		
@@ -75,6 +78,7 @@ public class MyRunner {
 	 * @param requiredFiles
 	 * @param dataFiles
 	 * @param startingFilesList
+	 * @param NumberOfDisk 
 	 * @throws Exception
 	 */
 	public void init(
@@ -83,7 +87,8 @@ public class MyRunner {
 			String RequestArrivalDistri,
 			String requiredFiles,
 			String dataFiles,
-			String startingFilesList) throws Exception {
+			String startingFilesList,
+			int NumberOfDisk) throws Exception {
 		
 		// Entities
 		helper.initCloudSim();
@@ -92,7 +97,7 @@ public class MyRunner {
 		helper.createPeList(1);
 		helper.createHostList(1);
 		helper.createVmList(1);
-		helper.createPersistentStorage(1);
+		helper.createPersistentStorage(NumberOfDisk);
 		helper.createDatacenterCharacteristics();
 		helper.createDatacenter();
 		

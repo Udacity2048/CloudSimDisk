@@ -26,9 +26,10 @@ public class MyExample1 {
 		String requiredFiles = ""; // No files required
 		String dataFiles = "basic/example1/ex1DataFiles.txt"; // dataFiles Names and Sizes
 		String startingFilesList = ""; // No files to start
+		int NumberOfDisk = 1; // 1 HDD
 
 		// Execution
-		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList);
+		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList, NumberOfDisk);
 	}
 
 }
