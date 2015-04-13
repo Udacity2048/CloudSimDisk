@@ -77,11 +77,12 @@ public abstract class StorageModelHdd {
 		return (Double) getParameter(5);
 	}
 
-	// SCALABILITY: create new GETTERs to retrieve additional parameters.
-	//
-	// public <TYPE> getNameOfTheParameter() {
-	// return <CAST_OBJECT> getParameter(<KEY_NUMBER>);
-	// }
-	//
-
+	/*---------------------------------------------------------------------
+	|  SCALABILITY: create new GETTERs to retrieve additional parameters.
+	|
+	|  public <TYPE> getNameOfTheParameter() {
+	|      return <CAST_OBJECT> getParameter(<KEY_NUMBER>);
+	|  }
+	|
+	 *-------------------------------------------------------------------*/
 }

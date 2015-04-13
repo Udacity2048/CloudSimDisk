@@ -16,6 +16,9 @@ import org.cloudbus.cloudsim.core.SimEvent;
  */
 public class MyDatacenter extends Datacenter {
 
+	/** Round Robin Algorithm temp variable */
+	private int	tempRR	= 0;
+
 	/**
 	 * The constructor.
 	 * 
@@ -246,6 +249,9 @@ public class MyDatacenter extends Datacenter {
 	@Override
 	public int addFile(File file) {
 
+		// Select the storage algorithm (Value can be changed according to your choice)
+		int key = 1;
+
 		// test if the file is NULL
 		if (file == null) {
 			return DataCloudTags.FILE_ADD_ERROR_EMPTY;
@@ -261,26 +267,59 @@ public class MyDatacenter extends Datacenter {
 			return DataCloudTags.FILE_ADD_ERROR_STORAGE_FULL;
 		}
 
-		// ***************************************************
-		// DEFAULT SEQUENTIAL STORAGE : scan the list of available HDD storage and add the file on the first one which
-		// have enough free space for the file.
-		Storage tempStorage = null;
+		// prepare algorithms
 		int msg = DataCloudTags.FILE_ADD_ERROR_STORAGE_FULL;
+		Storage tempStorage = null;
 
-		for (int i = 0; i < getStorageList().size(); i++) {
-			tempStorage = getStorageList().get(i);
-			if (tempStorage.getAvailableSpace() >= file.getSize()) {
-				tempStorage.addFile(file);
-				msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
+		switch (key) {
+			case 1:
+				/* ***********************************************************************************************************
+				 * FIRST-FOUND (DEFAULT): scan the list of available HDD storage and add the file on the first one which
+				 * have enough free space for the file. */
+				for (int i = 0; i < getStorageList().size(); i++) {
+					tempStorage = getStorageList().get(i);
+					if (tempStorage.getAvailableSpace() >= file.getSize()) {
+						tempStorage.addFile(file);
+						msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
+						break;
+					}
+				}
+				// ***********************************************************************************************************
 				break;
-			}
+
+			case 2:
+				/* ***********************************************************************************************************
+				 * ROUND-ROBIN: adding the first file to the first disk, the second file to the second disk, etc. When
+				 * no more disk are in the pool, restart from the first disk. */
+				if (tempRR >= getStorageList().size()) {
+					tempRR = 0;
+				}
+				int counter = 0;
+				tempStorage = getStorageList().get(tempRR);
+				while ((tempStorage.getAvailableSpace() < file.getSize()) || (counter > getStorageList().size())) {
+					tempRR++;
+					tempStorage = getStorageList().get(tempRR);
+					counter++;
+				}
+
+				if (counter <= getStorageList().size()) {
+					tempStorage.addFile(file);
+					msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
+					tempRR++;
+				}
+
+				// ***********************************************************************************************************
+				break;
+
+			/*--------------------------------------------------------------------------------------
+			 |SCALABILITY: right your own algorithm to store a File on a pool of Hard Disk Drives.
+			 *--------------------------------------------------------------------------------------*/
+
+			default:
+				System.out.println("ERROR: no such algorithm corresponding to this key.");
+				break;
 		}
-		// ***************************************************
-		
-		// ***************************************************
-		// SCALABILITY: right your own algorithm to store a File on a pool of Hard Disk Drives.
-		// ***************************************************
-		
+
 		return msg;
 	}
 }

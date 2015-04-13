@@ -227,18 +227,17 @@ public class WriteToResultFile {
 			fileIntStream = new FileInputStream(file);
 			HSSFWorkbook workbook = new HSSFWorkbook(fileIntStream);
 			HSSFSheet sheet = workbook.getSheetAt(0);
-			
+
 			for (int i = 0; i < 15; i++) {
 				sheet.autoSizeColumn(i);
 			}
-			
+
 			// update workbook
 			FileOutputStream outFile = new FileOutputStream(file);
 			workbook.write(outFile);
 			outFile.close();
 			workbook.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

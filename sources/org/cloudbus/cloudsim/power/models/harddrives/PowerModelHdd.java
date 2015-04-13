@@ -54,10 +54,12 @@ public abstract class PowerModelHdd {
 		return getPowerData(1);
 	}
 
-	// SCALABILITY: create new GETTERs to retrieve Power for additional mode.
-	//
-	// public <TYPE> getPowerOfYourMode() {
-	// return getPowerData(<KEY_NUMBER>);
-	// }
-	//
+	/*---------------------------------------------------------------------
+	|  SCALABILITY: create new GETTERs to retrieve Power for additional mode.
+	|
+	|  public <TYPE> getPowerOfYourMode() {
+	|      return getPowerData(<KEY_NUMBER>);
+	|  }
+	|
+	 *-------------------------------------------------------------------*/
 }

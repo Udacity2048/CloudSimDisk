@@ -21,7 +21,7 @@ public class MyExampleWikipedia1 {
 		// Parameters
 		String name = "simulationWiki1"; // name of the simulation
 		String type = "wiki"; // type of the workload
-		int NumberOfRequest = MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
+		int NumberOfRequest = 6;//MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
 		String RequestArrivalDistri = "wikipedia/wiki.1190153705"; // wikipedia workload with time-Stamps
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
