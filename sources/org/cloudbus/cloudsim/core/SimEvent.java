@@ -7,6 +7,8 @@ package org.cloudbus.cloudsim.core;
 
 import java.util.ArrayList;
 
+import org.cloudbus.cloudsim.util.WriteToLogFile;
+
 /**
  * This class represents a simulation event which is passed between the entities in the simulation.
  * 
@@ -124,7 +126,7 @@ public class SimEvent implements Cloneable, Comparable<SimEvent> {
 		}
 		msg += "\n\n";
 		
-		PrintFile.AddtoFile(msg);
+		WriteToLogFile.AddtoFile(msg);
 	}
 	
 	@Override

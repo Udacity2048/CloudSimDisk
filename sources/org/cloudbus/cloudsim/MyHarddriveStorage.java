@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.cloudbus.cloudsim.core.PrintFile;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
+import org.cloudbus.cloudsim.util.WriteToLogFile;
+import org.cloudbus.cloudsim.util.WriteToResultFile;
 
 /**
  * My HarddriveStorage is based on HarddriveStorage.java CloudSim Toolkit 1.0 written by Uros Cibej and Anthony Sulistio
@@ -242,7 +243,8 @@ public class MyHarddriveStorage implements Storage {
 			result = "Active";
 		}
 
-		PrintFile.AddtoFile("OBSERVATION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
+		WriteToLogFile
+				.AddtoFile("OBSERVATION>> Hard disk drive \"" + this.name + "\" is now in " + result + " mode.\n");
 	}
 
 	/**
@@ -258,7 +260,7 @@ public class MyHarddriveStorage implements Storage {
 		queueLengthHistory.add(queueLength);
 
 		// log the observation
-		PrintFile.AddtoFile("OBSERVATION>> #QueueLenght <" + this.name + "> is now => " + queueLength);
+		WriteToLogFile.AddtoFile("OBSERVATION>> #QueueLenght <" + this.name + "> is now => " + queueLength);
 	}
 
 	/**
@@ -785,13 +787,18 @@ public class MyHarddriveStorage implements Storage {
 		// check if the same file name is already taken
 		if (!contains(file.getName())) {
 			double seekTime = getSeekTime(file.getSize());
-			double transferTime = getTransferTime(file.getSize());
 			double rotlatency = getRotLatency();
+			double transferTime = getTransferTime(file.getSize());
 
 			fileList.add(file); // add the file into the HD
 			nameList.add(file.getName()); // add the name to the name list
 			currentSize += file.getSize(); // increment the current HD size
-			result = seekTime + transferTime + rotlatency;
+			result = seekTime + rotlatency + transferTime;
+
+			// store results/information
+			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
+			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
+			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
 
 			// Log the observation
 			String msg = String.format("OBSERVATION>> Writting \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
@@ -799,7 +806,7 @@ public class MyHarddriveStorage implements Storage {
 					+ "%13s" + "%9.6f" + " second(s) for rotation Latency;" + "\n" + "%13s" + "%9.6f"
 					+ " second(s) in TOTAL.\n", file.getName(), this.getName(), "", seekTime, "", transferTime, "",
 					rotlatency, "", seekTime + transferTime + rotlatency);
-			PrintFile.AddtoFile(msg);
+			WriteToLogFile.AddtoFile(msg);
 		}
 
 		file.setTransactionTime(result);
@@ -847,11 +854,16 @@ public class MyHarddriveStorage implements Storage {
 		if (found) {
 			obj = fileList.get(index);
 			double seekTime = getSeekTime(size);
-			double transferTime = getTransferTime(obj.getSize());
 			double rotlatency = getRotLatency();
+			double transferTime = getTransferTime(obj.getSize());
 
 			// total time for this operation
-			obj.setTransactionTime(seekTime + transferTime + rotlatency);
+			obj.setTransactionTime(seekTime + rotlatency + transferTime);
+
+			// store results/information
+			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
+			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
+			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
 
 			// log the observation
 			String msg = String.format("OBSERVATION>> Reading \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
@@ -859,7 +871,7 @@ public class MyHarddriveStorage implements Storage {
 					+ "%13s" + "%9.6f" + " second(s) for rotation Latency;" + "\n" + "%13s" + "%9.6f"
 					+ " second(s) in TOTAL.\n", obj.getName(), this.getName(), "", seekTime, "", transferTime, "",
 					rotlatency, "", seekTime + transferTime + rotlatency);
-			PrintFile.AddtoFile(msg);
+			WriteToLogFile.AddtoFile(msg);
 		}
 
 		return obj;

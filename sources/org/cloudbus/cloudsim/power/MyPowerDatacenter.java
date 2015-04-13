@@ -15,6 +15,7 @@ import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.MyCloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.cloudbus.cloudsim.util.WriteToResultFile;
 
 /**
  * My Power-aware Datacenter is a Datacenter which overwrites all methods to be in accordance with power-aware ability.
@@ -169,6 +170,9 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// retrieve the transaction time for this operation
 		double tempTime = tempFile.getTransactionTime();
 
+		// store results/information
+		WriteToResultFile.AddValueToSheetTab(tempTime, cl.getCloudletId(), 3);
+
 		// add the transaction time to the "total active time" of this disk
 		storage.setInActiveDuration(storage.getInActiveDuration() + tempTime);
 
@@ -180,6 +184,9 @@ public class MyPowerDatacenter extends MyDatacenter {
 			storage.setActiveEndAt(storage.getActiveEndAt() + tempTime);
 			eventDelay = storage.getActiveEndAt() - CloudSim.clock();
 			// Note: a delay is not a specific Time, it is a duration. A duration is a difference between two times.
+
+			// store results/information
+			WriteToResultFile.AddValueToSheetTab(waitingDelay, cl.getCloudletId(), 2);
 
 		} else if (storage.isIdle()) {
 			// handle Idle intervals
@@ -193,6 +200,9 @@ public class MyPowerDatacenter extends MyDatacenter {
 
 			// handle mode to Active (key = 1)
 			storage.setMode(1);
+
+			// store results/information
+			WriteToResultFile.AddValueToSheetTab(0.0, cl.getCloudletId(), 2);
 		}
 
 		// compute energy
@@ -236,6 +246,12 @@ public class MyPowerDatacenter extends MyDatacenter {
 		int mode = (int) data[6];
 		MyPowerHarddriveStorage storage = (MyPowerHarddriveStorage) data[7];
 		double waitingDelay = (double) data[8];
+
+		// store results/information
+		WriteToResultFile.AddValueToSheetTab(CloudSim.clock(), cl.getCloudletId(), 7);
+		WriteToResultFile.AddValueToSheetTab(tempFile.getName(), cl.getCloudletId(), 8);
+		WriteToResultFile.AddValueToSheetTab(tempFile.getSize(), cl.getCloudletId(), 9);
+		WriteToResultFile.AddValueToSheetTab(tempEnergy, cl.getCloudletId(), 10);
 
 		// Print out confirmation that Files have been handled
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),

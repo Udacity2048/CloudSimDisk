@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jars/commons-math3-3.4.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="jars/commons-math3-3.4.1.jar"/>
+	<classpathentry kind="lib" path="poi-3.11-20141221.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

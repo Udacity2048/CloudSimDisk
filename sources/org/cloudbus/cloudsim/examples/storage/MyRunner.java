@@ -2,7 +2,8 @@ package org.cloudbus.cloudsim.examples.storage;
 
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.PrintFile;
+import org.cloudbus.cloudsim.util.WriteToLogFile;
+import org.cloudbus.cloudsim.util.WriteToResultFile;
 
 /**
  * A Runner to run storage examples.
@@ -45,7 +46,8 @@ public class MyRunner {
 		
 		// BEGIN
 		Log.printLine("Starting simulation \"" + name + "\"\n");
-		PrintFile.AddtoFile("Starting simulation \"" + name + "\"\n");
+		WriteToLogFile.AddtoFile("Starting simulation \"" + name + "\"\n");
+		WriteToResultFile.init();
 		
 		init(NumberOfRequest,
 				type,

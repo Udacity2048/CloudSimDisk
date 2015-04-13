@@ -18,7 +18,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.PrintFile;
 import org.cloudbus.cloudsim.power.MyPowerDatacenter;
 import org.cloudbus.cloudsim.power.MyPowerDatacenterBroker;
 import org.cloudbus.cloudsim.power.MyPowerHarddriveStorage;
@@ -27,6 +26,7 @@ import org.cloudbus.cloudsim.power.PowerVm;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.cloudbus.cloudsim.util.WriteToLogFile;
 
 /**
  * Helper for the CloudSim examples of cloudsim.examples.storage package.
@@ -350,7 +350,7 @@ public class Helper {
 							"maxTransferRate", tempList.get(i).getAvgInternalDataTransferRate());
 		}
 
-		PrintFile.AddtoFile(msg);
+		WriteToLogFile.AddtoFile(msg);
 	}
 
 	/**
@@ -389,28 +389,28 @@ public class Helper {
 
 		// -----------------------------------------------------------------------
 		// Log detailed information.
-		PrintFile.AddtoFile("\n************************** RAW DATA  **************************");
+		WriteToLogFile.AddtoFile("\n************************** RAW DATA  **************************");
 
 		// Arrival rate
-		PrintFile.AddtoFile("ARRIVAL RATE in Second(s) (not sorted)");
+		WriteToLogFile.AddtoFile("ARRIVAL RATE in Second(s) (not sorted)");
 		for (Double delay : broker.getArrivalTimeHistory()) {
-			PrintFile.AddtoFile(String.format("%9.3f", delay));
+			WriteToLogFile.AddtoFile(String.format("%9.3f", delay));
 		}
 
 		// Idle Interval
-		PrintFile.AddtoFile("\nIDLE INTERVALS in Second(s) (not sorted)");
+		WriteToLogFile.AddtoFile("\nIDLE INTERVALS in Second(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
 			for (Double interval : tempList.get(i).getIdleIntervalsHistory()) {
-				PrintFile.AddtoFile(String.format("%9.3f", interval));
+				WriteToLogFile.AddtoFile(String.format("%9.3f", interval));
 			}
-			PrintFile.AddtoFile("\n");
+			WriteToLogFile.AddtoFile("\n");
 		}
 
 		// queue size
-		PrintFile.AddtoFile("QUEUE SIZE in Operation(s) (not sorted)");
+		WriteToLogFile.AddtoFile("QUEUE SIZE in Operation(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
 			for (int queue : tempList.get(i).getQueueLengthHistory()) {
-				PrintFile.AddtoFile(String.format("%4d", queue));
+				WriteToLogFile.AddtoFile(String.format("%4d", queue));
 			}
 		}
 		// -----------------------------------------------------------------------
