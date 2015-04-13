@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -69,29 +71,48 @@ public class WriteToResultFile {
 		// Create a new row in current sheet
 		Row row = sheet.createRow(0);
 
+		// Create a font
+		HSSFFont font = workbook.createFont();
+		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+		// Create a style
+		HSSFCellStyle style = workbook.createCellStyle();
+		style.setFont(font);
+
 		// Create a new cell in current row
 		Cell cell = row.createCell(0);
 		cell.setCellValue("Cloudlet ID");
+		cell.setCellStyle(style);
 		cell = row.createCell(1);
 		cell.setCellValue("Arrival Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(2);
 		cell.setCellValue("Waiting Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(3);
 		cell.setCellValue("Transaction Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(4);
 		cell.setCellValue("Seek Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(5);
 		cell.setCellValue("Rotation Latency (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(6);
 		cell.setCellValue("Transfer Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(7);
 		cell.setCellValue("Execusion Time (s)");
+		cell.setCellStyle(style);
 		cell = row.createCell(8);
 		cell.setCellValue("Filename");
+		cell.setCellStyle(style);
 		cell = row.createCell(9);
 		cell.setCellValue("File size (MB)");
+		cell.setCellStyle(style);
 		cell = row.createCell(10);
 		cell.setCellValue("Energy Consumption (J)");
+		cell.setCellStyle(style);
 
 		FileOutputStream out;
 		try {
@@ -112,9 +133,6 @@ public class WriteToResultFile {
 	 */
 	public static void AddValueToSheetTab(Object input, int rownum, int column) {
 		try {
-
-			tempRowNum = rownum;
-
 			FileInputStream fileIntStream = new FileInputStream(file);
 
 			HSSFWorkbook workbook = new HSSFWorkbook(fileIntStream);
@@ -151,6 +169,13 @@ public class WriteToResultFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Store temporarily the row number.
+	 */
+	public static void setTempRowNum(int tempRowNum) {
+		WriteToResultFile.tempRowNum = tempRowNum;
 	}
 
 	/**
@@ -191,5 +216,31 @@ public class WriteToResultFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Format sheet at the end
+	 */
+	public static void end() {
+		FileInputStream fileIntStream;
+		try {
+			fileIntStream = new FileInputStream(file);
+			HSSFWorkbook workbook = new HSSFWorkbook(fileIntStream);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+			
+			for (int i = 0; i < 15; i++) {
+				sheet.autoSizeColumn(i);
+			}
+			
+			// update workbook
+			FileOutputStream outFile = new FileOutputStream(file);
+			workbook.write(outFile);
+			outFile.close();
+			workbook.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

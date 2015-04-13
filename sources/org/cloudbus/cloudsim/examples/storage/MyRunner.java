@@ -58,6 +58,7 @@ public class MyRunner {
 		start();
 		print();
 		
+		WriteToResultFile.end();
 		Log.printLine("END !");
 		// END
 	}

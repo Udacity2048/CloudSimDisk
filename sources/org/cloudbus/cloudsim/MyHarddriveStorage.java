@@ -856,7 +856,7 @@ public class MyHarddriveStorage implements Storage {
 			double seekTime = getSeekTime(size);
 			double rotlatency = getRotLatency();
 			double transferTime = getTransferTime(obj.getSize());
-
+			
 			// total time for this operation
 			obj.setTransactionTime(seekTime + rotlatency + transferTime);
 
