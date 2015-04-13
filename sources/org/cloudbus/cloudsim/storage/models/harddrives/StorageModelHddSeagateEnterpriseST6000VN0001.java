@@ -14,22 +14,21 @@ public class StorageModelHddSeagateEnterpriseST6000VN0001 extends StorageModelHd
 	/* (non-Javadoc)
 	 * 
 	 * @see org.cloudbus.cloudsim.power.models.PowerModelSpecPower#getPowerData(int) */
-	@SuppressWarnings("javadoc")
 	@Override
 	protected Object getParameter(int key) {
 		switch (key) {
 			case 0:
-				return "Seagate Enterprise"; // Full name
+				return "Seagate Technology"; // Manufacturer 
 			case 1:
-				return "ST6000VN0001"; // Reference
+				return "ST6000VN0001"; // Model Number
 			case 2:
 				return 6000000; // capacity (MB)
 			case 3:
-				return 0.00416; // rotation latency (s)
+				return 0.00416; // Average Rotation Latency (s)
 			case 4:
-				return 0.0085; // seekTime (s)
+				return 0.0085; // Average Seek Time (s)
 			case 5:
-				return 216.0; // maxTransferRate (MB/s)
+				return 216.0; // Average Internal Data Transfer Rate (MB/s)
 			default:
 				return "No info";
 

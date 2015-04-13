@@ -18,17 +18,17 @@ public class StorageModelHddSeagateDesktopST4000DM000 extends StorageModelHdd {
 	protected Object getParameter(int key) {
 		switch (key) {
 			case 0:
-				return "Seagate Desktop"; // Full name
+				return "Seagate Technology"; // Manufacturer 
 			case 1:
-				return "ST4000DM000"; // Reference
+				return "ST4000DM000"; // Model Number
 			case 2:
 				return 4000000; // capacity (MB)
 			case 3:
-				return 0.00516; // rotation latency (s)
+				return 0.00516; // Average Rotation Latency (s)
 			case 4:
-				return 0.0085; // seekTime (s)
+				return 0.0085; // Average Seek Time (s)
 			case 5:
-				return 146.0; // maxTransferRate (MB/s)
+				return 146.0; // Average Internal Data Transfer Rate (MB/s)
 			default:
 				return "No info";
 

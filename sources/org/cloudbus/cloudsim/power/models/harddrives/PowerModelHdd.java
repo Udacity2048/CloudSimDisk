@@ -25,6 +25,18 @@ public abstract class PowerModelHdd {
 	// Non-abstract Method to retrieve a specific parameter.
 
 	/**
+	 * Gets the Power of a specified mode.
+	 * 
+	 * @param mode
+	 *            the mode
+	 * 
+	 * @return the power
+	 */
+	public double getPower(int mode) {
+		return getPowerData(mode);
+	}
+
+	/**
 	 * Gets the Power in Idle mode.
 	 * 
 	 * @return the power

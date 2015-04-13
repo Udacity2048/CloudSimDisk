@@ -21,31 +21,23 @@ import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
  */
 public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 
-	/**
-	 * The power model.
-	 */
+	/** The power model */
 	private PowerModelHdd	powerModelHdd;
 
-	/**
-	 * Duration in Active mode.
-	 */
+	/** Duration in Active mode */
 	public double			inActiveDuration;
 
-	/**
-	 * Idle Duration Intervals history (when the disk is in idle mode).
-	 */
+	/** Idle Duration Intervals history (when the disk is in idle mode) */
 	public List<Double>		IdleIntervalsHistory	= new ArrayList<Double>();
 
-	/**
-	 * Last starting Idle time
-	 */
+	/** Last starting Idle time */
 	public double			LastIdleStartTime;
 
 	/**
 	 * Creates a new Hard Drive storage base on a specific HDD Model.
 	 * 
 	 * @param id
-	 * 
+	 *            unique id of the HDD CloudSim component
 	 * @param name
 	 *            the name
 	 * @param storageModelHdd
@@ -89,33 +81,30 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	}
 
 	/**
-	 * Gets the power.
+	 * Gets the power in Active mode
 	 * 
-	 * @param key
-	 *            0 for idle, 1 for Active
 	 * @return the power
 	 */
-	public double getPower(int key) {
+	public double getPowerActive() {
+		return getPowerModelHdd().getPowerActive();
+	}
 
-		// instantiates local variable
-		double power = 0;
+	/**
+	 * Gets the power in Idle mode
+	 * 
+	 * @return the power
+	 */
+	public double getPowerIdle() {
+		return getPowerModelHdd().getPowerIdle();
+	}
 
-		// check parameter validity
-		if (key != 0 && key != 1) {
-			Log.printLine(this.getName() + ".getPower(): Warning - 0 for Idle mode, 1 for Active mode.");
-			return power;
-		}
-
-		// retrieve power
-		switch (key) {
-			case 0:
-				return getPowerModelHdd().getPowerIdle();
-			case 1:
-				return getPowerModelHdd().getPowerActive();
-			default:
-				return power;
-		}
-
+	/**
+	 * Gets the power of the current state of the drive
+	 * 
+	 * @return the power
+	 */
+	public double getPower() {
+		return getPowerModelHdd().getPower(mode);
 	}
 
 	/**

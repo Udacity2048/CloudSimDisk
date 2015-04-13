@@ -200,7 +200,7 @@ public class MyDatacenter extends Datacenter {
 				File tempFile = tempStorage.getFile(fileName);
 				if (tempFile != null) {
 					// increment the time
-					time += tempFile.getSize() / tempStorage.getMaxTransferRate();
+					time += tempFile.getSize() / tempStorage.getAvgInternalDataTransferRate();
 					break;
 				}
 			}
@@ -230,7 +230,7 @@ public class MyDatacenter extends Datacenter {
 		while (iter.hasNext()) {
 			File fileName = iter.next();
 			// increment the time
-			time += fileName.getSize() / getStorageList().get(0).getMaxTransferRate();
+			time += fileName.getSize() / getStorageList().get(0).getAvgInternalDataTransferRate();
 
 			// NOTE: For the prediction, it is assumed that the transfer rate of the target hard drive will be
 			// approximately the same than the first hard drive in the storageList of this Datacenter.

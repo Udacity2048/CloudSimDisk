@@ -790,7 +790,7 @@ public class Datacenter extends SimEntity {
 				Storage tempStorage = getStorageList().get(i);
 				File tempFile = tempStorage.getFile(fileName);
 				if (tempFile != null) {
-					time += tempFile.getSize() / tempStorage.getMaxTransferRate();
+					time += tempFile.getSize() / tempStorage.getAvgInternalDataTransferRate();
 					break;
 				}
 			}

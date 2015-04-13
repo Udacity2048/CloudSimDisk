@@ -30,32 +30,32 @@ import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
  */
 public class HarddriveStorage implements Storage {
 
-	/** a list storing the names of all the files on the harddrive. */  // Modified the privacy for Baptiste Louis test
-	protected List<String> nameList;
+	/** a list storing the names of all the files on the harddrive. */
+	private List<String> nameList;
 
-	/** a list storing all the files stored on the harddrive. */  // Modified the privacy for Baptiste Louis test
-	protected List<File> fileList;
+	/** a list storing all the files stored on the harddrive. */
+	private List<File> fileList;
 
-	/** the name of the harddrive. */  // Modified the privacy for Baptiste Louis test
-	protected final String name;
+	/** the name of the harddrive. */
+	private final String name;
 
-	/** a generator required to randomize the seek time. */  // Modified the privacy for Baptiste Louis test
-	protected ContinuousDistribution gen;
+	/** a generator required to randomize the seek time. */
+	private ContinuousDistribution gen;
 
-	/** the current size of files on the harddrive. */  // Modified the privacy for Baptiste Louis test
-	protected double currentSize;
+	/** the current size of files on the harddrive. */
+	private double currentSize;
 
-	/** the total capacity of the harddrive in MB. */  // Modified the privacy for Baptiste Louis test
-	protected final double capacity;
+	/** the total capacity of the harddrive in MB. */
+	private final double capacity;
 
-	/** the maximum transfer rate in MB/sec. */ // Modified the privacy for Baptiste Louis test
-	protected double maxTransferRate;
+	/** the maximum transfer rate in MB/sec. */
+	private double maxTransferRate;
 
-	/** the latency of the harddrive in seconds. */  // Modified the privacy for Baptiste Louis test
-	protected double latency;
+	/** the latency of the harddrive in seconds. */
+	private double latency;
 
-	/** the average seek time in seconds. */  // Modified the privacy for Baptiste Louis test
-	protected double avgSeekTime;
+	/** the average seek time in seconds. */
+	private double avgSeekTime;
 
 	/**
 	 * Creates a new harddrive storage with a given name and capacity.
@@ -287,7 +287,7 @@ public class HarddriveStorage implements Storage {
 	 * @param rate the maximum transfer rate in MB/sec
 	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
 	 */
-	@Override
+	// @Override Commented by Baptiste Louis: innacurate method.
 	public boolean setMaxTransferRate(int rate) {
 		if (rate <= 0) {
 			return false;
@@ -303,7 +303,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the maximum transfer rate in MB/sec
 	 */
 	@Override
-	public double getMaxTransferRate() {
+	public double getAvgInternalDataTransferRate() {
 		return maxTransferRate;
 	}
 
@@ -409,7 +409,7 @@ public class HarddriveStorage implements Storage {
 	 * @param fileSize the size of a file in MB
 	 * @return the seek time in seconds
 	 */
-	protected double getSeekTime(int fileSize) { // Modified privacy for Baptiste Louis test
+	private double getSeekTime(int fileSize) {
 		double result = 0;
 
 		if (gen != null) {
@@ -419,7 +419,7 @@ public class HarddriveStorage implements Storage {
 		if (fileSize > 0 && capacity != 0) {
 			result += (fileSize / capacity);
 		}
-		
+
 		return result;
 	}
 
@@ -429,9 +429,9 @@ public class HarddriveStorage implements Storage {
 	 * @param fileSize the size of the transferred file
 	 * @return the transfer time in seconds
 	 */
-	protected double getTransferTime(int fileSize) { // Modified privacy for Baptiste Louis test
+	private double getTransferTime(int fileSize) {
 		double result = 0;
-		if (fileSize > 0 && capacity != 0) { 
+		if (fileSize > 0 && capacity != 0) {
 			result = (fileSize * maxTransferRate) / capacity;
 		}
 
@@ -447,7 +447,7 @@ public class HarddriveStorage implements Storage {
 	 * @param methodName the name of the method in which we check for validity of the file
 	 * @return <tt>true</tt> if the file is valid, <tt>false</tt> otherwise
 	 */
-	protected boolean isFileValid(File file, String methodName) { // Modified privacy for Baptiste Louis test
+	private boolean isFileValid(File file, String methodName) {
 
 		if (file == null) {
 			Log.printLine(name + "." + methodName + ": Warning - the given file is null.");
@@ -494,13 +494,9 @@ public class HarddriveStorage implements Storage {
 			fileList.add(file);               // add the file into the HD
 			nameList.add(file.getName());     // add the name to the name list
 			currentSize += file.getSize();    // increment the current HD size
-			result = seekTime + transferTime;
-	
+			result = seekTime + transferTime;  // add total time
 		}
-		
 		file.setTransactionTime(result);
-		
-		
 		return result;
 	}
 

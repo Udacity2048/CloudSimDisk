@@ -49,7 +49,7 @@ public interface Storage {
 	 * 
 	 * @return the maximum transfer rate in MB/sec
 	 */
-	double getMaxTransferRate();
+	double getAvgInternalDataTransferRate();
 
 	/**
 	 * Gets the available space on this storage in MByte.
@@ -64,7 +64,7 @@ public interface Storage {
 	 * @param rate the maximum transfer rate in MB/sec
 	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
 	 */
-	boolean setMaxTransferRate(int rate);
+	// boolean setMaxTransferRate(int rate);  // Modified by Baptiste Louis: inaccurate method.
 
 	/**
 	 * Checks if the storage is full or not.

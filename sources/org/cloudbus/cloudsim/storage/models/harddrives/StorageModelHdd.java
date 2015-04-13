@@ -24,56 +24,56 @@ public abstract class StorageModelHdd {
 	// Non-abstract Method to retrieve a specific parameter.
 
 	/**
-	 * Get the name of the hard drive.
+	 * Get the Manufacturer name of the hard drive.
 	 * 
-	 * @return name of the hard drive
+	 * @return Manufacturer name
 	 */
-	public String getFullName() {
+	public String getManufacturerName() {
 		return getParameter(0).toString();
 	}
 
 	/**
-	 * Get the reference of the hard drive.
+	 * Get the Model Number of the hard drive.
 	 * 
-	 * @return reference of the hard drive
+	 * @return Model Number
 	 */
-	public String getReference() {
+	public String getModelNumber() {
 		return getParameter(1).toString();
 	}
 
 	/**
 	 * Get the total capacity of the hard drive in MB.
 	 * 
-	 * @return total capacity of the hard drive in MB
+	 * @return total capacity in MB
 	 */
 	public double getCapacity() {
 		return (int) getParameter(2);
 	}
 
 	/**
-	 * Get the latency of the hard drive in seconds.
+	 * Get the Average Rotation Latency of the hard drive in seconds.
 	 * 
-	 * @return latency of the hard drive in seconds
+	 * @return Average Rotation Latency in seconds
 	 */
-	public double getLatency() {
+	public double getAvgRotationLatency() {
 		return (Double) getParameter(3);
 	}
 
 	/**
-	 * Get the average seek time in seconds.
+	 * Get the Average Seek Time of the hard drive in seconds.
 	 * 
-	 * @return average seek time in seconds
+	 * @return Average Seek Time in seconds
 	 */
 	public double getAvgSeekTime() {
 		return (Double) getParameter(4);
 	}
 
 	/**
-	 * Get the maximum transfer rate in MB/second.
+	 * Get the Average Internal Data Transfer Rate of the hard drive in MB/second.
 	 * 
-	 * @return maximum transfer rate in MB/second
+	 * @return Average Internal Data Transfer Rate in MB/second
 	 */
-	public double getMaxTransferRate() {
+	public double getAvgInternalDataTransferRate() {
 		return (Double) getParameter(5);
 	}
 
