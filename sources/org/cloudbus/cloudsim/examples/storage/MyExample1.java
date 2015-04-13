@@ -1,5 +1,8 @@
 package org.cloudbus.cloudsim.examples.storage;
 
+import org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd;
+import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
+
 /**
  * Example 1: this example aims to understand the basic operation of storage example. In this scenario, 3 requests are
  * sent to the Datacenter respectively at 0.2, 0.4 and 0.7 second(s). Each requests adds respectively FileA(1MB),
@@ -27,9 +30,12 @@ public class MyExample1 {
 		String dataFiles = "basic/example1/ex1DataFiles.txt"; // dataFiles Names and Sizes
 		String startingFilesList = ""; // No files to start
 		int NumberOfDisk = 1; // 1 HDD
+		StorageModelHdd hddModel = MyConstants.STORAGE_MODEL_HDD; // model of disks in the persistent storage
+		PowerModelHdd hddPowerModel = MyConstants.STORAGE_POWER_MODEL_HDD; // power model of disks
 
 		// Execution
-		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList, NumberOfDisk);
+		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList,
+				NumberOfDisk, hddModel, hddPowerModel);
 	}
 
 }

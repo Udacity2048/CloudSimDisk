@@ -23,9 +23,11 @@ import org.cloudbus.cloudsim.power.MyPowerDatacenterBroker;
 import org.cloudbus.cloudsim.power.MyPowerHarddriveStorage;
 import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.power.PowerVm;
+import org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 import org.cloudbus.cloudsim.util.WriteToLogFile;
 
 /**
@@ -155,10 +157,10 @@ public class Helper {
 	 * @param storageNumber
 	 * @throws ParameterException
 	 */
-	public void createPersistentStorage(int storageNumber) throws ParameterException {
+	public void createPersistentStorage(int storageNumber, StorageModelHdd hddModel, PowerModelHdd hddPowerModel)
+			throws ParameterException {
 		for (int i = 1; i <= storageNumber; i++) {
-			storageList.add(new MyPowerHarddriveStorage(i, "hdd" + i, MyConstants.STORAGE_MODEL_HDD,
-					MyConstants.STORAGE_POWER_MODEL_HDD));
+			storageList.add(new MyPowerHarddriveStorage(i, "hdd" + i, hddModel, hddPowerModel));
 		}
 	}
 
