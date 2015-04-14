@@ -49,7 +49,7 @@ public interface Storage {
 	 * 
 	 * @return the maximum transfer rate in MB/sec
 	 */
-	double getAvgInternalDataTransferRate();
+	double getMaxInternalDataTransferRate();
 
 	/**
 	 * Gets the available space on this storage in MByte.

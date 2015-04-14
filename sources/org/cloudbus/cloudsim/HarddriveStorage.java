@@ -303,7 +303,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the maximum transfer rate in MB/sec
 	 */
 	@Override
-	public double getAvgInternalDataTransferRate() {
+	public double getMaxInternalDataTransferRate() {
 		return maxTransferRate;
 	}
 

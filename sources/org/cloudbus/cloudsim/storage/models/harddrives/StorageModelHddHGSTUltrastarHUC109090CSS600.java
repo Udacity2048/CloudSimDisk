@@ -3,13 +3,13 @@
 package org.cloudbus.cloudsim.storage.models.harddrives;
 
 /**
- * Storage Model based on Seagate Enterprise NAS HDD Review .
+ * Storage Model based on HGST Ultrastar C10K900 Review (HUC109090CSS600).
  * 
- * Link: http://www.storagereview.com/seagate_enterprise_nas_hdd_review
+ * Link: http://www.storagereview.com/hgst_ultrastar_c10k900_review
  * 
  * @author Baptiste Louis
  */
-public class StorageModelHddSeagateEnterpriseST6000VN0001 extends StorageModelHdd {
+public class StorageModelHddHGSTUltrastarHUC109090CSS600 extends StorageModelHdd {
 
 	/* (non-Javadoc)
 	 * 
@@ -18,17 +18,17 @@ public class StorageModelHddSeagateEnterpriseST6000VN0001 extends StorageModelHd
 	protected Object getParameter(int key) {
 		switch (key) {
 			case 0:
-				return "Seagate Technology"; // Manufacturer 
+				return "HGST Western Digital"; // Manufacturer
 			case 1:
-				return "ST6000VN0001"; // Model Number
+				return "HUC109090CSS600"; // Model Number
 			case 2:
-				return 6000000; // capacity (MB)
+				return 900000; // capacity (MB)
 			case 3:
-				return 0.00416; // Average Rotation Latency (s)
+				return 0.003; // Average Rotation Latency (s)
 			case 4:
-				return 0.0085; // Average Seek Time (s)
+				return 0.004; // Average Seek Time (s)
 			case 5:
-				return 216.0; // Maximum Internal Data Transfer Rate (MB/s)
+				return 198.0; // Maximum Internal Data Transfer Rate (MB/s)
 			default:
 				return "No info";
 

@@ -3,13 +3,13 @@
 package org.cloudbus.cloudsim.storage.models.harddrives;
 
 /**
- * Storage Model based on Seagate Desktop HDD.15 Review (ST4000DM000).
+ * Storage Model based on Toshiba MG04SCA Enterprise HDD Review (MG04SCA500E).
  * 
- * Link: http://www.storagereview.com/seagate_desktop_hdd15_review_st4000dm000
+ * Link: http://www.storagereview.com/toshiba_mg04sca_enterprise_hdd_review
  * 
  * @author Baptiste Louis
  */
-public class StorageModelHddSeagateDesktopST4000DM000 extends StorageModelHdd {
+public class StorageModelHddToshibaEnterpriseMG04SCA500E extends StorageModelHdd {
 
 	/* (non-Javadoc)
 	 * 
@@ -18,17 +18,17 @@ public class StorageModelHddSeagateDesktopST4000DM000 extends StorageModelHdd {
 	protected Object getParameter(int key) {
 		switch (key) {
 			case 0:
-				return "Seagate Technology"; // Manufacturer 
+				return "Toshiba"; // Manufacturer 
 			case 1:
-				return "ST4000DM000"; // Model Number
+				return "MG04SCA500E"; // Model Number
 			case 2:
-				return 4000000; // capacity (MB)
+				return 5000000; // capacity (MB)
 			case 3:
-				return 0.00516; // Average Rotation Latency (s)
+				return 0.00417; // Average Rotation Latency (s)
 			case 4:
-				return 0.0085; // Average Seek Time (s)
+				return 0.009; // Average Seek Time (s)
 			case 5:
-				return 146.0; // Average Internal Data Transfer Rate (MB/s)
+				return 215.0; // Maximum Internal Data Transfer Rate (MB/s)
 			default:
 				return "No info";
 

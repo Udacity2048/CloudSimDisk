@@ -11,10 +11,10 @@ public class TesterOfDistribution {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MyPoissonDistr testStat = new MyPoissonDistr(10);
+		MyPoissonDistr testStat = new MyPoissonDistr(0.0085);
 		// System.out.println(\\\"Testing stat: \\\" + testStat+ \\\" with lambda: \\\" + lambda);
 		for (int i = 0; i < 1000; i++) {
-			Log.formatLine("%.2f", testStat.sample());
+			Log.formatLine("%.10f", testStat.sample());
 		}
 	}
 }

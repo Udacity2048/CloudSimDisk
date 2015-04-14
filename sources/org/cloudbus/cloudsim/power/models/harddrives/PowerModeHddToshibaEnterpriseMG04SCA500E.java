@@ -3,13 +3,13 @@
 package org.cloudbus.cloudsim.power.models.harddrives;
 
 /**
- * The power model of a Toshiba MG04SCA Enterprise.
+ * The power model of a Toshiba MG04SCA Enterprise 5TB.
  * 
  * Info source: http://www.storagereview.com/toshiba_mg04sca_enterprise_hdd_review
  * 
  * @author Baptiste Louis
  */
-public class PowerModeHddToshibaMG04SCAEnterprise extends PowerModelHdd {
+public class PowerModeHddToshibaEnterpriseMG04SCA500E extends PowerModelHdd {
 
 	/* (non-Javadoc)
 	 * 

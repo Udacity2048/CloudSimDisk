@@ -349,7 +349,7 @@ public class Helper {
 									.getCapacity(), "UsedSpace", (tempList.get(i).getCapacity() - tempList.get(i)
 									.getAvailableSpace()), "FreeSpave", tempList.get(i).getAvailableSpace(), "Latency",
 							tempList.get(i).getAvgRotLatency(), "avgSeekTime", tempList.get(i).getAvgSeekTime(),
-							"maxTransferRate", tempList.get(i).getAvgInternalDataTransferRate());
+							"maxTransferRate", tempList.get(i).getMaxInternalDataTransferRate());
 		}
 
 		WriteToLogFile.AddtoFile(msg);

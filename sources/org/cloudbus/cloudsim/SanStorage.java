@@ -80,9 +80,9 @@ public class SanStorage extends HarddriveStorage {
 	 * @return the maximum transfer rate in MB/sec
 	 */
 	@Override
-	public double getAvgInternalDataTransferRate() {
+	public double getMaxInternalDataTransferRate() {
 
-		double diskRate = super.getAvgInternalDataTransferRate();
+		double diskRate = super.getMaxInternalDataTransferRate();
 
 		// the max transfer rate is the minimum between
 		// the network bandwidth and the disk rate

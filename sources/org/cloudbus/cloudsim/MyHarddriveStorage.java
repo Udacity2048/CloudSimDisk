@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
+import org.cloudbus.cloudsim.distributions.MyPoissonDistr;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 import org.cloudbus.cloudsim.util.WriteToLogFile;
@@ -43,8 +44,8 @@ public class MyHarddriveStorage implements Storage {
 	/** the total capacity of the harddrive in MB. */
 	protected double					capacity;
 
-	/** the average internal data transfer rate in MB/sec. */
-	protected final double				avgInternalDataTransferRate;
+	/** the maximum internal data transfer rate in MB/sec. */
+	protected final double				maxInternalDataTransferRate;
 
 	/** the average rotation latency of the harddrive in seconds. */
 	protected final double				avgRotLatency;
@@ -95,7 +96,7 @@ public class MyHarddriveStorage implements Storage {
 		this.storageModel = storageModelHdd;
 		this.capacity = storageModelHdd.getCapacity();
 		this.reference = storageModelHdd.getModelNumber();
-		this.avgInternalDataTransferRate = storageModelHdd.getAvgInternalDataTransferRate();
+		this.maxInternalDataTransferRate = storageModelHdd.getMaxInternalDataTransferRate();
 		this.avgRotLatency = storageModelHdd.getAvgRotationLatency();
 
 		// initializes global variables
@@ -123,21 +124,22 @@ public class MyHarddriveStorage implements Storage {
 	 */
 	public boolean setSeekTime(double avgSeekTime) {
 
+		this.avgSeekTime = avgSeekTime;
+
 		// check that avgSeekTime > 0
 		if (avgSeekTime <= 0.0) {
 			return false;
 		}
 
 		// randomize SeekTime
-		ContinuousDistribution generator = new UniformDistr(0, 2 * storageModel.getAvgSeekTime());
+		ContinuousDistribution generator = new MyPoissonDistr(getAvgSeekTime());
 
 		// SCALABILITY: define your own Distribution algorithm for the seekTime.
 		//
 		// ContinuousDistribution generator = new YOUR_PERSO_DISTR(...);
 
-		// store variables
-		this.avgSeekTime = avgSeekTime;
 		this.genSeekTime = generator;
+
 		return true;
 	}
 
@@ -210,7 +212,8 @@ public class MyHarddriveStorage implements Storage {
 	}
 
 	/**
-	 * Gets the transfer time of a given file.
+	 * Gets the transfer time of a given file. Note than "Maximum Internal Data Transfer Rate" is taken into account
+	 * which is rarely the case in real world but manufacturers usually provide only this mesurement.
 	 * 
 	 * @param fileSize
 	 *            the size of the transferred file
@@ -218,8 +221,8 @@ public class MyHarddriveStorage implements Storage {
 	 */
 	protected double getTransferTime(int fileSize) {
 		double result = 0;
-		if (fileSize > 0 && avgInternalDataTransferRate != 0) {
-			result = fileSize / avgInternalDataTransferRate;
+		if (fileSize > 0 && maxInternalDataTransferRate != 0) {
+			result = fileSize / maxInternalDataTransferRate;
 		}
 
 		return result;
@@ -303,12 +306,12 @@ public class MyHarddriveStorage implements Storage {
 	}
 
 	/**
-	 * Gets the average internal data transfer rate of the storage.
+	 * Gets the maximum internal data transfer rate of the storage.
 	 * 
-	 * @return the average internal transfer rate in MB/sec
+	 * @return the maximum internal transfer rate in MB/sec
 	 */
-	public double getAvgInternalDataTransferRate() {
-		return avgInternalDataTransferRate;
+	public double getMaxInternalDataTransferRate() {
+		return maxInternalDataTransferRate;
 	}
 
 	/**
@@ -856,7 +859,7 @@ public class MyHarddriveStorage implements Storage {
 			double seekTime = getSeekTime(size);
 			double rotlatency = getRotLatency();
 			double transferTime = getTransferTime(obj.getSize());
-			
+
 			// total time for this operation
 			obj.setTransactionTime(seekTime + rotlatency + transferTime);
 

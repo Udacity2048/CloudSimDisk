@@ -3,13 +3,13 @@
 package org.cloudbus.cloudsim.power.models.harddrives;
 
 /**
- * The power model of a WD Se WD4000F9YZ.
+ * Power model based on HGST Ultrastar C10K900 Review (HUC109090CSS600).
  * 
- * Info source: http://www.storagereview.com/wd_se_hdd_review
+ * Info source: http://www.storagereview.com/hgst_ultrastar_c10k900_review
  * 
  * @author Baptiste Louis
  */
-public class PowerModeHddWDSeWD4000F9YZ extends PowerModelHdd {
+public class PowerModeHddHGSTUltrastarHUC109090CSS600 extends PowerModelHdd {
 
 	/* (non-Javadoc)
 	 * 
@@ -19,12 +19,12 @@ public class PowerModeHddWDSeWD4000F9YZ extends PowerModelHdd {
 
 		switch (key) {
 			case 0:
-				return 8.1; // Idle mode, in W.
+				return 3.0; // Idle mode, in W.
 			case 1:
-				return 9.5; // Active mode, in W.
+				return 5.8; // Active mode, in W.
 			default:
 				return 0.0;
-				
+
 				// SCALABILITY: add new mode by adding new CASE.
 				//
 				// case <KEY_NUMBER>:

@@ -69,11 +69,11 @@ public abstract class StorageModelHdd {
 	}
 
 	/**
-	 * Get the Average Internal Data Transfer Rate of the hard drive in MB/second.
+	 * Get the Maximum Internal Data Transfer Rate of the hard drive in MB/second.
 	 * 
-	 * @return Average Internal Data Transfer Rate in MB/second
+	 * @return Maximum Internal Data Transfer Rate in MB/second
 	 */
-	public double getAvgInternalDataTransferRate() {
+	public double getMaxInternalDataTransferRate() {
 		return (Double) getParameter(5);
 	}
 
