@@ -1,20 +1,22 @@
 package org.cloudbus.cloudsim.distributions;
 
-import org.cloudbus.cloudsim.Log;
+import org.cloudbus.cloudsim.util.WriteToLogFile;
 
 /**
  * @author Baptiste Louis
- *
+ * 
  */
 public class TesterOfDistribution {
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		MyPoissonDistr testStat = new MyPoissonDistr(0.0085);
-		// System.out.println(\\\"Testing stat: \\\" + testStat+ \\\" with lambda: \\\" + lambda);
+		MySeekTimeDistr testStat = new MySeekTimeDistr(0.0002, 3 * 0.0085, 0.0085);
+		String msg = "";
 		for (int i = 0; i < 1000; i++) {
-			Log.formatLine("%.10f", testStat.sample());
+			msg += testStat.sample() + "\n";
+
 		}
+		WriteToLogFile.AddtoFile(msg);
 	}
 }

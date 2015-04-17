@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
-import org.cloudbus.cloudsim.distributions.MyPoissonDistr;
+import org.cloudbus.cloudsim.distributions.MySeekTimeDistr;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
 import org.cloudbus.cloudsim.util.WriteToLogFile;
@@ -132,7 +132,7 @@ public class MyHarddriveStorage implements Storage {
 		}
 
 		// randomize SeekTime
-		ContinuousDistribution generator = new MyPoissonDistr(getAvgSeekTime());
+		ContinuousDistribution generator = new UniformDistr(0.0002, 3*avgSeekTime);
 
 		// SCALABILITY: define your own Distribution algorithm for the seekTime.
 		//
@@ -155,7 +155,13 @@ public class MyHarddriveStorage implements Storage {
 		double result = 0;
 
 		if (genSeekTime != null) {
-			result += genSeekTime.sample();
+			double tempSample = 0;
+			
+			// Seek Time should be between "Track-to-Track seek time" and "3 x avgSeekTime".
+			while (tempSample < 0.0002 || tempSample > 3 * avgSeekTime) {
+				tempSample = genSeekTime.sample();
+			}
+			result += tempSample;
 		}
 
 		if (fileSize > 0 && capacity != 0) {

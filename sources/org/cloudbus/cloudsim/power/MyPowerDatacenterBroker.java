@@ -12,7 +12,7 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.ExponentialDistr;
 import org.cloudbus.cloudsim.distributions.MyBasicDistr;
-import org.cloudbus.cloudsim.distributions.MyPoissonDistr;
+import org.cloudbus.cloudsim.distributions.MySeekTimeDistr;
 import org.cloudbus.cloudsim.distributions.MyWikiDistr;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.lists.VmList;
@@ -137,8 +137,8 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 				distri = new ExponentialDistr(60);
 				break;
 
-			case "pois":
-				distri = new MyPoissonDistr(60);
+			case "seek":
+				distri = new MySeekTimeDistr(0.0002, 3 * Double.parseDouble(source), Double.parseDouble(source));
 				break;
 
 			case "unif":

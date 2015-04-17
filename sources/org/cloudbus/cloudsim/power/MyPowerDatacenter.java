@@ -250,11 +250,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// Print out confirmation that Files have been handled
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),
 				tempFile.getName(), action, storage.getName());
-		Log.formatLine("%10s Power  consumption of %6.3f Watt(s)  according to mode %3d.", "", tempPower, mode);
-		Log.formatLine("%10s Waiting time of %9.6f Seconds(s) due to the disk queue.", "", waitingDelay);
-		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s) according to %s specifications.", "", tempTime,
-				storage.getName());
-		Log.formatLine("%10s Energy consumption of %6.3f Joule(s) according to mode %3d.", "", tempEnergy, mode);
+		Log.formatLine("%10s Power  consumption of %6.3f Watt(s).", "", tempPower);
+		Log.formatLine("%10s Queue Waiting time of %9.6f Seconds(s).", "", waitingDelay);
+		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s).", "", tempTime);
+		Log.formatLine("%10s Energy consumption of %6.3f Joule(s).", "", tempEnergy);
 		Log.printLine();
 
 		// handle queue
