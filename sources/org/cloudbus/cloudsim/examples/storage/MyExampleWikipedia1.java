@@ -24,12 +24,12 @@ public class MyExampleWikipedia1 {
 		// Parameters
 		String name = "simulationWiki1"; // name of the simulation
 		String type = "wiki"; // type of the workload
-		int NumberOfRequest = 6;// MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
+		int NumberOfRequest = MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
 		String RequestArrivalDistri = "wikipedia/wiki.1190153705"; // wikipedia workload with time-Stamps
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
 		String startingFilesList = ""; // No files to start
-		int NumberOfDisk = 1; // 1 HDD
+		int NumberOfDisk = 2; // 1 HDD
 		StorageModelHdd hddModel = MyConstants.STORAGE_MODEL_HDD; // model of disks in the persistent storage
 		PowerModelHdd hddPowerModel = MyConstants.STORAGE_POWER_MODEL_HDD; // power model of disks
 

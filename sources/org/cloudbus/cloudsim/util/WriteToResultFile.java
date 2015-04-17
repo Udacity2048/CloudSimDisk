@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -27,7 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 public class WriteToResultFile {
 
 	/** The relative path of the future results file. */
-	public static String		file_name	= "";
+	public static String		file_name;
 
 	public static File			file;
 
@@ -41,32 +42,33 @@ public class WriteToResultFile {
 		// variable to change each log files names.
 		java.util.Date d = new java.util.Date();
 
-		// Create Result File
-		if (file_name == "") {
+		// define the destination filename
+		file_name = "results/cloudSim_Res" + d.getTime() + ".xls";
 
-			// define the filename
-			file_name = "results/cloudSim_Res" + d.getTime() + ".xls";
+		// Instantiate a File object
+		file = new File(file_name);
 
-			// Instantiate a File object
-			file = new File(file_name);
+		// copy and rename result template
+		File srcFile = new File("resultsTemplate.xls");
+		File destFile = file;
+		try {
+			FileUtils.copyFile(srcFile, destFile);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
-			// Get the workbook instance for XLS file
-			workbook = new HSSFWorkbook();
-
-			// if file doesn't exists, then create it
-			FileOutputStream fileOut;
-			try {
-				fileOut = new FileOutputStream(file);
-				workbook.write(fileOut);
-				fileOut.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
+		// read the new results file
+		FileInputStream fileInStream;
+		try {
+			fileInStream = new FileInputStream(destFile);
+			workbook = new HSSFWorkbook(fileInStream);
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			System.exit(0);
 		}
 
 		// Get first sheet from the workbook
-		sheet = workbook.createSheet("Sample sheet");
+		sheet = workbook.getSheetAt(0);
 
 		// Create a new row in current sheet
 		Row row = sheet.createRow(0);

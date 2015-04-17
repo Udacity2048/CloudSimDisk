@@ -250,7 +250,7 @@ public class MyDatacenter extends Datacenter {
 	public int addFile(File file) {
 
 		// Select the storage algorithm (Value can be changed according to your choice)
-		int key = 1;
+		int key = 2;
 
 		// test if the file is NULL
 		if (file == null) {
