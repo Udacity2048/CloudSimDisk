@@ -47,7 +47,7 @@ public class MyDatacenter extends Datacenter {
 	public void processEvent(SimEvent ev) {
 
 		// Handle my new Tag Event.
-		if (ev.getTag() == MyCloudSimTags.CLOUDLET_FILES_DONE) {
+		if (ev.getTag() == MyCloudSimTags.CLOUDLET_FILE_DONE) {
 			processCloudletFilesDone(ev);
 		} else {
 			super.processEvent(ev);

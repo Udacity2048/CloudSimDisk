@@ -24,7 +24,7 @@ public class MyExample1 {
 		// Parameters
 		String name = "Basic Example 1"; // name of the simulation
 		String type = "basic"; // type of the workload
-		int NumberOfRequest = 9; // Number of requests
+		int NumberOfRequest = 3; // Number of requests
 		String RequestArrivalDistri = "basic/example1/ex1RequestArrivalDistri.txt"; // time distribution
 		String requiredFiles = ""; // No files required
 		String dataFiles = "basic/example1/ex1DataFiles.txt"; // dataFiles Names and Sizes

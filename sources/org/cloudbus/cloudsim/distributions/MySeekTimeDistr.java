@@ -2,9 +2,6 @@ package org.cloudbus.cloudsim.distributions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
 /**
  * A seekTime generator with min, max and average parameters.

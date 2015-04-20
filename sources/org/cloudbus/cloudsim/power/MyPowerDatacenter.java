@@ -205,19 +205,18 @@ public class MyPowerDatacenter extends MyDatacenter {
 		storage.setQueueLength(storage.getQueueLength() + 1);
 
 		// Prepare data for the event
-		Object[] data = new Object[9];
+		Object[] data = new Object[8];
 		data[0] = action; // the action of the operation
 		data[1] = cl; // the cloudlet subject to the operation
 		data[2] = tempFile; // the file subject to the operation
 		data[3] = tempPower; // the power needed during the operation
 		data[4] = tempTime; // the transaction time of the operation
 		data[5] = tempEnergy; // the energy consumed by the operation
-		data[6] = storage.getMode(); // the mode of the disk for the operation
-		data[7] = storage; // the disk subject to the operation
-		data[8] = waitingDelay; // the waiting time for the operation
+		data[6] = storage; // the disk subject to the operation
+		data[7] = waitingDelay; // the waiting time for the operation
 
 		// Schedule an Event confirming that the read/write operation has been done.
-		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILES_DONE, data);
+		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILE_DONE, data);
 
 		return tempEnergy;
 	}
@@ -235,9 +234,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 		double tempPower = (double) data[3];
 		double tempTime = (double) data[4];
 		double tempEnergy = (double) data[5];
-		int mode = (int) data[6];
-		MyPowerHarddriveStorage storage = (MyPowerHarddriveStorage) data[7];
-		double waitingDelay = (double) data[8];
+		MyPowerHarddriveStorage storage = (MyPowerHarddriveStorage) data[6];
+		double waitingDelay = (double) data[7];
 
 		// store results/information
 		WriteToResultFile.AddValueToSheetTab(waitingDelay, cl.getCloudletId(), 2);

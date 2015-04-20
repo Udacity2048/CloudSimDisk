@@ -392,13 +392,6 @@ public class Helper {
 		// -----------------------------------------------------------------------
 		// Log detailed information.
 		WriteToLogFile.AddtoFile("\n************************** RAW DATA  **************************");
-
-		// Arrival rate
-		WriteToLogFile.AddtoFile("ARRIVAL RATE in Second(s) (not sorted)");
-		for (Double delay : broker.getArrivalTimeHistory()) {
-			WriteToLogFile.AddtoFile(String.format("%9.3f", delay));
-		}
-
 		// Idle Interval
 		WriteToLogFile.AddtoFile("\nIDLE INTERVALS in Second(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
@@ -408,14 +401,15 @@ public class Helper {
 			WriteToLogFile.AddtoFile("\n");
 		}
 
-		// queue size
+		/*// queue size
 		WriteToLogFile.AddtoFile("QUEUE SIZE in Operation(s) (not sorted)");
 		for (int i = 0; i < tempList.size(); i++) {
+			WriteToLogFile.AddtoFile("For Disk" + tempList.get(i).getName());
 			for (int queue : tempList.get(i).getQueueLengthHistory()) {
 				WriteToLogFile.AddtoFile(String.format("%4d", queue));
 			}
 		}
-		// -----------------------------------------------------------------------
+		// -----------------------------------------------------------------------*/
 
 	}
 

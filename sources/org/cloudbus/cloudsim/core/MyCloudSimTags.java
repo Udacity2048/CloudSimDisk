@@ -11,7 +11,7 @@ public class MyCloudSimTags {
 	private static final int	BASE				= 0;
 	
 	/** Confirmation that Cloudlet Files have been handle **/
-	public static final int		CLOUDLET_FILES_DONE	= BASE + 49;
+	public static final int		CLOUDLET_FILE_DONE	= BASE + 49;
 	
 	/**
 	 * Convert tagValue to TagText.
