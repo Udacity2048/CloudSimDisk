@@ -282,7 +282,7 @@ public class CloudSimTags {
 	 * @param tagValue
 	 * @return tagText
 	 */
-	public static String TagText(int tagValue) {
+	public static String TagText(int tagValue) { // method added by Baptiste Louis
 		switch (tagValue) {
 		/*
 		 * case 0: return "BASE"; break;
@@ -403,7 +403,7 @@ public class CloudSimTags {
 	}
 
 	/** Private Constructor */
-	private CloudSimTags() {
+	protected CloudSimTags() {   // Java modifier changed by Baptiste Louis
 		throw new UnsupportedOperationException(
 				"CloudSim Tags cannot be instantiated");
 	}

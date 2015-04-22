@@ -34,7 +34,7 @@ public class Dvfs {
 
 		boolean enableOutput = true;
 		boolean outputToFile = false;
-		String inputFolder = "sources/workload/planetlab";
+		String inputFolder = "files/planetlab";
 		String outputFolder = "output";
 		String workload = "test1"; // PlanetLab workload
 		String vmAllocationPolicy = "dvfs"; // DVFS policy without VM migrations

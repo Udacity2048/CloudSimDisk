@@ -7,7 +7,7 @@ package org.cloudbus.cloudsim.core;
 
 import java.util.ArrayList;
 
-import org.cloudbus.cloudsim.util.WriteToLogFile;
+import org.cloudbus.cloudsimdisk.util.WriteToLogFile;
 
 /**
  * This class represents a simulation event which is passed between the entities in the simulation.
