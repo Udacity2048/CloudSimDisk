@@ -38,8 +38,8 @@ public class MyHarddriveStorage implements Storage {
 	/** a generator required to randomize the rotation latency. */
 	protected ContinuousDistribution	genRotLatency;
 
-	/** the current size of files on the harddrive. */
-	protected double					currentSize;
+	/** the space used by of files on the harddrive. */
+	protected double					usedSpace;
 
 	/** the total capacity of the harddrive in MB. */
 	protected double					capacity;
@@ -104,7 +104,7 @@ public class MyHarddriveStorage implements Storage {
 		this.fileList = new ArrayList<File>();
 		this.nameList = new ArrayList<String>();
 		this.genSeekTime = null;
-		this.currentSize = 0;
+		this.usedSpace = 0;
 		setMode(0);
 		setQueueLength(0);
 
@@ -132,12 +132,13 @@ public class MyHarddriveStorage implements Storage {
 		}
 
 		// randomize SeekTime
-		ContinuousDistribution generator = new UniformDistr(0.0002, 3*avgSeekTime);
+		ContinuousDistribution generator = new UniformDistr(0.0002, 3 * avgSeekTime);
 
 		// SCALABILITY: define your own Distribution algorithm for the seekTime.
 		//
 		// ContinuousDistribution generator = new YOUR_PERSO_DISTR(...);
 
+		// store variable
 		this.genSeekTime = generator;
 
 		return true;
@@ -147,28 +148,17 @@ public class MyHarddriveStorage implements Storage {
 	 * Get the seek time for a file with the defined size. Given a file size in MB, this method returns a seek time for
 	 * the file in seconds.
 	 * 
-	 * @param fileSize
-	 *            the size of a file in MB
 	 * @return the seek time in seconds
 	 */
-	protected double getSeekTime(int fileSize) {
+	protected double getSeekTime() {
 		double result = 0;
 
+		// Seek Time will be between a "Track-to-Track seek time" of 0.2ms and "3 x avgSeekTime".
 		if (genSeekTime != null) {
-			double tempSample = 0;
-			
-			// Seek Time should be between "Track-to-Track seek time" and "3 x avgSeekTime".
-			while (tempSample < 0.0002 || tempSample > 3 * avgSeekTime) {
-				tempSample = genSeekTime.sample();
-			}
-			result += tempSample;
+			result += genSeekTime.sample();
 		}
 
-		if (fileSize > 0 && capacity != 0) {
-			result += (fileSize / capacity);
-		}
-
-		// SCALABILITY: right your algorithm to GET a seekTime.
+		// SCALABILITY: right your algorithm to GET a seekTime. You can add parameter to the method like the fileSize.
 
 		return result;
 	}
@@ -194,8 +184,9 @@ public class MyHarddriveStorage implements Storage {
 		//
 		// ContinuousDistribution generator = new YOUR_PERSO_DISTR(...);
 
-		// store variables
+		// store variable
 		this.genRotLatency = generator;
+		
 		return true;
 	}
 
@@ -212,7 +203,7 @@ public class MyHarddriveStorage implements Storage {
 			result += genRotLatency.sample();
 		}
 
-		// SCALABILITY: right your algorithm to GET the rotation latency.
+		// SCALABILITY: right your algorithm to GET the rotation latency. You can add parameter to the method.
 
 		return result;
 	}
@@ -283,13 +274,13 @@ public class MyHarddriveStorage implements Storage {
 	}
 
 	/**
-	 * Gets the current size of the stored files in MB.
+	 * Gets the space used by the stored files in MB.
 	 * 
-	 * @return the current size of the stored files in MB
+	 * @return the space used of the stored files in MB
 	 */
 	@Override
-	public double getCurrentSize() {
-		return currentSize;
+	public double getUsedSpace() {
+		return usedSpace;
 	}
 
 	/**
@@ -437,13 +428,13 @@ public class MyHarddriveStorage implements Storage {
 	// SPACE METHODS
 
 	/**
-	 * Gets the available space on this storage in MB.
+	 * Gets the free space on this storage in MB.
 	 * 
-	 * @return the available space in MB
+	 * @return the free space in MB
 	 */
 	@Override
-	public double getAvailableSpace() {
-		return capacity - currentSize;
+	public double getFreeSpace() {
+		return capacity - usedSpace;
 	}
 
 	/**
@@ -453,7 +444,7 @@ public class MyHarddriveStorage implements Storage {
 	 */
 	@Override
 	public boolean isFull() {
-		if (Math.abs(currentSize - capacity) < .0000001) { // currentSize == capacity
+		if (Math.abs(usedSpace - capacity) < .0000001) { // currentSize == capacity
 			return true;
 		}
 		return false;
@@ -482,11 +473,11 @@ public class MyHarddriveStorage implements Storage {
 			return false;
 		}
 
-		if (currentSize + fileSize >= capacity) {
+		if (usedSpace + fileSize >= capacity) {
 			return false;
 		}
 
-		currentSize += fileSize;
+		usedSpace += fileSize;
 		return true;
 	}
 
@@ -504,12 +495,12 @@ public class MyHarddriveStorage implements Storage {
 			return 0;
 		}
 
-		currentSize -= file.getSize();
+		usedSpace -= file.getSize();
 		double result = addFile(file);
 
 		// if add file fails, then set the current size back to its old value
 		if (result == 0.0) {
-			currentSize += file.getSize();
+			usedSpace += file.getSize();
 		}
 
 		return result;
@@ -529,7 +520,7 @@ public class MyHarddriveStorage implements Storage {
 		}
 
 		// check if enough space left
-		if (getAvailableSpace() > fileSize) {
+		if (getFreeSpace() > fileSize) {
 			return true;
 		}
 
@@ -645,14 +636,14 @@ public class MyHarddriveStorage implements Storage {
 		if (!isFileValid(file, "deleteFile()")) {
 			return result;
 		}
-		double seekTime = getSeekTime(file.getSize());
+		double seekTime = getSeekTime();
 		double transferTime = getTransferTime(file.getSize());
 
 		// check if the file is in the storage
 		if (contains(file)) {
 			fileList.remove(file);            // remove the file HD
 			nameList.remove(file.getName());  // remove the name from name list
-			currentSize -= file.getSize();    // decrement the current HD space
+			usedSpace -= file.getSize();    // decrement the current HD space
 			result = seekTime + transferTime;  // total time
 			file.setTransactionTime(result);
 		}
@@ -788,21 +779,25 @@ public class MyHarddriveStorage implements Storage {
 		}
 
 		// check the capacity
-		if (file.getSize() + currentSize > capacity) {
-			Log.printLine(name + ".addFile(): Warning - not enough space" + " to store " + file.getName());
+		if (file.getSize() + usedSpace > capacity) {
+			Log.printLine(name + ".addFile(): Warning - not enough space to store " + file.getName());
 			return result;
 		}
 
 		// check if the same file name is already taken
 		if (!contains(file.getName())) {
-			double seekTime = getSeekTime(file.getSize());
+			
+			// calculate the transaction time
+			double seekTime = getSeekTime();
 			double rotlatency = getRotLatency();
 			double transferTime = getTransferTime(file.getSize());
-
+			result = seekTime + rotlatency + transferTime;
+			
+			// update global variables
 			fileList.add(file); // add the file into the HD
 			nameList.add(file.getName()); // add the name to the name list
-			currentSize += file.getSize(); // increment the current HD size
-			result = seekTime + rotlatency + transferTime;
+			usedSpace += file.getSize(); // increment the current HD size
+			
 
 			// store results/information
 			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
@@ -818,6 +813,7 @@ public class MyHarddriveStorage implements Storage {
 			WriteToLogFile.AddtoFile(msg);
 		}
 
+		// store transactionTime and HDDid as attributes on this file.
 		file.setTransactionTime(result);
 		file.setResourceID(this.getId());
 
@@ -841,7 +837,6 @@ public class MyHarddriveStorage implements Storage {
 		}
 
 		Iterator<File> it = fileList.iterator();
-		int size = 0;
 		int index = 0;
 		boolean found = false;
 		File tempFile = null;
@@ -849,7 +844,6 @@ public class MyHarddriveStorage implements Storage {
 		// find the file in the disk
 		while (it.hasNext()) {
 			tempFile = it.next();
-			size += tempFile.getSize();
 			if (tempFile.getName().equals(fileName)) {
 				found = true;
 				obj = tempFile;
@@ -861,8 +855,10 @@ public class MyHarddriveStorage implements Storage {
 
 		// if the file is found, then determine the time taken to get it
 		if (found) {
+			
+			// calculate the transaction time
 			obj = fileList.get(index);
-			double seekTime = getSeekTime(size);
+			double seekTime = getSeekTime();
 			double rotlatency = getRotLatency();
 			double transferTime = getTransferTime(obj.getSize());
 

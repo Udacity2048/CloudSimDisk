@@ -89,32 +89,6 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// initializes local variable
 		double timeFrameStorageEnergy = 0.0;
 
-		// Handle requiredFiles
-		List<String> requiredFiles = new ArrayList<String>();
-		if (cl instanceof MyCloudlet) {
-			MyCloudlet mycl = (MyCloudlet) cl;
-			requiredFiles = mycl.getRequiredFiles();
-		}
-
-		if (requiredFiles != null) {
-			Iterator<String> iter = requiredFiles.iterator();
-
-			while (iter.hasNext()) {
-				String fileName = iter.next();
-
-				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
-					File tempFile = storage.getFile(fileName);
-
-					if (tempFile != null) {
-
-						// add energy to this time frame storage energy
-						timeFrameStorageEnergy += processOperationWithStorage(storage, tempFile, cl, "retrieved");
-						break;
-					}
-				}
-			}
-		}
-
 		// Handle dataFiles
 		List<File> dataFiles = new ArrayList<File>();
 		if (cl instanceof MyCloudlet) {
@@ -147,6 +121,32 @@ public class MyPowerDatacenter extends MyDatacenter {
 				} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
 					Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
 							+ "> is already stored");
+				}
+			}
+		}
+
+		// Handle requiredFiles
+		List<String> requiredFiles = new ArrayList<String>();
+		if (cl instanceof MyCloudlet) {
+			MyCloudlet mycl = (MyCloudlet) cl;
+			requiredFiles = mycl.getRequiredFiles();
+		}
+
+		if (requiredFiles != null) {
+			Iterator<String> iter = requiredFiles.iterator();
+
+			while (iter.hasNext()) {
+				String fileName = iter.next();
+
+				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
+					File tempFile = storage.getFile(fileName);
+
+					if (tempFile != null) {
+
+						// add energy to this time frame storage energy
+						timeFrameStorageEnergy += processOperationWithStorage(storage, tempFile, cl, "retrieved");
+						break;
+					}
 				}
 			}
 		}

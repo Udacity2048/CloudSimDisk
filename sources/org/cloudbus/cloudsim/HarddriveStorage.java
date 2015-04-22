@@ -117,7 +117,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the available space in MB
 	 */
 	@Override
-	public double getAvailableSpace() {
+	public double getFreeSpace() {
 		return capacity - currentSize;
 	}
 
@@ -201,7 +201,7 @@ public class HarddriveStorage implements Storage {
 		}
 
 		// check if enough space left
-		if (getAvailableSpace() > fileSize) {
+		if (getFreeSpace() > fileSize) {
 			return true;
 		}
 
@@ -243,7 +243,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the current size of the stored files in MB
 	 */
 	@Override
-	public double getCurrentSize() {
+	public double getUsedSpace() {
 		return currentSize;
 	}
 
@@ -288,7 +288,7 @@ public class HarddriveStorage implements Storage {
 	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
 	 */
 	// @Override Commented by Baptiste Louis: innacurate method.
-	public boolean setMaxTransferRate(int rate) {
+	public boolean setMaxInternalDataTransferRate(int rate) {
 		if (rate <= 0) {
 			return false;
 		}

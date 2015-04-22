@@ -972,7 +972,7 @@ public class Datacenter extends SimEntity {
 		
 		for (int i = 0; i < getStorageList().size(); i++) {
 			tempStorage = getStorageList().get(i);
-			if (tempStorage.getAvailableSpace() >= file.getSize()) {
+			if (tempStorage.getFreeSpace() >= file.getSize()) {
 				tempStorage.addFile(file);
 				msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
 				break;

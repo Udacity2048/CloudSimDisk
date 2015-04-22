@@ -1,7 +1,7 @@
 package org.cloudbus.cloudsim.examples.storage;
 
-import org.cloudbus.cloudsim.power.models.harddrives.PowerModelHdd;
-import org.cloudbus.cloudsim.storage.models.harddrives.StorageModelHdd;
+import org.cloudbus.cloudsim.power.models.harddrives.*;
+import org.cloudbus.cloudsim.storage.models.harddrives.*;
 
 /**
  * Example Wikipedia 1: this example use wikipedia workload for the time distribution of requests. In this scenario,
@@ -24,18 +24,18 @@ public class MyExampleWikipedia1 {
 		// Parameters
 		String name = "simulationWiki1"; // name of the simulation
 		String type = "wiki"; // type of the workload
-		int NumberOfRequest = 3;//MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
+		int NumberOfRequest = MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
 		String RequestArrivalDistri = "wikipedia/wiki.1190153705"; // wikipedia workload with time-Stamps
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
 		String startingFilesList = ""; // No files to start
 		int NumberOfDisk = 1; // 1 HDD
-		StorageModelHdd hddModel = MyConstants.STORAGE_MODEL_HDD; // model of disks in the persistent storage
-		PowerModelHdd hddPowerModel = MyConstants.STORAGE_POWER_MODEL_HDD; // power model of disks
+		StorageModelHdd hddModel = new StorageModelHddHGSTUltrastarHUC109090CSS600(); // model of disks in the
+																						// persistent storage
+		PowerModelHdd hddPowerModel = new PowerModeHddHGSTUltrastarHUC109090CSS600(); // power model of disks
 
 		// Execution
 		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList,
 				NumberOfDisk, hddModel, hddPowerModel);
 	}
-
 }

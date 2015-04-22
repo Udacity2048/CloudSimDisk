@@ -278,7 +278,7 @@ public class MyDatacenter extends Datacenter {
 				 * have enough free space for the file. */
 				for (int i = 0; i < getStorageList().size(); i++) {
 					tempStorage = getStorageList().get(i);
-					if (tempStorage.getAvailableSpace() >= file.getSize()) {
+					if (tempStorage.getFreeSpace() >= file.getSize()) {
 						tempStorage.addFile(file);
 						msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
 						break;
@@ -296,7 +296,7 @@ public class MyDatacenter extends Datacenter {
 				}
 				int counter = 0;
 				tempStorage = getStorageList().get(tempRR);
-				while ((tempStorage.getAvailableSpace() < file.getSize()) || (counter > getStorageList().size())) {
+				while ((tempStorage.getFreeSpace() < file.getSize()) || (counter > getStorageList().size())) {
 					tempRR++;
 					tempStorage = getStorageList().get(tempRR);
 					counter++;

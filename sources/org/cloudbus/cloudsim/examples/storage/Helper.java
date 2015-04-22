@@ -347,7 +347,7 @@ public class Helper {
 					.format("OBSERVATION>> Initial persistent storage \n%d/%d %s\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.0f MB\n\t%-16s-> %10.6f s\n\t%-16s-> %10.6f s\n\t%-16s-> %10.3f MB/s\n",
 							(i + 1), tempList.size(), tempList.get(i).getName(), "Capacity", tempList.get(i)
 									.getCapacity(), "UsedSpace", (tempList.get(i).getCapacity() - tempList.get(i)
-									.getAvailableSpace()), "FreeSpave", tempList.get(i).getAvailableSpace(), "Latency",
+									.getFreeSpace()), "FreeSpave", tempList.get(i).getFreeSpace(), "Latency",
 							tempList.get(i).getAvgRotLatency(), "avgSeekTime", tempList.get(i).getAvgSeekTime(),
 							"maxTransferRate", tempList.get(i).getMaxInternalDataTransferRate());
 		}
