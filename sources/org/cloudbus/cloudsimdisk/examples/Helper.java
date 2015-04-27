@@ -23,9 +23,9 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsimdisk.MyCloudlet;
+import org.cloudbus.cloudsimdisk.MyDatacenterBroker;
 import org.cloudbus.cloudsimdisk.models.hdd.StorageModelHdd;
 import org.cloudbus.cloudsimdisk.power.MyPowerDatacenter;
-import org.cloudbus.cloudsimdisk.power.MyPowerDatacenterBroker;
 import org.cloudbus.cloudsimdisk.power.MyPowerHarddriveStorage;
 import org.cloudbus.cloudsimdisk.power.models.hdd.PowerModelHdd;
 import org.cloudbus.cloudsimdisk.util.WriteToLogFile;
@@ -76,7 +76,7 @@ public class Helper {
 	/**
 	 * the Broker.
 	 */
-	public MyPowerDatacenterBroker				broker;
+	public MyDatacenterBroker				broker;
 
 	/**
 	 * the Datacenter.
@@ -105,7 +105,7 @@ public class Helper {
 	 */
 	public void createBroker(String type, String RequestArrivalDistri) {
 		try {
-			broker = new MyPowerDatacenterBroker("Broker", type, RequestArrivalDistri);
+			broker = new MyDatacenterBroker("Broker", type, RequestArrivalDistri);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,4 +1,4 @@
-package org.cloudbus.cloudsimdisk.power;
+package org.cloudbus.cloudsimdisk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ import org.cloudbus.cloudsim.distributions.ExponentialDistr;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.lists.VmList;
 import org.cloudbus.cloudsim.power.PowerDatacenterBroker;
-import org.cloudbus.cloudsimdisk.MyCloudlet;
 import org.cloudbus.cloudsimdisk.distributions.MyBasicDistr;
 import org.cloudbus.cloudsimdisk.distributions.MySeekTimeDistr;
 import org.cloudbus.cloudsimdisk.distributions.MyWikiDistr;
@@ -25,7 +24,7 @@ import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
  * @author Baptiste Louis
  * 
  */
-public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
+public class MyDatacenterBroker extends PowerDatacenterBroker {
 
 	/** History of requests (cloudlets) arrival rate. */
 	private List<Double>			History	= new ArrayList<Double>();
@@ -45,7 +44,7 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public MyPowerDatacenterBroker(String name, String type, String RequestArrivalDistri) throws Exception {
+	public MyDatacenterBroker(String name, String type, String RequestArrivalDistri) throws Exception {
 		super(name);
 
 		setDistri(type, RequestArrivalDistri);
@@ -69,9 +68,7 @@ public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 
 			// Vm binding check
 			Vm vm;
-			if (cloudlet.getVmId() == -1) { // if user didn't bind this cloudlet
-											// and it has not been
-											// executed yet
+			if (cloudlet.getVmId() == -1) { // if user didn't bind this cloudlet and it has not been executed yet
 				vm = getVmsCreatedList().get(vmIndex);
 			} else { // submit to the specific vm
 				vm = VmList.getById(getVmsCreatedList(), cloudlet.getVmId());

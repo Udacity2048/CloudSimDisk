@@ -48,13 +48,13 @@ public class HarddriveStorage implements Storage {
 	/** the total capacity of the harddrive in MB. */
 	private final double capacity;
 
-	/** the maximum transfer rate in MB/sec. */
+	/** the maximum transfer rate in MB/sec. */ //Baptiste Louis
 	private double maxTransferRate;
 
-	/** the latency of the harddrive in seconds. */
+	/** the latency of the harddrive in seconds. */ //Baptiste Louis
 	private double latency;
 
-	/** the average seek time in seconds. */
+	/** the average seek time in seconds. */ //Baptiste Louis
 	private double avgSeekTime;
 
 	/**
@@ -117,7 +117,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the available space in MB
 	 */
 	@Override
-	public double getFreeSpace() {
+	public double getFreeSpace() { //Baptiste Louis
 		return capacity - currentSize;
 	}
 
@@ -243,7 +243,7 @@ public class HarddriveStorage implements Storage {
 	 * @return the current size of the stored files in MB
 	 */
 	@Override
-	public double getUsedSpace() {
+	public double getUsedSpace() { //Baptiste Louis
 		return currentSize;
 	}
 
@@ -282,28 +282,12 @@ public class HarddriveStorage implements Storage {
 	}
 
 	/**
-	 * Sets the maximum transfer rate of this storage system in MB/sec.
-	 * 
-	 * @param rate the maximum transfer rate in MB/sec
-	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
-	 */
-	// @Override Commented by Baptiste Louis: innacurate method.
-	public boolean setMaxInternalDataTransferRate(int rate) {
-		if (rate <= 0) {
-			return false;
-		}
-
-		maxTransferRate = rate;
-		return true;
-	}
-
-	/**
 	 * Gets the maximum transfer rate of the storage in MB/sec.
 	 * 
 	 * @return the maximum transfer rate in MB/sec
 	 */
 	@Override
-	public double getMaxInternalDataTransferRate() {
+	public double getMaxInternalDataTransferRate() { //Baptiste Louis
 		return maxTransferRate;
 	}
 
@@ -409,7 +393,7 @@ public class HarddriveStorage implements Storage {
 	 * @param fileSize the size of a file in MB
 	 * @return the seek time in seconds
 	 */
-	private double getSeekTime(int fileSize) {
+	private double getSeekTime(int fileSize) { //Baptiste Louis
 		double result = 0;
 
 		if (gen != null) {

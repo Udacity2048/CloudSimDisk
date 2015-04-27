@@ -1,5 +1,6 @@
 package org.cloudbus.cloudsimdisk;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,10 +19,12 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsimdisk.core.MyCloudSimTags;
+import org.cloudbus.cloudsimdisk.power.MyPowerHarddriveStorage;
+import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
 
 /**
- * My Datacenter extends Datacenter.java by overwriting some of its methods. The modifications are not important but
- * necessary for the new storage implementation.
+ * My Datacenter extends Datacenter.java by overwriting some of its methods. The modifications are necessary for the new
+ * storage implementation. Further development of CloudSimDisk will implement Host and VMs management.
  * 
  * @author Baptiste Louis
  * 
@@ -66,6 +69,154 @@ public class MyDatacenter extends Datacenter {
 		}
 	}
 
+	@Override
+	protected void processCloudletSubmit(SimEvent ev, boolean ack) {
+		/**
+		 * When a cloudlet is received by the Datacenter, First (and once for all) it retrieves requiredFiles and adds
+		 * dataFiles by interacting with the persistent storage available. Note: as a first step of CloudSimDisk
+		 * development, data center are not handling Host and VMs processing. However, the extension have been
+		 * implemented to easily integrate these functionalities in future development of CloudSimDisk.
+		 */
+		processCloudletFiles(ev, ack);
+	}
+
+	/**
+	 * Process Cloudlet Required Files and Data Files.
+	 * 
+	 * @param ev
+	 * @param ack
+	 */
+	public void processCloudletFiles(SimEvent ev, boolean ack) {
+
+		// retrieve Cloudlet object
+		Cloudlet cl = (Cloudlet) ev.getData();
+		WriteToResultFile.setTempRowNum(cl.getCloudletId());
+
+		// print out Cloudlet reception
+		Log.printLine();
+		Log.formatLine("\n%.6f: %s: Cloudlet # %d has been successfully received. ", CloudSim.clock(), getName(),
+				cl.getCloudletId());
+
+		// Handle dataFiles
+		List<File> dataFiles = new ArrayList<File>();
+		if (cl instanceof MyCloudlet) {
+			MyCloudlet mycl = (MyCloudlet) cl;
+			dataFiles = mycl.getDataFiles();
+		}
+
+		if (dataFiles != null) {
+			Iterator<File> iter = dataFiles.iterator();
+
+			while (iter.hasNext()) {
+				File tempFile = iter.next();
+
+				// Might need to move this in Datacenter.java
+				int answerTag = this.addFile(tempFile);
+
+				// test if tempFile has been added
+				if (answerTag == DataCloudTags.FILE_ADD_SUCCESSFUL) {
+
+					// find where the file has been added
+					for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
+
+						// test if the storage id EQUAL the file ResourceID
+						if (storage.getId() == tempFile.getResourceID()) {
+
+							// update HDD variables
+							processOperationWithStorage(storage, tempFile, cl, "added");
+						}
+					}
+				} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
+					Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
+							+ "> is already stored");
+				}
+			}
+		}
+
+		// Handle requiredFiles
+		List<String> requiredFiles = new ArrayList<String>();
+		if (cl instanceof MyCloudlet) {
+			MyCloudlet mycl = (MyCloudlet) cl;
+			requiredFiles = mycl.getRequiredFiles();
+		}
+
+		if (requiredFiles != null) {
+			Iterator<String> iter = requiredFiles.iterator();
+
+			while (iter.hasNext()) {
+				String fileName = iter.next();
+
+				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
+					File tempFile = storage.getFile(fileName);
+
+					if (tempFile != null) {
+
+						// update HDD variables
+						processOperationWithStorage(storage, tempFile, cl, "retrieved");
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Process operation with the storage.
+	 * 
+	 * @param storage
+	 * @param tempFile
+	 * @param cl
+	 * @param action
+	 * @return 1 if ok
+	 */
+	protected double processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
+			String action) {
+
+		// retrieve the transaction time for this operation
+		double transTime = tempFile.getTransactionTime();
+
+		// add the transaction time to the "total active time" of this disk
+		storage.setInActiveDuration(storage.getInActiveDuration() + transTime);
+
+		// update the storage state
+		double waitingTime = 0.0;
+		double eventDelay = 0.0;
+		if (storage.isIdle()) {
+			// handle Active End Time
+			storage.setActiveEndAt(CloudSim.clock() + transTime);
+			// handle Event for Operation completion
+			eventDelay = transTime;
+			// handle mode to Active (key = 1)
+			storage.setMode(1);
+		} else if (storage.isActive()) {
+			// handle waiting time
+			waitingTime = storage.getActiveEndAt() - CloudSim.clock();
+			// handle Time at which the Active mode end (Time at which all operation will be done)
+			storage.setActiveEndAt(storage.getActiveEndAt() + transTime);
+			// handle the event delay to schedule the event confirmation COUDLET_FILE_DONE
+			eventDelay = waitingTime + transTime;
+			// Note: an event delay is not a specific Time, it is a duration.
+			// Note: similarly, eventDelay = storage.getActiveEndAt() - CloudSim.clock();
+		}
+
+		// handle queue
+		storage.setQueueLength(storage.getQueueLength() + 1);
+
+		// Prepare data for the event
+		Object[] data = new Object[6];
+		data[0] = action; // the action of the operation
+		data[1] = cl; // the cloudlet subject to the operation
+		data[2] = tempFile; // the file subject to the operation
+		data[3] = transTime; // the transaction time of the operation
+		data[4] = storage; // the disk subject to the operation
+		data[5] = waitingTime; // the waiting time for the operation
+
+		// Schedule an Event confirming that the read/write operation has been done.
+		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILE_DONE, data);
+
+		return 1;
+	}
+
 	/**
 	 * Processes a "Cloudlet Files Done" Event.
 	 * 
@@ -74,184 +225,37 @@ public class MyDatacenter extends Datacenter {
 	 */
 	protected void processCloudletFilesDone(SimEvent ev) {
 
-		// get data from event
+		// Retrieves data from the ev
 		Object[] data = (Object[]) ev.getData();
-
-		// retrieves data
 		String action = (String) data[0];
 		Cloudlet cl = (Cloudlet) data[1];
 		File tempFile = (File) data[2];
-		double tempTime = (double) data[4];
-		Storage storage = (Storage) data[7];
+		double transTime = (double) data[3];
+		MyHarddriveStorage storage = (MyHarddriveStorage) data[4];
+		double waitingTime = (double) data[5];
 
-		// print out confirmation
-		Log.formatLine("%.3f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),
+		// store results/information
+		WriteToResultFile.AddValueToSheetTab(waitingTime, cl.getCloudletId(), 2);
+		WriteToResultFile.AddValueToSheetTab(transTime, cl.getCloudletId(), 3);
+		WriteToResultFile.AddValueToSheetTab(CloudSim.clock(), cl.getCloudletId(), 7);
+		WriteToResultFile.AddValueToSheetTab(tempFile.getName(), cl.getCloudletId(), 8);
+		WriteToResultFile.AddValueToSheetTab(tempFile.getSize(), cl.getCloudletId(), 9);
+
+		// Print out confirmation that Files have been handled
+		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),
 				tempFile.getName(), action, storage.getName());
-		Log.formatLine("%10s Transaction time of %6.3f Seconde(s) according to %s specifications.", "", tempTime,
-				storage.getName());
+		Log.formatLine("%10s Queue Waiting time of %9.6f Seconds(s).", "", waitingTime);
+		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s).", "", transTime);
 		Log.printLine();
-	}
 
-	/**
-	 * Processes a Cloudlet submission.
-	 * 
-	 * @param ev
-	 *            a SimEvent object
-	 * @param ack
-	 *            an acknowledgment
-	 */
-	@Override
-	protected void processCloudletSubmit(SimEvent ev, boolean ack) {
+		// handle queue
+		storage.setQueueLength(storage.getQueueLength() - 1);
 
-		// The code is almost the same than in Datacenter.java but some modification has been done to avoid compilation
-		// issues and
-
-		updateCloudletProcessing();
-
-		try {
-			// gets the Cloudlet object
-			Object obj = ev.getData();
-
-			// test is the Object <obj> is a Cloudlet
-			if (obj instanceof Cloudlet) {
-				Cloudlet cl = (Cloudlet) obj;
-
-				// checks whether this Cloudlet has finished or not
-				if (cl.isFinished()) {
-					String name = CloudSim.getEntityName(cl.getUserId());
-					Log.printLine(getName() + ": Warning - Cloudlet #" + cl.getCloudletId() + " owned by " + name
-							+ " is already completed/finished.");
-					Log.printLine("Therefore, it is not being executed again");
-					Log.printLine();
-
-					// NOTE: If a Cloudlet has finished, then it won't be processed.
-					// So, if ack is required, this method sends back a result.
-					// If ack is not required, this method don't send back a result.
-					// Hence, this might cause CloudSim to be hanged since waiting
-					// for this Cloudlet back.
-					if (ack) {
-						int[] data = new int[3];
-						data[0] = getId();
-						data[1] = cl.getCloudletId();
-						data[2] = CloudSimTags.FALSE;
-
-						// unique tag = operation tag
-						int tag = CloudSimTags.CLOUDLET_SUBMIT_ACK;
-						sendNow(cl.getUserId(), tag, data);
-					}
-
-					sendNow(cl.getUserId(), CloudSimTags.CLOUDLET_RETURN, cl);
-
-					return;
-				}
-
-				// process this Cloudlet to this CloudResource
-				cl.setResourceParameter(getId(), getCharacteristics().getCostPerSecond(), getCharacteristics()
-						.getCostPerBw());
-
-				int userId = cl.getUserId();
-				int vmId = cl.getVmId();
-
-				// Main modification compare to Datacenter.java
-				// time to transfer the required files
-				double fileTransferTime = predictRequiredFilesTransferTime(cl.getRequiredFiles());
-
-				// time to transfer the data files (if the Cloudlet is MyCloudlet)
-				if (cl instanceof MyCloudlet) {
-					MyCloudlet mycl = (MyCloudlet) cl;
-					fileTransferTime += predictDataFilesTransferTime(mycl.getDataFiles());
-				}
-
-				Host host = getVmAllocationPolicy().getHost(vmId, userId);
-				Vm vm = host.getVm(vmId, userId);
-				CloudletScheduler scheduler = vm.getCloudletScheduler();
-				double estimatedFinishTime = scheduler.cloudletSubmit(cl, fileTransferTime);
-
-				// if this cloudlet is in the execution queue
-				if (estimatedFinishTime > 0.0 && !Double.isInfinite(estimatedFinishTime)) {
-					estimatedFinishTime += fileTransferTime;
-					send(getId(), estimatedFinishTime, CloudSimTags.VM_DATACENTER_EVENT);
-				}
-
-				if (ack) {
-					int[] data = new int[3];
-					data[0] = getId();
-					data[1] = cl.getCloudletId();
-					data[2] = CloudSimTags.TRUE;
-
-					// unique tag = operation tag
-					int tag = CloudSimTags.CLOUDLET_SUBMIT_ACK;
-					sendNow(cl.getUserId(), tag, data);
-				}
-			}
-		} catch (ClassCastException c) {
-			Log.printLine(getName() + ".processCloudletSubmit(): " + "ClassCastException error.");
-			c.printStackTrace();
-		} catch (Exception e) {
-			Log.printLine(getName() + ".processCloudletSubmit(): " + "Exception error.");
-			e.printStackTrace();
+		// Test if there is further operation on the disk
+		if (storage.getActiveEndAt() <= CloudSim.clock()) {
+			storage.setMode(0); // switch to idle mode
+			storage.setActiveEndAt(0.0); // reset EndAt time
 		}
-
-		checkCloudletCompletion();
-	}
-
-	/**
-	 * Predict Required Files transfer time.
-	 * 
-	 * @param requiredFiles
-	 *            the required files
-	 * @return time the transfer time in Second(s)
-	 */
-	protected double predictRequiredFilesTransferTime(List<String> requiredFiles) {
-		// initialization
-		double time = 0.0;
-		Iterator<String> iter = requiredFiles.iterator();
-
-		// find each Files
-		while (iter.hasNext()) {
-			String fileName = iter.next();
-			for (int i = 0; i < getStorageList().size(); i++) {
-				Storage tempStorage = getStorageList().get(i);
-				File tempFile = tempStorage.getFile(fileName);
-				if (tempFile != null) {
-					// increment the time
-					time += tempFile.getSize() / tempStorage.getMaxInternalDataTransferRate();
-					break;
-				}
-			}
-		}
-
-		return time;
-	}
-
-	/**
-	 * Predict data files transfer time.
-	 * 
-	 * @param dataFiles
-	 *            the data files
-	 * @return time the transfer time in Second(s)
-	 */
-	protected double predictDataFilesTransferTime(List<File> dataFiles) {
-		// initialization
-		double time = 0.0;
-		Iterator<File> iter = dataFiles.iterator();
-
-		// handle the case where there is no persistent storage
-		if (getStorageList().size() == 0) {
-			return time;
-		}
-
-		// handle each files
-		while (iter.hasNext()) {
-			File fileName = iter.next();
-			// increment the time
-			time += fileName.getSize() / getStorageList().get(0).getMaxInternalDataTransferRate();
-
-			// NOTE: For the prediction, it is assumed that the transfer rate of the target hard drive will be
-			// approximately the same than the first hard drive in the storageList of this Datacenter.
-		}
-
-		return time;
 	}
 
 	/* (non-Javadoc)

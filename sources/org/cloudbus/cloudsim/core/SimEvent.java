@@ -7,6 +7,7 @@ package org.cloudbus.cloudsim.core;
 
 import java.util.ArrayList;
 
+import org.cloudbus.cloudsimdisk.core.MyCloudSimTags;
 import org.cloudbus.cloudsimdisk.util.WriteToLogFile;
 
 /**
@@ -111,14 +112,14 @@ public class SimEvent implements Cloneable, Comparable<SimEvent> {
 	 * @author Anupinder Singh
 	 * @param className
 	 */
-	public void CustomtoString(String className) {
+	public void CustomtoString(String className) { // added by Baptiste Louis
 		
 		ArrayList<String> type = new ArrayList<String>();
 		type.add("ENULL");
 		type.add("SEND");
 		type.add("HOLD_DONE");
 		type.add("CREATE");
-		String msg = className + ": -->Event Type = " + type.get(etype) + ";Event tag = " + CloudSimTags.TagText(tag)
+		String msg = className + ": -->Event Type = " + type.get(etype) + ";Event tag = " + MyCloudSimTags.TagText(tag)
 				+ "; source = " + CloudSim.getEntity(entSrc).getName() + "; destination = "
 				+ CloudSim.getEntity(entDst).getName() + "; Time= " + this.time + "; endwaiting time = " + this.endWaitingTime;
 		if (data != null) {

@@ -58,23 +58,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 	}
 
 	/* (non-Javadoc)
-	 * 
-	 * @see cloudsim.Datacenter#processCloudletSubmit(cloudsim.core.SimEvent, boolean) */
-	@Override
-	protected void processCloudletSubmit(SimEvent ev, boolean ack) {
-		/**
-		 * When a cloudlet is received by the Datacenter, First (and once for all) it retrieves requiredFiles and adds
-		 * dataFiles by interacting with the persistent storage available.
-		 */
-		processCloudletFiles(ev, ack);
-	}
-
-	/**
-	 * Process Cloudlet Required Files and Data Files.
-	 * 
-	 * @param ev
-	 * @param ack
+	 * @see org.cloudbus.cloudsimdisk.MyDatacenter#processCloudletFiles(org.cloudbus.cloudsim.core.SimEvent, boolean)
 	 */
+	@SuppressWarnings("javadoc")
+	@Override
 	public void processCloudletFiles(SimEvent ev, boolean ack) {
 
 		// retrieve Cloudlet object
@@ -157,49 +144,46 @@ public class MyPowerDatacenter extends MyDatacenter {
 	}
 
 	/**
-	 * Process operation with the storage.
-	 * 
-	 * @param storage
-	 * @param tempFile
-	 * @param cl
-	 * @param action
-	 * @return the energy
+	 * @return the energy consumption of the operation.
 	 */
+	@Override
 	protected double processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
 			String action) {
 
 		// retrieve the transaction time for this operation
-		double tempTime = tempFile.getTransactionTime();
+		double transTime = tempFile.getTransactionTime();
 
 		// add the transaction time to the "total active time" of this disk
-		storage.setInActiveDuration(storage.getInActiveDuration() + tempTime);
+		storage.setInActiveDuration(storage.getInActiveDuration() + transTime);
 
-		// set the mode of the disk to Active + handle waitingDelay, eventDelay, ActiveEndAt and IdleIntervalsHistory.
-		double waitingDelay = 0.0;
+		// update the storage state
+		double waitingTime = 0.0;
 		double eventDelay = 0.0;
-		if (storage.isActive()) {
-			waitingDelay = storage.getActiveEndAt() - CloudSim.clock();
-			storage.setActiveEndAt(storage.getActiveEndAt() + tempTime);
-			eventDelay = storage.getActiveEndAt() - CloudSim.clock();
-			// Note: a delay is not a specific Time, it is a duration. A duration is a difference between two times.
-
-		} else if (storage.isIdle()) {
+		if (storage.isIdle()) {
 			// handle Idle intervals
-			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleStartTime());
-
+			storage.getIdleIntervalsHistory().add(
+					CloudSim.clock() - storage.getLastIdleStartTime());
 			// handle Active End Time
-			storage.setActiveEndAt(CloudSim.clock() + tempTime);
-
+			storage.setActiveEndAt(CloudSim.clock() + transTime);
 			// handle Event for Operation completion
-			eventDelay = tempTime;
-
+			eventDelay = transTime;
 			// handle mode to Active (key = 1)
 			storage.setMode(1);
+		} else if (storage.isActive()) {
+			// handle waiting time
+			waitingTime = storage.getActiveEndAt() - CloudSim.clock();
+			// handle Time at which all operation will be done)
+			storage.setActiveEndAt(
+					storage.getActiveEndAt() + transTime);
+			// handle the event delay to schedule the event COUDLET_FILE_DONE
+			eventDelay = waitingTime + transTime;
+			// Note: an event delay is not a specific Time, it is a duration.
+			// also, eventDelay = storage.getActiveEndAt() - CloudSim.clock();
 		}
 
 		// compute energy
 		double tempPower = storage.getPowerActive();
-		double tempEnergy = tempPower * tempTime;
+		double tempEnergy = tempPower * transTime;
 
 		// handle queue
 		storage.setQueueLength(storage.getQueueLength() + 1);
@@ -210,10 +194,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 		data[1] = cl; // the cloudlet subject to the operation
 		data[2] = tempFile; // the file subject to the operation
 		data[3] = tempPower; // the power needed during the operation
-		data[4] = tempTime; // the transaction time of the operation
+		data[4] = transTime; // the transaction time of the operation
 		data[5] = tempEnergy; // the energy consumed by the operation
 		data[6] = storage; // the disk subject to the operation
-		data[7] = waitingDelay; // the waiting time for the operation
+		data[7] = waitingTime; // the waiting time for the operation
 
 		// Schedule an Event confirming that the read/write operation has been done.
 		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILE_DONE, data);
@@ -221,9 +205,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 		return tempEnergy;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * @see org.cloudbus.cloudsim.MyDatacenter#processCloudletFilesDone(org.cloudbus.cloudsim.core.SimEvent) */
+	@Override
 	protected void processCloudletFilesDone(SimEvent ev) {
 
 		// Retrieves data from the ev
@@ -232,14 +214,14 @@ public class MyPowerDatacenter extends MyDatacenter {
 		Cloudlet cl = (Cloudlet) data[1];
 		File tempFile = (File) data[2];
 		double tempPower = (double) data[3];
-		double tempTime = (double) data[4];
+		double transTime = (double) data[4];
 		double tempEnergy = (double) data[5];
 		MyPowerHarddriveStorage storage = (MyPowerHarddriveStorage) data[6];
-		double waitingDelay = (double) data[7];
+		double waitingTime = (double) data[7];
 
 		// store results/information
-		WriteToResultFile.AddValueToSheetTab(waitingDelay, cl.getCloudletId(), 2);
-		WriteToResultFile.AddValueToSheetTab(tempTime, cl.getCloudletId(), 3);
+		WriteToResultFile.AddValueToSheetTab(waitingTime, cl.getCloudletId(), 2);
+		WriteToResultFile.AddValueToSheetTab(transTime, cl.getCloudletId(), 3);
 		WriteToResultFile.AddValueToSheetTab(CloudSim.clock(), cl.getCloudletId(), 7);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getName(), cl.getCloudletId(), 8);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getSize(), cl.getCloudletId(), 9);
@@ -249,8 +231,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),
 				tempFile.getName(), action, storage.getName());
 		Log.formatLine("%10s Power  consumption of %6.3f Watt(s).", "", tempPower);
-		Log.formatLine("%10s Queue Waiting time of %9.6f Seconds(s).", "", waitingDelay);
-		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s).", "", tempTime);
+		Log.formatLine("%10s Queue Waiting time of %9.6f Seconds(s).", "", waitingTime);
+		Log.formatLine("%10s Transaction time   of %9.6f Seconde(s).", "", transTime);
 		Log.formatLine("%10s Energy consumption of %6.3f Joule(s).", "", tempEnergy);
 		Log.printLine();
 
