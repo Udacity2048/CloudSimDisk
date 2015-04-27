@@ -20,7 +20,7 @@ public abstract class PowerModelHdd {
 	 *            0 for Idle mode, 1 for Active mode.
 	 * @return the power data
 	 */
-	protected abstract double getPowerData(int key);
+	protected abstract Object getPowerData(int key);
 
 	// Non-abstract Method to retrieve a specific parameter.
 
@@ -33,7 +33,7 @@ public abstract class PowerModelHdd {
 	 * @return the power
 	 */
 	public double getPower(int mode) {
-		return getPowerData(mode);
+		return (double) getPowerData(mode);
 	}
 
 	/**
@@ -42,7 +42,7 @@ public abstract class PowerModelHdd {
 	 * @return the power
 	 */
 	public double getPowerIdle() {
-		return getPowerData(0);
+		return (double) getPowerData(0);
 	}
 
 	/**
@@ -51,14 +51,14 @@ public abstract class PowerModelHdd {
 	 * @return the power
 	 */
 	public double getPowerActive() {
-		return getPowerData(1);
+		return (double) getPowerData(1);
 	}
 
 	/*---------------------------------------------------------------------
 	|  SCALABILITY: create new GETTERs to retrieve Power for additional mode.
 	|
 	|  public <TYPE> getPowerOfYourMode() {
-	|      return getPowerData(<KEY_NUMBER>);
+	|      return (CAST_OBJECT) getPowerData(<KEY_NUMBER>);
 	|  }
 	|
 	 *-------------------------------------------------------------------*/

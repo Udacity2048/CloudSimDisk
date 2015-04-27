@@ -17,6 +17,7 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeSharedOverSubscription;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.power.PowerVm;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
@@ -99,13 +100,13 @@ public class Helper {
 	/**
 	 * Creates a Power-aware broker named "Broker".
 	 * 
-	 * @param type
-	 * @param RequestArrivalDistri
+	 * @param typeOfDistribution
+	 * @param sourceOfDistribution
 	 * 
 	 */
-	public void createBroker(String type, String RequestArrivalDistri) {
+	public void createBroker(String typeOfDistribution, String sourceOfDistribution) {
 		try {
-			broker = new MyDatacenterBroker("Broker", type, RequestArrivalDistri);
+			broker = new MyDatacenterBroker("Broker", typeOfDistribution, sourceOfDistribution);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

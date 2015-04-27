@@ -167,9 +167,8 @@ public class MyDatacenter extends Datacenter {
 	 * @param tempFile
 	 * @param cl
 	 * @param action
-	 * @return 1 if ok
 	 */
-	protected double processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
+	protected void processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
 			String action) {
 
 		// retrieve the transaction time for this operation
@@ -213,8 +212,6 @@ public class MyDatacenter extends Datacenter {
 
 		// Schedule an Event confirming that the read/write operation has been done.
 		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILE_DONE, data);
-
-		return 1;
 	}
 
 	/**
@@ -265,8 +262,10 @@ public class MyDatacenter extends Datacenter {
 	@Override
 	public int addFile(File file) {
 
-		// Select the storage algorithm (Value can be changed according to your choice)
+		/************HDD POOL MANAGEMENT******/
+		/*Select the storage algorithm       */
 		int key = 2;
+		/*************************************/
 
 		// test if the file is NULL
 		if (file == null) {
@@ -328,11 +327,11 @@ public class MyDatacenter extends Datacenter {
 				break;
 
 			/*--------------------------------------------------------------------------------------
-			 |SCALABILITY: right your own algorithm to store a File on a pool of Hard Disk Drives.
+			 |SCALABILITY: write your own algorithm to manage request to the persistent storage
 			 *--------------------------------------------------------------------------------------*/
 
 			default:
-				System.out.println("ERROR: no such algorithm corresponding to this key.");
+				System.out.println("ERROR: no algorithm corresponding to this key.");
 				break;
 		}
 

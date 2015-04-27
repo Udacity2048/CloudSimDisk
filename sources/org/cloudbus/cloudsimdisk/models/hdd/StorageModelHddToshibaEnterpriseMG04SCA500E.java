@@ -15,7 +15,7 @@ public class StorageModelHddToshibaEnterpriseMG04SCA500E extends StorageModelHdd
 	 * 
 	 * @see org.cloudbus.cloudsim.power.models.PowerModelSpecPower#getPowerData(int) */
 	@Override
-	protected Object getParameter(int key) {
+	protected Object getCharacteristic(int key) {
 		switch (key) {
 			case 0:
 				return "Toshiba"; // Manufacturer 
@@ -30,9 +30,9 @@ public class StorageModelHddToshibaEnterpriseMG04SCA500E extends StorageModelHdd
 			case 5:
 				return 215.0; // Maximum Internal Data Transfer Rate (MB/s)
 			default:
-				return "No info";
+				return "n/a";
 
-				// SCALABILITY: add new parameters by adding new CASE.
+				// SCALABILITY: add new characteristic by adding new CASE.
 				//
 				// case <KEY_NUMBER>:
 				// return <PARAMETER_VALUE>;

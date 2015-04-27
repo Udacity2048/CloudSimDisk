@@ -54,7 +54,7 @@ public class MyHarddriveStorage implements Storage {
 	protected final double				avgRotLatency;
 
 	/** the average seek time in seconds. */
-	protected double					avgSeekTime;
+	protected final double				avgSeekTime;
 
 	/** unique ID of the Hard Drive */
 	private final int					Id;
@@ -101,6 +101,7 @@ public class MyHarddriveStorage implements Storage {
 		this.reference = storageModelHdd.getModelNumber();
 		this.maxInternalDataTransferRate = storageModelHdd.getMaxInternalDataTransferRate();
 		this.avgRotLatency = storageModelHdd.getAvgRotationLatency();
+		this.avgSeekTime = storageModelHdd.getAvgSeekTime();
 
 		// initializes global variables
 		this.activeEndAt = 0.0;
@@ -126,13 +127,6 @@ public class MyHarddriveStorage implements Storage {
 	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
 	 */
 	public boolean setSeekTime(double avgSeekTime) {
-
-		this.avgSeekTime = avgSeekTime;
-
-		// check that avgSeekTime > 0
-		if (avgSeekTime <= 0.0) {
-			return false;
-		}
 
 		// randomize SeekTime
 		ContinuousDistribution generator = new MySeekTimeDistr(0.0002, 3 * avgSeekTime, avgSeekTime);
@@ -162,7 +156,7 @@ public class MyHarddriveStorage implements Storage {
 			result += genSeekTime.sample();
 		}
 
-		// SCALABILITY: right your algorithm to GET a seekTime. You can add parameter to the method like the fileSize.
+		// SCALABILITY: write your algorithm to GET a seekTime. You can add parameter to the method like the fileSize.
 
 		return result;
 	}
@@ -175,11 +169,6 @@ public class MyHarddriveStorage implements Storage {
 	 * @return <tt>true</tt> if the setting succeeded, <tt>false</tt> otherwise
 	 */
 	public boolean setRotLatency(double avgRotationLatency) {
-
-		// check that avgRotationLatency > 0
-		if (avgRotationLatency <= 0.0) {
-			return false;
-		}
 
 		// randomize rotation latency
 		ContinuousDistribution generator = new UniformDistr(0, 2 * avgRotationLatency);
@@ -207,7 +196,7 @@ public class MyHarddriveStorage implements Storage {
 			result += genRotLatency.sample();
 		}
 
-		// SCALABILITY: right your algorithm to GET the rotation latency. You can add parameter to the method.
+		// SCALABILITY: write your algorithm to GET the rotation latency. You can add parameter to the method.
 
 		return result;
 	}
@@ -640,7 +629,10 @@ public class MyHarddriveStorage implements Storage {
 		if (!isFileValid(file, "deleteFile()")) {
 			return result;
 		}
+
+		// retrieve transaction times
 		double seekTime = getSeekTime();
+		double rotationLatency = getRotLatency();
 		double transferTime = getTransferTime(file.getSize());
 
 		// check if the file is in the storage
@@ -648,7 +640,7 @@ public class MyHarddriveStorage implements Storage {
 			fileList.remove(file);            // remove the file HD
 			nameList.remove(file.getName());  // remove the name from name list
 			usedSpace -= file.getSize();    // decrement the current HD space
-			result = seekTime + transferTime;  // total time
+			result = seekTime + transferTime + rotationLatency;  // total time
 			file.setTransactionTime(result);
 		}
 		return result;
@@ -806,6 +798,7 @@ public class MyHarddriveStorage implements Storage {
 			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
 			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
 			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
+			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 10);
 
 			// Log the observation
 			String msg = String.format("OBSERVATION>> Writting \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
@@ -872,6 +865,7 @@ public class MyHarddriveStorage implements Storage {
 			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
 			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
 			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
+			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 10);
 
 			// log the observation
 			String msg = String.format("OBSERVATION>> Reading \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"

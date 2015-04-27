@@ -19,7 +19,7 @@ public abstract class StorageModelHdd {
 	 *            key value of the parameter
 	 * @return the requested parameter
 	 */
-	protected abstract Object getParameter(int key);
+	protected abstract Object getCharacteristic(int key);
 
 	// Non-abstract Method to retrieve a specific parameter.
 
@@ -29,7 +29,7 @@ public abstract class StorageModelHdd {
 	 * @return Manufacturer name
 	 */
 	public String getManufacturerName() {
-		return getParameter(0).toString();
+		return getCharacteristic(0).toString();
 	}
 
 	/**
@@ -38,7 +38,7 @@ public abstract class StorageModelHdd {
 	 * @return Model Number
 	 */
 	public String getModelNumber() {
-		return getParameter(1).toString();
+		return getCharacteristic(1).toString();
 	}
 
 	/**
@@ -46,8 +46,8 @@ public abstract class StorageModelHdd {
 	 * 
 	 * @return total capacity in MB
 	 */
-	public double getCapacity() {
-		return (int) getParameter(2);
+	public int getCapacity() {
+		return (int) getCharacteristic(2);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class StorageModelHdd {
 	 * @return Average Rotation Latency in seconds
 	 */
 	public double getAvgRotationLatency() {
-		return (Double) getParameter(3);
+		return (Double) getCharacteristic(3);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class StorageModelHdd {
 	 * @return Average Seek Time in seconds
 	 */
 	public double getAvgSeekTime() {
-		return (Double) getParameter(4);
+		return (Double) getCharacteristic(4);
 	}
 
 	/**
@@ -74,14 +74,14 @@ public abstract class StorageModelHdd {
 	 * @return Maximum Internal Data Transfer Rate in MB/second
 	 */
 	public double getMaxInternalDataTransferRate() {
-		return (Double) getParameter(5);
+		return (Double) getCharacteristic(5);
 	}
 
 	/*---------------------------------------------------------------------
-	|  SCALABILITY: create new GETTERs to retrieve additional parameters.
+	|  SCALABILITY: create new GETTERs to retrieve additional characteristic.
 	|
 	|  public <TYPE> getNameOfTheParameter() {
-	|      return <CAST_OBJECT> getParameter(<KEY_NUMBER>);
+	|      return <CAST_OBJECT> getCharacteristic(<KEY_NUMBER>);
 	|  }
 	|
 	 *-------------------------------------------------------------------*/

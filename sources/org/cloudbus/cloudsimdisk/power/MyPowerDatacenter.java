@@ -1,18 +1,14 @@
 package org.cloudbus.cloudsimdisk.power;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.DataCloudTags;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.File;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
-import org.cloudbus.cloudsimdisk.MyCloudlet;
 import org.cloudbus.cloudsimdisk.MyDatacenter;
 import org.cloudbus.cloudsimdisk.core.MyCloudSimTags;
 import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
@@ -57,97 +53,8 @@ public class MyPowerDatacenter extends MyDatacenter {
 		setTotalStorageEnergy(0.0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cloudbus.cloudsimdisk.MyDatacenter#processCloudletFiles(org.cloudbus.cloudsim.core.SimEvent, boolean)
-	 */
-	@SuppressWarnings("javadoc")
 	@Override
-	public void processCloudletFiles(SimEvent ev, boolean ack) {
-
-		// retrieve Cloudlet object
-		Cloudlet cl = (Cloudlet) ev.getData();
-		WriteToResultFile.setTempRowNum(cl.getCloudletId());
-
-		// print out Cloudlet reception
-		Log.printLine();
-		Log.formatLine("\n%.6f: %s: Cloudlet # %d has been successfully received. ", CloudSim.clock(), getName(),
-				cl.getCloudletId());
-
-		// initializes local variable
-		double timeFrameStorageEnergy = 0.0;
-
-		// Handle dataFiles
-		List<File> dataFiles = new ArrayList<File>();
-		if (cl instanceof MyCloudlet) {
-			MyCloudlet mycl = (MyCloudlet) cl;
-			dataFiles = mycl.getDataFiles();
-		}
-
-		if (dataFiles != null) {
-			Iterator<File> iter = dataFiles.iterator();
-
-			while (iter.hasNext()) {
-				File tempFile = iter.next();
-
-				// Might need to move this in Datacenter.java
-				int answerTag = this.addFile(tempFile);
-
-				// test if tempFile has been added
-				if (answerTag == DataCloudTags.FILE_ADD_SUCCESSFUL) {
-
-					// find where the file has been added
-					for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
-
-						// test if the storage id EQUAL the file ResourceID
-						if (storage.getId() == tempFile.getResourceID()) {
-
-							// add energy to this time frame storage energy
-							timeFrameStorageEnergy += processOperationWithStorage(storage, tempFile, cl, "added");
-						}
-					}
-				} else if (answerTag == DataCloudTags.FILE_ADD_ERROR_EXIST_READ_ONLY) {
-					Log.printLine(tempFile.getName() + ".addFile(): Warning - This file named <" + tempFile.getName()
-							+ "> is already stored");
-				}
-			}
-		}
-
-		// Handle requiredFiles
-		List<String> requiredFiles = new ArrayList<String>();
-		if (cl instanceof MyCloudlet) {
-			MyCloudlet mycl = (MyCloudlet) cl;
-			requiredFiles = mycl.getRequiredFiles();
-		}
-
-		if (requiredFiles != null) {
-			Iterator<String> iter = requiredFiles.iterator();
-
-			while (iter.hasNext()) {
-				String fileName = iter.next();
-
-				for (MyPowerHarddriveStorage storage : this.<MyPowerHarddriveStorage> getStorageList()) {
-					File tempFile = storage.getFile(fileName);
-
-					if (tempFile != null) {
-
-						// add energy to this time frame storage energy
-						timeFrameStorageEnergy += processOperationWithStorage(storage, tempFile, cl, "retrieved");
-						break;
-					}
-				}
-			}
-		}
-
-		// Update total energy
-		setTotalDatacenterEnergy(getTotalDatacenterEnergy() + timeFrameStorageEnergy);
-		setTotalStorageEnergy(getTotalStorageEnergy() + timeFrameStorageEnergy);
-	}
-
-	/**
-	 * @return the energy consumption of the operation.
-	 */
-	@Override
-	protected double processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
+	protected void processOperationWithStorage(MyPowerHarddriveStorage storage, File tempFile, Cloudlet cl,
 			String action) {
 
 		// retrieve the transaction time for this operation
@@ -161,8 +68,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 		double eventDelay = 0.0;
 		if (storage.isIdle()) {
 			// handle Idle intervals
-			storage.getIdleIntervalsHistory().add(
-					CloudSim.clock() - storage.getLastIdleStartTime());
+			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleStartTime());
 			// handle Active End Time
 			storage.setActiveEndAt(CloudSim.clock() + transTime);
 			// handle Event for Operation completion
@@ -173,8 +79,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 			// handle waiting time
 			waitingTime = storage.getActiveEndAt() - CloudSim.clock();
 			// handle Time at which all operation will be done)
-			storage.setActiveEndAt(
-					storage.getActiveEndAt() + transTime);
+			storage.setActiveEndAt(storage.getActiveEndAt() + transTime);
 			// handle the event delay to schedule the event COUDLET_FILE_DONE
 			eventDelay = waitingTime + transTime;
 			// Note: an event delay is not a specific Time, it is a duration.
@@ -184,6 +89,10 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// compute energy
 		double tempPower = storage.getPowerActive();
 		double tempEnergy = tempPower * transTime;
+
+		// update total energy
+		setTotalDatacenterEnergy(getTotalDatacenterEnergy() + tempEnergy);
+		setTotalStorageEnergy(getTotalStorageEnergy() + tempEnergy);
 
 		// handle queue
 		storage.setQueueLength(storage.getQueueLength() + 1);
@@ -201,8 +110,6 @@ public class MyPowerDatacenter extends MyDatacenter {
 
 		// Schedule an Event confirming that the read/write operation has been done.
 		send(this.getId(), eventDelay, MyCloudSimTags.CLOUDLET_FILE_DONE, data);
-
-		return tempEnergy;
 	}
 
 	@Override
@@ -225,7 +132,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 		WriteToResultFile.AddValueToSheetTab(CloudSim.clock(), cl.getCloudletId(), 7);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getName(), cl.getCloudletId(), 8);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getSize(), cl.getCloudletId(), 9);
-		WriteToResultFile.AddValueToSheetTab(tempEnergy, cl.getCloudletId(), 10);
+		WriteToResultFile.AddValueToSheetTab(tempEnergy, cl.getCloudletId(), 11);
 
 		// Print out confirmation that Files have been handled
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),

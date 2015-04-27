@@ -104,7 +104,7 @@ public class WriteToResultFile {
 		cell.setCellValue("Transfer Time (s)");
 		cell.setCellStyle(style);
 		cell = row.createCell(7);
-		cell.setCellValue("Execusion Time (s)");
+		cell.setCellValue("Done Time (s)");
 		cell.setCellStyle(style);
 		cell = row.createCell(8);
 		cell.setCellValue("Filename");
@@ -113,6 +113,9 @@ public class WriteToResultFile {
 		cell.setCellValue("File size (MB)");
 		cell.setCellStyle(style);
 		cell = row.createCell(10);
+		cell.setCellValue("HDD name");
+		cell.setCellStyle(style);
+		cell = row.createCell(11);
 		cell.setCellValue("Energy Consumption (J)");
 		cell.setCellStyle(style);
 
@@ -220,6 +223,46 @@ public class WriteToResultFile {
 		}
 	}
 
+	/**
+	 * Add a new text to the result sheet tab on the same raw than previous action.
+	 * 
+	 * @param txt
+	 *            the text to add on the results file in String format.
+	 */
+	public static void AddTextToSheetTabSameRow(String txt, int column) {
+		try {
+			FileInputStream fileIntStream = new FileInputStream(file);
+
+			HSSFWorkbook workbook = new HSSFWorkbook(fileIntStream);
+			HSSFSheet sheet = workbook.getSheetAt(0);
+
+			// Write the value in the good cell
+			Row row = sheet.getRow(tempRowNum);
+			if (row == null) {
+				row = sheet.createRow(tempRowNum);
+			}
+			Cell cell = row.getCell(column);
+			if (cell == null) {
+				cell = row.createCell(column);
+			}
+			cell.setCellValue(txt);
+
+			// close input stream
+			fileIntStream.close();
+
+			// update workbook
+			FileOutputStream outFile = new FileOutputStream(file);
+			workbook.write(outFile);
+			outFile.close();
+			workbook.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Format sheet at the end
 	 */

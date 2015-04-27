@@ -37,17 +37,17 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 	 * 
 	 * @param name
 	 *            name to be associated with this entity (as required by Sim_entity class from simjava package)
-	 * @param type
+	 * @param distriType
 	 *            the distribution type
-	 * @param RequestArrivalDistri
+	 * @param distriSource
 	 *            the file containing time distribution
 	 * @throws Exception
 	 *             the exception
 	 */
-	public MyDatacenterBroker(String name, String type, String RequestArrivalDistri) throws Exception {
+	public MyDatacenterBroker(String name, String distriType, String distriSource) throws Exception {
 		super(name);
 
-		setDistri(type, RequestArrivalDistri);
+		setDistri(distriType, distriSource);
 	}
 
 	/* (non-Javadoc)
@@ -128,27 +128,23 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 	 */
 	public void setDistri(String type, String source) {
 		switch (type) {
+			case "expo":
+				distri = new ExponentialDistr(60); // arbitrary parameters
+				break;
+			case "unif":
+				distri = new UniformDistr(0, 10); // arbitrary parameters
+				break;
 			case "basic":
 				distri = new MyBasicDistr(source);
 				break;
-			case "expo":
-				distri = new ExponentialDistr(60);
-				break;
-
-			case "seek":
-				distri = new MySeekTimeDistr(0.0002, 3 * Double.parseDouble(source), Double.parseDouble(source));
-				break;
-
-			case "unif":
-				distri = new UniformDistr(0, 1);
-				break;
-
 			case "wiki":
 				distri = new MyWikiDistr(source);
 				break;
 
+			// SCALABILITY: add a case and declare instantiate your own distribution.
+
 			default:
-				distri = new UniformDistr(1, 2);
+				distri = new UniformDistr(1, 1.0001); // arbitrary parameters
 				break;
 		}
 	}

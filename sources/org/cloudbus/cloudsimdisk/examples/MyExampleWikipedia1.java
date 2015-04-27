@@ -22,20 +22,20 @@ public class MyExampleWikipedia1 {
 	public static void main(String[] args) throws Exception {
 
 		// Parameters
-		String name = "simulationWiki1"; // name of the simulation
-		String type = "wiki"; // type of the workload
-		int NumberOfRequest = MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
-		String RequestArrivalDistri = "wikipedia/wiki.1190153705"; // wikipedia workload with time-Stamps
+		String nameOfTheSimulation = "simulationWiki1"; // name of the simulation
+		String requestArrivalRateType = "wiki"; // type of the workload
+		String requestArrivalTimesSource = "wikipedia/wiki.1190153705"; // wikipedia workload with time-Stamps
+		int numberOfRequest = 20;//MyConstants.CLOUDLET_NUMBER_WIKI; // Number of requests
 		String requiredFiles = ""; // No files required
 		String dataFiles = "wikipedia/wikiDataFiles.txt"; // File path of the "Hypothetical" Wikipedia dataFiles.
 		String startingFilesList = ""; // No files to start
-		int NumberOfDisk = 1; // 1 HDD
+		int numberOfDisk = 10; // 1 HDD
 		StorageModelHdd hddModel = new StorageModelHddHGSTUltrastarHUC109090CSS600(); // model of disks in the
 																						// persistent storage
 		PowerModelHdd hddPowerModel = new PowerModeHddHGSTUltrastarHUC109090CSS600(); // power model of disks
 
 		// Execution
-		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList,
-				NumberOfDisk, hddModel, hddPowerModel);
+		new MyRunner(nameOfTheSimulation, requestArrivalRateType, numberOfRequest, requestArrivalTimesSource, requiredFiles, dataFiles, startingFilesList,
+				numberOfDisk, hddModel, hddPowerModel);
 	}
 }

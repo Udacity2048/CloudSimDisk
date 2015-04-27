@@ -15,7 +15,7 @@ public class PowerModeHddSeagateEnterpriseST6000VN0001 extends PowerModelHdd {
 	 * 
 	 * @see org.cloudbus.cloudsimdisk.power.models.hdd.PowerModelHdd#getPowerData(int) */
 	@Override
-	protected double getPowerData(int key) {
+	protected Object getPowerData(int key) {
 
 		switch (key) {
 			case 0:
@@ -23,14 +23,12 @@ public class PowerModeHddSeagateEnterpriseST6000VN0001 extends PowerModelHdd {
 			case 1:
 				return 11.27; // Active mode, in W.
 			default:
-				return 0.0;
+				return "n/a";
 
 				// SCALABILITY: add new mode by adding new CASE.
 				//
 				// case <KEY_NUMBER>:
 				// return <POWER_VALUE>;
-				//
 		}
-
 	}
 }

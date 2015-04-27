@@ -22,20 +22,20 @@ public class MyExample1 {
 	public static void main(String[] args) throws Exception {
 
 		// Parameters
-		String name = "Basic Example 1"; // name of the simulation
-		String type = "basic"; // type of the workload
-		int NumberOfRequest = 9; // Number of requests
-		String RequestArrivalDistri = "basic/example1/ex1RequestArrivalDistri.txt"; // time distribution
+		String nameOfTheSimulation = "Basic Example 1"; // name of the simulation
+		String requestArrivalRateType = "basic"; // type of the workload
+		String requestArrivalTimesSource = "basic/example1/ex1RequestArrivalDistri.txt"; // time distribution
+		int numberOfRequest = 9; // Number of requests
 		String requiredFiles = ""; // No files required
 		String dataFiles = "basic/example1/ex1DataFiles.txt"; // dataFiles Names and Sizes
 		String startingFilesList = ""; // No files to start
-		int NumberOfDisk = 1; // 1 HDD
+		int numberOfDisk = 1; // 1 HDD
 		StorageModelHdd hddModel = MyConstants.STORAGE_MODEL_HDD; // model of disks in the persistent storage
 		PowerModelHdd hddPowerModel = MyConstants.STORAGE_POWER_MODEL_HDD; // power model of disks
 
 		// Execution
-		new MyRunner(name, type, NumberOfRequest, RequestArrivalDistri, requiredFiles, dataFiles, startingFilesList,
-				NumberOfDisk, hddModel, hddPowerModel);
+		new MyRunner(nameOfTheSimulation, requestArrivalRateType, numberOfRequest, requestArrivalTimesSource, requiredFiles, dataFiles, startingFilesList,
+				numberOfDisk, hddModel, hddPowerModel);
 	}
 
 }
