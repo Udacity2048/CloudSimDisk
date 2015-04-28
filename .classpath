@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="jars/commons-math3-3.4.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="jars/commons-math3-3.4.1.jar"/>
-	<classpathentry kind="lib" path="poi-3.11-20141221.jar"/>
+	<classpathentry kind="lib" path="C:/Users/baplou/Dropbox/Project Master Thesis/Github/CloudSim/jars/poi-3.11-20141221.jar"/>
 	<classpathentry kind="lib" path="C:/Users/baplou/Dropbox/Project Master Thesis/Github/CloudSim/jars/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/baplou/Dropbox/Project Master Thesis/Github/CloudSim/jars/commons-io-2.4-javadoc.jar"/>
 	<classpathentry kind="output" path="bin"/>
