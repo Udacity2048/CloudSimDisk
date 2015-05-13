@@ -33,8 +33,8 @@ public class MyExample0 {
 		PowerModelHdd hddPowerModel = MyConstants.STORAGE_POWER_MODEL_HDD; // power model of disks
 
 		// Execution
-		new MyRunner(nameOfTheSimulation, requestArrivalRateType, numberOfRequest, requestArrivalTimesSource, requiredFiles, dataFiles, startingFilesList,
-				numberOfDisk, hddModel, hddPowerModel);
+		new MyRunner(nameOfTheSimulation, requestArrivalRateType, numberOfRequest, requestArrivalTimesSource,
+				requiredFiles, dataFiles, startingFilesList, numberOfDisk, hddModel, hddPowerModel);
 	}
 
 }

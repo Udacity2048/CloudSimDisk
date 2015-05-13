@@ -16,13 +16,13 @@ import org.cloudbus.cloudsim.UtilizationModel;
  * 
  */
 public class MyCloudlet extends Cloudlet {
-	
+
 	/** The required files. */
 	private List<String>	requiredFiles	= null;
-	
+
 	/** The data files. */
 	private List<File>		dataFiles		= null;
-	
+
 	/**
 	 * The constructor.
 	 * 
@@ -47,33 +47,21 @@ public class MyCloudlet extends Cloudlet {
 	 * @param dataFiles
 	 *            list of "to storage" files
 	 */
-	public MyCloudlet(
-			int cloudletId,
-			long cloudletLength,
-			int pesNumber,
-			long cloudletFileSize,
-			long cloudletOutputSize,
-			UtilizationModel utilizationModelCpu,
-			UtilizationModel utilizationModelRam,
+	public MyCloudlet(int cloudletId, long cloudletLength, int pesNumber, 
+			long cloudletFileSize, long cloudletOutputSize, 
+			UtilizationModel utilizationModelCpu, 
+			UtilizationModel utilizationModelRam, 
 			UtilizationModel utilizationModelBw,
-			List<String> requiredFiles,
-			List<File> dataFiles) {
-		super(
-				cloudletId,
-				cloudletLength,
-				pesNumber,
-				cloudletFileSize,
-				cloudletOutputSize,
-				utilizationModelCpu,
-				utilizationModelRam,
-				utilizationModelBw);
-		
+			List<String> requiredFiles, List<File> dataFiles) {
+		super(cloudletId, cloudletLength, pesNumber, cloudletFileSize, cloudletOutputSize, 
+				utilizationModelCpu, utilizationModelRam, utilizationModelBw);
+
 		setRequiredFiles(requiredFiles);
 		setDataFiles(dataFiles);
 	}
-	
+
 	// GETTER AND SETTER
-	
+
 	/**
 	 * Gets the required files.
 	 * 
@@ -83,32 +71,30 @@ public class MyCloudlet extends Cloudlet {
 	public List<String> getRequiredFiles() {
 		return requiredFiles;
 	}
-	
+
 	/**
 	 * Sets the required files.
 	 * 
 	 * @param requiredFiles
 	 *            the new required files
 	 */
-	protected void setRequiredFiles(
-			final List<String> requiredFiles) {
+	protected void setRequiredFiles(final List<String> requiredFiles) {
 		this.requiredFiles = requiredFiles;
 	}
-	
+
 	/**
 	 * @return the dataFiles
 	 */
 	public List<File> getDataFiles() {
 		return dataFiles;
 	}
-	
+
 	/**
 	 * @param dataFiles
 	 *            the dataFiles to set
 	 */
-	public void setDataFiles(
-			List<File> dataFiles) {
+	public void setDataFiles(List<File> dataFiles) {
 		this.dataFiles = dataFiles;
 	}
-	
+
 }

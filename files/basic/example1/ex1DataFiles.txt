@@ -1,9 +1,9 @@
-FileA	1
-FileB	2
-FileC	3
-FileD	4
-FileE	5
-FileF	6
-FileG	7
-FileH	8
-FileI	9
+FileA,1
+FileB,2
+FileC,3
+FileD,4
+FileE,5
+FileF,6
+FileG,7
+FileH,8
+FileI,9

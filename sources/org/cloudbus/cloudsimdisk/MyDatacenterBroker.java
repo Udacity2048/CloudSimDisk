@@ -64,6 +64,8 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 		// For each Cloudlet of the Cloudlet list...
 		for (Cloudlet cloudlet : getCloudletList()) {
 			MyCloudlet myCloudlet = (MyCloudlet) cloudlet;
+			
+			// prepare spreadsheet results
 			WriteToResultFile.AddValueToSheetTab(myCloudlet.getCloudletId(), myCloudlet.getCloudletId(), 0);
 
 			// Vm binding check

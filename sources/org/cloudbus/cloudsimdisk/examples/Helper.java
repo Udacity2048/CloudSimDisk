@@ -77,7 +77,7 @@ public class Helper {
 	/**
 	 * the Broker.
 	 */
-	public MyDatacenterBroker				broker;
+	public MyDatacenterBroker					broker;
 
 	/**
 	 * the Datacenter.
@@ -206,9 +206,7 @@ public class Helper {
 			while ((line = input.readLine()) != null) {
 
 				// retrieve fileName and fileSize
-				lineSplited = line.split("\\t+"); // regular expression
-													// quantifiers for
-													// whitespace
+				lineSplited = line.split(",");
 				fileName = lineSplited[0];
 				fileSize = lineSplited[1];
 
@@ -381,12 +379,19 @@ public class Helper {
 			Log.formatLine("%8sTime in   Active  mode: %9.3f second(s)", "", tempList.get(i).getInActiveDuration());
 			Log.formatLine("%8sTime of the simulation: %9.3f second(s)", "", endTimeSimulation);
 			Log.printLine();
+			Log.formatLine("%8sEnergy consumed in  Idle   mode: %9.3f Joule(s)", "", tempList.get(i)
+					.getTotalEnergyIdle());
+			Log.formatLine("%8sEnergy consumed in Active  mode: %9.3f Joule(s)", "", tempList.get(i)
+					.getTotalEnergyActive());
+			Log.formatLine("%8sEnergy consumed in  total      : %9.3f Joule(s)", "", tempList.get(i)
+					.getTotalEnergyIdle() + tempList.get(i).getTotalEnergyActive());
+			Log.printLine();
 			Log.formatLine("%8sMaximum Queue size    : %10d operation(s)", "",
 					Collections.max(tempList.get(i).getQueueLengthHistory()));
 			Log.printLine();
-			Log.formatLine("Energy consumed by Persistent Storage: %.3f Joule(s)", TotalStorageEnergy);
-			Log.printLine();
 		}
+		Log.printLine();
+		Log.formatLine("Energy consumed by Persistent Storage: %.3f Joule(s)", TotalStorageEnergy);
 		Log.printLine();
 		// -----------------------------------------------------------------------
 
@@ -405,14 +410,23 @@ public class Helper {
 					- tempList.get(i).getInActiveDuration()));
 			WriteToLogFile.AddtoFile(String.format("%8sTime in   Active  mode: %9.3f second(s)", "", tempList.get(i)
 					.getInActiveDuration()));
-			WriteToLogFile.AddtoFile(String.format("%8sTime of the simulation: %9.3f second(s)", "", endTimeSimulation));
+			WriteToLogFile
+					.AddtoFile(String.format("%8sTime of the simulation: %9.3f second(s)", "", endTimeSimulation));
+			WriteToLogFile.AddtoFile("\n");
+			WriteToLogFile.AddtoFile(String.format("%8sEnergy consumed in  Idle   mode: %9.3f Joule(s)", "", tempList
+					.get(i).getTotalEnergyIdle()));
+			WriteToLogFile.AddtoFile(String.format("%8sEnergy consumed in Active  mode: %9.3f Joule(s)", "", tempList
+					.get(i).getTotalEnergyActive()));
+			WriteToLogFile.AddtoFile(String.format("%8sEnergy consumed in  total      : %9.3f Joule(s)", "", tempList
+					.get(i).getTotalEnergyIdle() + tempList.get(i).getTotalEnergyActive()));
 			WriteToLogFile.AddtoFile("\n");
 			WriteToLogFile.AddtoFile(String.format("%8sMaximum Queue size    : %10d operation(s)", "",
 					Collections.max(tempList.get(i).getQueueLengthHistory())));
 			WriteToLogFile.AddtoFile("\n");
-			WriteToLogFile.AddtoFile(String.format("Energy consumed by Persistent Storage: %.3f Joule(s)", TotalStorageEnergy));
-			WriteToLogFile.AddtoFile("\n");
 		}
+		WriteToLogFile.AddtoFile("\n");
+		WriteToLogFile.AddtoFile(String.format("Energy consumed by Persistent Storage: %.3f Joule(s)",
+				TotalStorageEnergy));
 		WriteToLogFile.AddtoFile("\n");
 
 		/* // queue size WriteToLogFile.AddtoFile("QUEUE SIZE in Operation(s) (not sorted)"); for (int i = 0; i <

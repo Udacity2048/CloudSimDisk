@@ -129,7 +129,7 @@ public class MyHarddriveStorage implements Storage {
 	public boolean setSeekTime(double avgSeekTime) {
 
 		// randomize SeekTime
-		ContinuousDistribution generator = new MySeekTimeDistr(0.0002, 3 * avgSeekTime, avgSeekTime);
+		ContinuousDistribution generator = new MySeekTimeDistr(0, 3 * avgSeekTime, avgSeekTime);
 
 		// SCALABILITY: define your own Distribution algorithm for the seekTime.
 		//
@@ -150,8 +150,7 @@ public class MyHarddriveStorage implements Storage {
 	protected double getSeekTime() {
 		double result = 0;
 
-		// Seek Time will be between a "Track-to-Track seek time" of 0.2ms and "3 x avgSeekTime" with an average equal
-		// to avgSeekTime.
+		// Seek Time will be between 0ms and "3 x avgSeekTime" with an average equal to avgSeekTime.
 		if (genSeekTime != null) {
 			result += genSeekTime.sample();
 		}
@@ -798,7 +797,8 @@ public class MyHarddriveStorage implements Storage {
 			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
 			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
 			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
-			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 10);
+			WriteToResultFile.AddTextToSheetTabSameRow("added", 10);
+			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 11);
 
 			// Log the observation
 			String msg = String.format("OBSERVATION>> Writting \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"
@@ -865,7 +865,8 @@ public class MyHarddriveStorage implements Storage {
 			WriteToResultFile.AddValueToSheetTabSameRow(seekTime, 4);
 			WriteToResultFile.AddValueToSheetTabSameRow(rotlatency, 5);
 			WriteToResultFile.AddValueToSheetTabSameRow(transferTime, 6);
-			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 10);
+			WriteToResultFile.AddTextToSheetTabSameRow("retrieved", 10);
+			WriteToResultFile.AddTextToSheetTabSameRow(this.name, 11);
 
 			// log the observation
 			String msg = String.format("OBSERVATION>> Reading \"%s\" on \"%s\" will take:" + "\n" + "%13s" + "%9.6f"

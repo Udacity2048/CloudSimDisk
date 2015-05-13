@@ -33,6 +33,12 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	/** Last starting Idle time */
 	public double			LastIdleStartTime;
 
+	/** Total energy in idle mode */
+	private double			totalEnergyIdle;
+	
+	/** Total energy in active mode */
+	private double			totalEnergyActive;
+
 	/**
 	 * Creates a new Hard Drive storage base on a specific HDD Model.
 	 * 
@@ -152,5 +158,41 @@ public class MyPowerHarddriveStorage extends MyHarddriveStorage {
 	 */
 	public void setLastIdleStartTime(double lastIdleStartTime) {
 		LastIdleStartTime = lastIdleStartTime;
+	}
+
+	/**
+	 * Gets the total energy consumed by this HDD in Idle mode.
+	 * 
+	 * @return the energy
+	 */
+	public double getTotalEnergyIdle() {
+		return totalEnergyIdle;
+	}
+
+	/**
+	 * Sets the total energy consumed by this HDD in Idle mode.
+	 * 
+	 * @param totalEnergyIdle the energy
+	 */
+	public void setTotalEnergyIdle(double totalEnergyIdle) {
+		this.totalEnergyIdle = totalEnergyIdle;
+	}
+
+	/**
+	 * Gets the total energy consumed by this HDD in Active mode.
+	 * 
+	 * @return the energy
+	 */
+	public double getTotalEnergyActive() {
+		return totalEnergyActive;
+	}
+
+	/**
+	 * Sets the total energy consumed by this HDD in Active mode.
+	 * 
+	 * @param totalEnergyActive the energy
+	 */
+	public void setTotalEnergyActive(double totalEnergyActive) {
+		this.totalEnergyActive = totalEnergyActive;
 	}
 }

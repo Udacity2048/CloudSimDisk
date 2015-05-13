@@ -32,7 +32,7 @@ import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
 public class MyDatacenter extends Datacenter {
 
 	/** Round Robin Algorithm temp variable */
-	private int	tempRR	= 0;
+	private int	tempRR	= -1;
 
 	/**
 	 * The constructor.
@@ -262,8 +262,8 @@ public class MyDatacenter extends Datacenter {
 	@Override
 	public int addFile(File file) {
 
-		/************HDD POOL MANAGEMENT******/
-		/*Select the storage algorithm       */
+		/************ HDD POOL MANAGEMENT ******/
+		/* Select the storage algorithm */
 		int key = 2;
 		/*************************************/
 
@@ -288,9 +288,10 @@ public class MyDatacenter extends Datacenter {
 
 		switch (key) {
 			case 1:
-				/* ***********************************************************************************************************
-				 * FIRST-FOUND (DEFAULT): scan the list of available HDD storage and add the file on the first one which
-				 * have enough free space for the file. */
+				/* ****************************************************************
+				 * FIRST-FOUND (DEFAULT): scan the list of available HDD storage 
+				 * and add the file on the first one which have enough free space 
+				 * for the file. */
 				for (int i = 0; i < getStorageList().size(); i++) {
 					tempStorage = getStorageList().get(i);
 					if (tempStorage.getFreeSpace() >= file.getSize()) {
@@ -299,31 +300,42 @@ public class MyDatacenter extends Datacenter {
 						break;
 					}
 				}
-				// ***********************************************************************************************************
+				// ****************************************************************
 				break;
 
 			case 2:
-				/* ***********************************************************************************************************
-				 * ROUND-ROBIN: adding the first file to the first disk, the second file to the second disk, etc. When
-				 * no more disk are in the pool, restart from the first disk. */
-				if (tempRR >= getStorageList().size()) {
-					tempRR = 0;
+				/* ****************************************************************
+				 * ROUND-ROBIN: adding the first file on the first disk, the second 
+				 * file on the second disk, etc. When no more disk are in the pool, 
+				 * restart from the first disk. */
+				int numberOfTries = 0;
+
+				// if we arrived to the end of the list, restart at the beginning.
+				if (tempRR + 1 >= getStorageList().size()) {
+					tempRR = -1;
 				}
-				int counter = 0;
-				tempStorage = getStorageList().get(tempRR);
-				while ((tempStorage.getFreeSpace() < file.getSize()) || (counter > getStorageList().size())) {
+
+				do {
+					// select the next HDD
 					tempRR++;
 					tempStorage = getStorageList().get(tempRR);
-					counter++;
-				}
 
-				if (counter <= getStorageList().size()) {
+					// count the number of tries
+					numberOfTries++;
+
+					// while "no space on the selected HDD" or "all HDD tested"
+				} while ((tempStorage.getFreeSpace() < file.getSize()) 
+						|| (numberOfTries > getStorageList().size()));
+
+				// if the algorithm found one HDD with enough space, add the file.
+				if (numberOfTries <= getStorageList().size()) {
 					tempStorage.addFile(file);
 					msg = DataCloudTags.FILE_ADD_SUCCESSFUL;
-					tempRR++;
+				} else {
+					msg = DataCloudTags.FILE_ADD_ERROR_STORAGE_FULL;
 				}
 
-				// ***********************************************************************************************************
+				// ****************************************************************
 				break;
 
 			/*--------------------------------------------------------------------------------------

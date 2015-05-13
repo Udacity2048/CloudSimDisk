@@ -113,9 +113,12 @@ public class WriteToResultFile {
 		cell.setCellValue("File size (MB)");
 		cell.setCellStyle(style);
 		cell = row.createCell(10);
-		cell.setCellValue("HDD name");
+		cell.setCellValue("Action");
 		cell.setCellStyle(style);
 		cell = row.createCell(11);
+		cell.setCellValue("HDD name");
+		cell.setCellStyle(style);
+		cell = row.createCell(12);
 		cell.setCellValue("Energy Consumption (J)");
 		cell.setCellStyle(style);
 
@@ -127,6 +130,9 @@ public class WriteToResultFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		// initialize variable
+		tempRowNum = 1;
 
 	}
 

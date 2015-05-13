@@ -66,9 +66,11 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// update the storage state
 		double waitingTime = 0.0;
 		double eventDelay = 0.0;
+		double idleInterval = 0.0;
 		if (storage.isIdle()) {
 			// handle Idle intervals
-			storage.getIdleIntervalsHistory().add(CloudSim.clock() - storage.getLastIdleStartTime());
+			idleInterval = CloudSim.clock() - storage.getLastIdleStartTime();
+			storage.getIdleIntervalsHistory().add(idleInterval);
 			// handle Active End Time
 			storage.setActiveEndAt(CloudSim.clock() + transTime);
 			// handle Event for Operation completion
@@ -86,13 +88,21 @@ public class MyPowerDatacenter extends MyDatacenter {
 			// also, eventDelay = storage.getActiveEndAt() - CloudSim.clock();
 		}
 
-		// compute energy
-		double tempPower = storage.getPowerActive();
-		double tempEnergy = tempPower * transTime;
+		// compute energy of the operation
+		double tempPowerActive = storage.getPowerActive();
+		double tempEnergyActive = tempPowerActive * transTime;
+		
+		// compute energy of previous Idle interval (if the disk was previously in Idle mode)
+		double tempPowerIdle = storage.getPowerIdle();
+		double tempEnergyIdle =  tempPowerIdle * idleInterval;
 
-		// update total energy
-		setTotalDatacenterEnergy(getTotalDatacenterEnergy() + tempEnergy);
-		setTotalStorageEnergy(getTotalStorageEnergy() + tempEnergy);
+		// update total energy of data center
+		setTotalStorageEnergy(getTotalStorageEnergy() + tempEnergyActive + tempEnergyIdle);
+		setTotalDatacenterEnergy(getTotalDatacenterEnergy() + tempEnergyActive + tempEnergyIdle);
+		
+		// update total energy of the target hard drive
+		storage.setTotalEnergyActive(storage.getTotalEnergyActive() + tempEnergyActive);
+		storage.setTotalEnergyIdle(storage.getTotalEnergyIdle() + tempEnergyIdle);
 
 		// handle queue
 		storage.setQueueLength(storage.getQueueLength() + 1);
@@ -102,9 +112,9 @@ public class MyPowerDatacenter extends MyDatacenter {
 		data[0] = action; // the action of the operation
 		data[1] = cl; // the cloudlet subject to the operation
 		data[2] = tempFile; // the file subject to the operation
-		data[3] = tempPower; // the power needed during the operation
+		data[3] = tempPowerActive; // the power needed during the operation
 		data[4] = transTime; // the transaction time of the operation
-		data[5] = tempEnergy; // the energy consumed by the operation
+		data[5] = tempEnergyActive; // the energy consumed by the operation
 		data[6] = storage; // the disk subject to the operation
 		data[7] = waitingTime; // the waiting time for the operation
 
@@ -132,7 +142,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 		WriteToResultFile.AddValueToSheetTab(CloudSim.clock(), cl.getCloudletId(), 7);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getName(), cl.getCloudletId(), 8);
 		WriteToResultFile.AddValueToSheetTab(tempFile.getSize(), cl.getCloudletId(), 9);
-		WriteToResultFile.AddValueToSheetTab(tempEnergy, cl.getCloudletId(), 11);
+		WriteToResultFile.AddValueToSheetTab(tempEnergy, cl.getCloudletId(), 12);
 
 		// Print out confirmation that Files have been handled
 		Log.formatLine("\n%.6f: %s: Cloudlet # %d: <%s> %s on %s.", CloudSim.clock(), getName(), cl.getCloudletId(),
@@ -146,7 +156,7 @@ public class MyPowerDatacenter extends MyDatacenter {
 		// handle queue
 		storage.setQueueLength(storage.getQueueLength() - 1);
 
-		// Test if there is further operation on the disk
+		// if there is no further operation on the disk
 		if (storage.getActiveEndAt() <= CloudSim.clock()) {
 			storage.setMode(0); // switch to idle mode
 			storage.setLastIdleStartTime(CloudSim.clock()); // handle Idle intervals
