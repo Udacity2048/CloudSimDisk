@@ -32,7 +32,7 @@ public class StorageModelHddSeagateEnterpriseST6000VN0001 extends StorageModelHd
 			default:
 				return "n/a";
 
-				// SCALABILITY: add new characteristic by adding new CASE.
+				// SCALABILITY: add new characteristics by adding new CASEs.
 				//
 				// case <KEY_NUMBER>:
 				// return <PARAMETER_VALUE>;

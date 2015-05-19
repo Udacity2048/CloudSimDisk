@@ -4,7 +4,7 @@ import org.cloudbus.cloudsimdisk.models.hdd.StorageModelHdd;
 import org.cloudbus.cloudsimdisk.power.models.hdd.PowerModelHdd;
 
 /**
- * Example 0: this example aims to understand the basic operation of storage example. In this scenario, 1 request is
+ * Example 0: this example aims to understand the basic execution of CloudSimDisk simulations. In this scenario, 1 request is
  * sent to the Datacenter at 0.5 second and adds FileA(1MB) on the persistent storage. No files are retrieved.
  * 
  * @author Baptiste Louis

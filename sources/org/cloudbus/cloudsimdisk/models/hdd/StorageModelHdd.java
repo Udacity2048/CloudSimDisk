@@ -3,7 +3,7 @@
 package org.cloudbus.cloudsimdisk.models.hdd;
 
 /**
- * The abstract class of a specific hard drive model. Note: new HDD characteristics can be implemented.
+ * The abstract class of all Hard Disk Drive model. Note: new HDD characteristics can be implemented.
  * 
  * @author Baptiste Louis
  */
@@ -12,8 +12,8 @@ public abstract class StorageModelHdd {
 	// Abstract Method that need to be implemented.
 
 	/**
-	 * Get Parameters of a specific StorageModelHdd : 0 the full name, 1 the reference, 2 the capacity, 3 the Latency, 4
-	 * the avgSeekTime, 5 the maxTransferRate.
+	 * Get Parameters of a specific StorageModelHdd : 0 the full name, 1 the reference, 2 the capacity, 
+	 * 3 the Latency, 4 the avgSeekTime, 5 the maxTransferRate.
 	 * 
 	 * @param key
 	 *            key value of the parameter
