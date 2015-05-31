@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Title: CloudSimDisk
+ * Description: a module for energy aware storage simulation in CloudSim
+ * Author: Baptiste Louis
+ * Date: June 2015
+ *
+ * Address: baptiste_louis@live.fr
+ * Source: https://github.com/Udacity2048/CloudSimDisk
+ * Website: http://baptistelouis.weebly.com/projects.html
+ *
+ * Licence: GPL - http://www.gnu.org/copyleft/gpl.html
+ * Copyright (c) 2015, Luleå University of Technology, Sweden.
+ *******************************************************************************/
+
 package org.cloudbus.cloudsimdisk;
 
 import java.util.ArrayList;
@@ -14,7 +28,6 @@ import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.lists.VmList;
 import org.cloudbus.cloudsim.power.PowerDatacenterBroker;
 import org.cloudbus.cloudsimdisk.distributions.MyBasicDistr;
-import org.cloudbus.cloudsimdisk.distributions.MySeekTimeDistr;
 import org.cloudbus.cloudsimdisk.distributions.MyWikiDistr;
 import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
 
@@ -24,7 +37,7 @@ import org.cloudbus.cloudsimdisk.util.WriteToResultFile;
  * @author Baptiste Louis
  * 
  */
-public class MyDatacenterBroker extends PowerDatacenterBroker {
+public class MyPowerDatacenterBroker extends PowerDatacenterBroker {
 
 	/** History of requests (cloudlets) arrival rate. */
 	private List<Double>			History	= new ArrayList<Double>();
@@ -33,7 +46,9 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 	private ContinuousDistribution	distri;
 
 	/**
-	 * Created a new DatacenterBroker object.
+	 * Created a new datacenter Broker object. This Broker has been implemented for CloudSimDisk simulations. It can
+	 * schedules the list of Cloudlet according to generic distributions (exponential, uniform). Also, it can read times
+	 * from a file, in which each line correspond to one time.
 	 * 
 	 * @param name
 	 *            name to be associated with this entity (as required by Sim_entity class from simjava package)
@@ -44,7 +59,7 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public MyDatacenterBroker(String name, String distriType, String distriSource) throws Exception {
+	public MyPowerDatacenterBroker(String name, String distriType, String distriSource) throws Exception {
 		super(name);
 
 		setDistri(distriType, distriSource);
@@ -64,7 +79,7 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 		// For each Cloudlet of the Cloudlet list...
 		for (Cloudlet cloudlet : getCloudletList()) {
 			MyCloudlet myCloudlet = (MyCloudlet) cloudlet;
-			
+
 			// prepare spreadsheet results
 			WriteToResultFile.AddValueToSheetTab(myCloudlet.getCloudletId(), myCloudlet.getCloudletId(), 0);
 
@@ -143,7 +158,7 @@ public class MyDatacenterBroker extends PowerDatacenterBroker {
 				distri = new MyWikiDistr(source);
 				break;
 
-			// SCALABILITY: add a case and declare instantiate your own distribution.
+			// SCALABILITY: add a case and declare your own distribution.
 
 			default:
 				distri = new UniformDistr(1, 1.0001); // arbitrary parameters

@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Title: CloudSimDisk
+ * Description: a module for energy aware storage simulation in CloudSim
+ * Author: Baptiste Louis
+ * Date: June 2015
+ *
+ * Address: baptiste_louis@live.fr
+ * Source: https://github.com/Udacity2048/CloudSimDisk
+ * Website: http://baptistelouis.weebly.com/projects.html
+ *
+ * Licence: GPL - http://www.gnu.org/copyleft/gpl.html
+ * Copyright (c) 2015, Luleå University of Technology, Sweden.
+ *******************************************************************************/
 package org.cloudbus.cloudsimdisk;
 
 import java.util.ArrayList;
@@ -5,18 +18,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.CloudletScheduler;
 import org.cloudbus.cloudsim.DataCloudTags;
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.File;
-import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Storage;
-import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.cloudbus.cloudsimdisk.core.MyCloudSimTags;
 import org.cloudbus.cloudsimdisk.power.MyPowerHarddriveStorage;

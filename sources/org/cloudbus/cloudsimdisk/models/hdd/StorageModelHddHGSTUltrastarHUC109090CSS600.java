@@ -1,5 +1,17 @@
-/* To change this license header, choose License Headers in Project Properties. To change this template file, choose
- * Tools | Templates and open the template in the editor. */
+/*******************************************************************************
+ * Title: CloudSimDisk
+ * Description: a module for energy aware storage simulation in CloudSim
+ * Author: Baptiste Louis
+ * Date: June 2015
+ *
+ * Address: baptiste_louis@live.fr
+ * Source: https://github.com/Udacity2048/CloudSimDisk
+ * Website: http://baptistelouis.weebly.com/projects.html
+ *
+ * Licence: GPL - http://www.gnu.org/copyleft/gpl.html
+ * Copyright (c) 2015, Luleå University of Technology, Sweden.
+ *******************************************************************************/
+
 package org.cloudbus.cloudsimdisk.models.hdd;
 
 /**

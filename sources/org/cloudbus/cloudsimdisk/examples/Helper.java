@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Title: CloudSimDisk
+ * Description: a module for energy aware storage simulation in CloudSim
+ * Author: Baptiste Louis
+ * Date: June 2015
+ *
+ * Address: baptiste_louis@live.fr
+ * Source: https://github.com/Udacity2048/CloudSimDisk
+ * Website: http://baptistelouis.weebly.com/projects.html
+ *
+ * Licence: GPL - http://www.gnu.org/copyleft/gpl.html
+ * Copyright (c) 2015, Luleå University of Technology, Sweden.
+ *******************************************************************************/
 package org.cloudbus.cloudsimdisk.examples;
 
 import java.io.BufferedReader;
@@ -24,7 +37,7 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsimdisk.MyCloudlet;
-import org.cloudbus.cloudsimdisk.MyDatacenterBroker;
+import org.cloudbus.cloudsimdisk.MyPowerDatacenterBroker;
 import org.cloudbus.cloudsimdisk.models.hdd.StorageModelHdd;
 import org.cloudbus.cloudsimdisk.power.MyPowerDatacenter;
 import org.cloudbus.cloudsimdisk.power.MyPowerHarddriveStorage;
@@ -77,7 +90,7 @@ public class Helper {
 	/**
 	 * the Broker.
 	 */
-	public MyDatacenterBroker					broker;
+	public MyPowerDatacenterBroker					broker;
 
 	/**
 	 * the Datacenter.
@@ -106,7 +119,7 @@ public class Helper {
 	 */
 	public void createBroker(String typeOfDistribution, String sourceOfDistribution) {
 		try {
-			broker = new MyDatacenterBroker("Broker", typeOfDistribution, sourceOfDistribution);
+			broker = new MyPowerDatacenterBroker("Broker", typeOfDistribution, sourceOfDistribution);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
