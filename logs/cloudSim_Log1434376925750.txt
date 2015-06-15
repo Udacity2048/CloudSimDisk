@@ -1,0 +1,110 @@
+
+Starting simulation "simulationWiki1"
+
+OBSERVATION>> Hard disk drive "hdd1" is now in Idle mode.
+
+OBSERVATION>> #QueueLenght <hdd1> is now => 0
+OBSERVATION>> Initial persistent storage 
+1/1 hdd1
+	Capacity        ->     900000 MB
+	UsedSpace       ->          0 MB
+	FreeSpave       ->     900000 MB
+	Latency         ->   0.003000 s
+	avgSeekTime     ->   0.004000 s
+	maxTransferRate ->    198.000 MB/s
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS_REQUEST; source = Broker; destination = Broker; Time= 0.0; endwaiting time = 0.0
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = REGISTER_RESOURCE; source = datacenter; destination = CloudInformationService; Time= 0.0; endwaiting time = 0.0; data = 3
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS; source = Broker; destination = datacenter; Time= 0.0; endwaiting time = 0.0; data = 2
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = RESOURCE_CHARACTERISTICS; source = datacenter; destination = Broker; Time= 0.0; endwaiting time = 0.0; data = org.cloudbus.cloudsim.DatacenterCharacteristics@7e0b0338
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = VM_CREATE_ACK; source = Broker; destination = datacenter; Time= 0.0; endwaiting time = 0.0; data = org.cloudbus.cloudsim.power.PowerVm@617faa95
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = VM_CREATE_ACK; source = datacenter; destination = Broker; Time= 0.1; endwaiting time = 0.0; data = [I@1e127982
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.3259999752044678; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@57536d79
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.3210000991821289; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@67b92f0a
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.31100010871887207; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@23e028a9
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.30100011825561523; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@551aa95a
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.30299997329711914; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@3a883ce7
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.31399989128112793; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@72b6cbcc
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.3250000476837158; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@67205a84
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.29600000381469727; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@74650e52
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.2969999313354492; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@1b68ddbd
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.29200005531311035; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@57e1b0c
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.30699992179870605; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@1563da5
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.33299994468688965; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@bd8db5a
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.32399988174438477; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@3dfc5fb8
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.3020000457763672; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@631330c
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.30500006675720215; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@32d2fa64
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.31800007820129395; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@687080dc
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.32200002670288086; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@45820e51
+
+
+CloudSim(future queue event added)
+: -->Event Type = SEND;Event tag = CLOUDLET_SUBMIT; source = Broker; destination = datacenter; Time= 0.3269999027252197; endwaiting time = 0.0; data = org.cloudbus.cloudsimdisk.MyCloudlet@670b40af
+
