@@ -36,15 +36,6 @@ public class MySeekTimeDistr implements ContinuousDistribution {
 	/** The mean. */
 	private final double					mean;
 
-	/** The max */
-	private final double					max;
-
-	/** The min */
-	private final double					min;
-
-	/** The epsilon */
-	private final double					eps;
-
 	/** The history */
 	private final List<Double>				x;
 
@@ -67,10 +58,7 @@ public class MySeekTimeDistr implements ContinuousDistribution {
 		}
 		this.numGen1 = new UniformDistr(min, mean);
 		this.numGen2 = new UniformDistr(mean, max);
-		this.min = min;
-		this.max = max;
 		this.mean = mean;
-		this.eps = 0.001;
 		this.x = new ArrayList<Double>();
 	}
 
