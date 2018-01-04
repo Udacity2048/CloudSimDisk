@@ -7,8 +7,12 @@ CloudSimDisk is a scalable framework for modelling and simulation of power-aware
 See Javadoc.
 
 ##Release
-The present project is in development. 
-A first official release will be available end of May 2015.
+The present project has been developed in 2015, released in May 2015.
+The word has been publised at the 8th IEEE/ACM International Conference on Utility and Cloud Computing (UCC), Cyprus.
+CloudSimDisk will be your keyword to find anything about it (paper available on IEEE website).
 
-However, you can have a look on the current code!
+##Conclusion
+This work is a strong and flexible base for future developments.
+I had hard times to make it, but now you can have fun time to play with it and improve it :)
 
+Have fun!
